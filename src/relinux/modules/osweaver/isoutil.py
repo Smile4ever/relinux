@@ -266,7 +266,7 @@ class USBComp(threading.Thread):
         if os.path.lexists(isotreel + "ubuntu"):
             print("REMOVEME")
             fsutil.rm(isotreel + "ubuntu", False, self.tn)
-        os.symlink(isotreel + "ubuntu", isotreel)
+        os.symlink(isotreel, isotreel + "ubuntu")
         logger.logVV(self.tn, _("Writing release notes URL"))
         files = open(isotreel + ".disk/release_notes_url", "w")
         files.write(configutils.getValue(configs[configutils.url]) + "\n")

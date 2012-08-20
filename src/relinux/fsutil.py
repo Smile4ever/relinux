@@ -128,11 +128,10 @@ def rm(files, followlink=False, tn=""):
         rmstring += "directory "
     if dfile != None:
         files = dfile
-        rmstring += "symlink "
         if os.path.isfile(files):
-            logger.logVV(tn, _("Removing") + " " + files)
+            logger.logVV(tn, _("Removing symlink") + " " + files)
         elif os.path.isdir(files):
-            logger.logVV(tn, _("Removing directory") + " " + files)
+            logger.logVV(tn, _("Removing directory symlink") + " " + files)
         os.remove(rfile)
         if followlink:
             files = rfile
