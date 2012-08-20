@@ -210,6 +210,7 @@ def chmod(files, mod, tn=""):
         # OR this option to val
         val = val | _chmod(c, int(i))
         c = c + 1
+        print(c)
     # Chmod it
     logger.logVV(tn, _("Setting permissions of") + " " + files + " " + _("to") + " " + mod)
     os.chmod(files, val)
