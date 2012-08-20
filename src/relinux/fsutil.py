@@ -333,14 +333,14 @@ def copystat(stat, dst):
 # 1 = filename
 # 2 = write buffer
 # 3 = file contents
-def ife_getbuffers(file):
+def ife_getbuffers(files):
     returnme = []
-    returnme.append(getStat(file))
-    returnme.append(file)
-    fbuff = open(file, "r")
+    returnme.append(getStat(files))
+    returnme.append(files)
+    fbuff = open(files, "r")
     rbuff = configutils.getBuffer(fbuff, False)
     fbuff.close()
-    fbuff = open(file, "w")
+    fbuff = open(files, "w")
     returnme.append(fbuff)
     returnme.append(rbuff)
     return returnme

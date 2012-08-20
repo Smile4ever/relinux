@@ -135,7 +135,7 @@ class copySysLinux(threading.Thread):
                   ["SPLASH", configutils.getValue(configs[configutils.splash])],
                   ["TIMEOUT", configutils.getValue(configs[configutils.timeout])]]:
             fsutil.ife(fsutil.ife_getbuffers(isotreel + "isolinux/isolinux.cfg"),
-                       lambda line: re.sub("\$" + i[0], i[1], line))
+                       lambda line: [True, re.sub("\$" + i[0], i[1], line)])
 copysyslinux["thread"] = copySysLinux()
 
 
