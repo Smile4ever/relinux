@@ -90,6 +90,7 @@ def main():
             minis = 0.0
             captop += 1
         aptcache = aptutil.getCache(aptutil.OpProgress(aptupdate, aptdone))
+        config.AptCache = aptcache
         spprog += 1
         splash.setProgress(calcPercent((spprog, spprogn)), "Loading the GUI...")
         App = gui.GUI(root)

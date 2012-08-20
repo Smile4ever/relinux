@@ -32,6 +32,7 @@ background = "lightgrey"
 
 # Generated
 Configuration = ""
+AptCache = ""
 ISOTree = ""
 TempSys = ""
 SysVersion = ""  # Should be filled in by: os.popen("/usr/bin/lsb_release -rs").read().strip()

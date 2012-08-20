@@ -174,14 +174,17 @@ class genPakManifest(threading.Thread):
         # Generate the package manifest
         logger.logV(self.tn, _("Generating package manifests"))
         logger.logVV(self.tn, _("Generating filesystem.manifest"))
-        pkglistu = os.popen("dpkg -l")
+        pkglistu = config.AptCache.packages
         writer = open(isotreel + "casper/filesystem.manifest", "w")
+        print(configs[configutils.remafterinst])
         for i in pkglistu:
-            splitted = i.split()
-            print("SPLIT" + str(splitted))
-            if (not splitted[1].strip() in 
+            if i.current_ver == None:
+                continue
+            name = i.get_fullname(True).strip()
+            ver = i.current_ver.ver_str.strip()
+            if (not name in 
                 configutils.parseMultipleValues(configutils.getValue(configs[configutils.remafterinst]))):
-                writer.write(splitted[1].strip() + " " + splitted[2].strip() + "\n")
+                writer.write(name + " " + ver + "\n")
         writer.close()
         logger.logVV(self.tn, _("Generating filesytem.manifest-remove"))
         writer = open(isotreel + "casper/filesystem.manifest-remove", "w")
