@@ -212,6 +212,7 @@ def chmod(files, mod, tn=""):
         c = c + 1
     # Chmod it
     logger.logVV(tn, _("Setting permissions of") + " " + files + " " + _("to") + " " + mod)
+    print(val)
     os.fchmod(files, val)
 
 
