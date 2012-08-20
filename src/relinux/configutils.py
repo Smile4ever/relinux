@@ -329,7 +329,6 @@ def parseBoolean(option):
 
 # Returns a list from a Multiple Value value
 def parseMultipleValues(option):
-    print(option)
     return option.split(" ")
 
 
