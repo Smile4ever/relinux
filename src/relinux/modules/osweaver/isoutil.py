@@ -263,9 +263,9 @@ class USBComp(threading.Thread):
         files.write(getDiskName())
         files.close()
         logger.logV(self.tn, _("Making symlink pointing to the ISO root dir"))
-        if os.path.exists(isotreel + "ubuntu"):
+        if os.path.lexists(isotreel + "ubuntu"):
             print("REMOVEME")
-            fsutil.rm(isotreel + "ubuntu", True, self.tn)
+            fsutil.rm(isotreel + "ubuntu", False, self.tn)
         os.symlink(isotreel + "ubuntu", isotreel)
         logger.logVV(self.tn, _("Writing release notes URL"))
         files = open(isotreel + ".disk/release_notes_url", "w")
