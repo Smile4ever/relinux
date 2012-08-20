@@ -35,6 +35,7 @@ class genTempSysTree(threading.Thread):
                           tmpsys + "sys", tmpsys + "mnt",
                           tmpsys + "media/cdrom", tmpsys + "var", tmpsys + "home"], self.tn)
         fsutil.chmod(tmpsys + "tmp", "1777", self.tn)
+        print("DONE")
 tmpsystree["thread"] = genTempSysTree()
 
 
