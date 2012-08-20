@@ -126,21 +126,24 @@ def rm(files, followlink=False, tn=""):
     rmstring = "Removing "
     if os.path.isdir(files):
         rmstring += "directory "
-    if dfile is not None:
+    if dfile != None:
         files = dfile
         rmstring += "symlink "
+        if os.path.isfile(files):
+            logger.logVV(tn, _("Removing") + " " + files)
+        elif os.path.isdir(files):
+            logger.logVV(tn, _("Removing directory") + " " + files)
+        os.remove(rfile)
+        if followlink:
+            files = rfile
+        else:
+            return
     if os.path.isfile(files):
         logger.logVV(tn, _(rmstring) + files)
         os.remove(rfile)
-        if followlink is True and dfile is not None:
-            logger.logVV(tn, _("Removing") + " " + files)
-            os.remove(files)
     elif os.path.isdir(files):
         logger.logVV(tn, _(rmstring + files))
         shutil.rmtree(rfile)
-        if followlink is True and dfile is not None:
-            logger.logVV(tn, _("Removing directory") + " " + files)
-            os.remove(files)
 
 
 # Removes a list of files
