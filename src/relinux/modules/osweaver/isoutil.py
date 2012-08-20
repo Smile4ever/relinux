@@ -176,7 +176,6 @@ class genPakManifest(threading.Thread):
         logger.logVV(self.tn, _("Generating filesystem.manifest"))
         pkglistu = config.AptCache.packages
         writer = open(isotreel + "casper/filesystem.manifest", "w")
-        print(configs[configutils.remafterinst])
         for i in pkglistu:
             if i.current_ver == None:
                 continue
