@@ -3,10 +3,10 @@ Thread Managing Class
 @author: Joel Leclerc (MiJyn) <lkjoel@ubuntu.com>
 '''
 
-from relinux import config, fsutil
+from relinux import config, fsutil, logger
 import time
 
-#threads = []
+tn = logger.genTN("TheadManager")
 
 
 # Finds threads that can currently run (and have not already run)
@@ -35,7 +35,7 @@ def runThread(threadid, threadsdone, threadsrunning, threads):
     thread = getThread(threadid, threads)
     if not thread["thread"].isAlive() and not threadid in threadsdone and not threadid in threadsrunning:
         threadsrunning.append(threadid)
-        print(str(threadid) + " " + str(threadsrunning) + " " + str(threadsdone))
+        logger.logV(tn, _("Starting thread") + " " + threadid + ".")
         thread["thread"].start()
 
 
@@ -45,6 +45,7 @@ def checkThread(threadid, threadsdone, threadsrunning, threads):
         if not getThread(threadid, threads)["thread"].isAlive():
             threadsrunning.remove(threadid)
             threadsdone.append(threadid)
+            logger.logV(tn, _("Thread") + " " + threadid + " " + _("has finished") + ".")
 
 
 # Get a thread from an ID
