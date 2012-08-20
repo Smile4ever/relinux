@@ -16,9 +16,9 @@ from relinux import configutils, logger
 
 
 # Reads the link location of a file or returns None
-def delink(file):
-    if os.path.islink(file):
-        return os.readlink(file)
+def delink(files):
+    if os.path.islink(files):
+        return os.readlink(files)
     return None
 
 
@@ -196,10 +196,10 @@ def _chmod(c, mi):
 
 
 # Simple implementation of the chmod utility
-def chmod(file, mod, tn=""):
+def chmod(files, mod, tn=""):
     val = 0x00
     c = 0
-    logger.logVV(tn, _("Calculating permissions of") + " " + file)
+    logger.logVV(tn, _("Calculating permissions of") + " " + files)
     # In case the user of this function used UGO instead of SUGO, we'll cover up for that
     if len(mod) < 4:
         c = 1
@@ -209,8 +209,8 @@ def chmod(file, mod, tn=""):
         val = val | _chmod(c, int(i))
         c = c + 1
     # Chmod it
-    logger.logVV(tn, _("Setting permissions of") + " " + file + " " + _("to") + " " + mod)
-    os.chmod(file, val)
+    logger.logVV(tn, _("Setting permissions of") + " " + files + " " + _("to") + " " + mod)
+    os.chmod(files, val)
 
 
 # List the files in a directory
@@ -246,20 +246,20 @@ def fscopy(src, dst, excludes1, tn=""):
         excludes = exclude(files, excludes1)
     makedir(dst)
     # Copy the files
-    for file in files:
+    for files in files:
         # Make sure we don't copy files that are supposed to be excluded
-        if file in excludes:
-            logger.logVV(tn, file + " " + _("is to be excluded. Skipping a CPU cycle"))
+        if files in excludes:
+            logger.logVV(tn, files + " " + _("is to be excluded. Skipping a CPU cycle"))
             continue
-        fullpath = os.path.join(src, file)
-        newpath = os.path.join(dst, file)
+        fullpath = os.path.join(src, files)
+        newpath = os.path.join(dst, files)
         dfile = delink(fullpath)
         if dfile is not None:
-            logger.logVV(tn, file + " " + _("is a symlink. Creating an identical symlink at") + " " + 
+            logger.logVV(tn, files + " " + _("is a symlink. Creating an identical symlink at") + " " + 
                          newpath)
             os.symlink(dfile, newpath)
         elif os.path.isdir(fullpath):
-            logger.logVV(tn, _("Recursing into") + " " + file)
+            logger.logVV(tn, _("Recursing into") + " " + files)
             fscopy(fullpath, newpath, excludes, tn)
         else:
             logger.logVV(tn, _("Copying") + " " + fullpath + " " + _("to") + " " + newpath)
@@ -283,12 +283,12 @@ def adrm(dirs, options, excludes1=[], tn=""):
     if options.excludes is True and len(excludes1) > 0:
         excludes = exclude(files, excludes1)
     # Remove the wanted files
-    for file in files:
+    for files in files:
         # Make sure we don't remove files that are listed to exclude from removal
-        if file in excludes:
-            logger.logVV(tn, file + " " + _("is to be excluded. Skipping a CPU cycle"))
+        if files in excludes:
+            logger.logVV(tn, files + " " + _("is to be excluded. Skipping a CPU cycle"))
             continue
-        fullpath = os.path.join(dirs, file)
+        fullpath = os.path.join(dirs, files)
         dfile = delink(fullpath)
         if dfile is not None:
             if os.path.isfile(dfile):
@@ -309,8 +309,8 @@ def adrm(dirs, options, excludes1=[], tn=""):
 
 
 # Returns the unix stat of a file
-def getStat(file):
-    return os.stat(file)
+def getStat(files):
+    return os.stat(files)
 
 
 # Returns the mode of the stat of a file (can be used like this: getMode(getStat(file))
@@ -339,10 +339,10 @@ def ife_getbuffers(files):
     returnme.append(files)
     fbuff = open(files, "r")
     rbuff = configutils.getBuffer(fbuff, False)
-    fbuff.close()
-    fbuff = open(files, "w")
-    returnme.append(fbuff)
+    fbuff2 = open(files, "w")
+    returnme.append(fbuff2)
     returnme.append(rbuff)
+    returnme.append(fbuff)
     return returnme
 
 
@@ -357,7 +357,7 @@ def ife(buffers, func):
             buffers[2].write(r[1])
     copystat(buffers[0], buffers[1])
     buffers[2].close()
-    buffers[3].close()
+    buffers[4].close()
 
 
 # Finds the system architecture
@@ -382,14 +382,14 @@ def getCPUCount():
 
 
 # Returns the installed size of a compressed filesystem (SquashFS)
-def getSFSInstSize(file):
+def getSFSInstSize(files):
     # Not optimal, but it works
     # Sample line:
     #     drwxr-xr-x root/root               377 2012-04-25 10:04 squashfs-root
     #                                        ^^^
     #                                        Size in bytes
     patt = "^ *[dlspcb-][rwx-][rwx-][rwx-][rwx-][rwx-][rwx-][rwx-][rwx-][rwx-] *[A-Za-z0-9]*/[A-Za-z0-9]* *([0-9]*).*"
-    output = os.popen("unsquashfs -lls " + file)
+    output = os.popen("unsquashfs -lls " + files)
     totsize = 0
     for line in output:
         m = patt.match(line)
@@ -399,16 +399,16 @@ def getSFSInstSize(file):
 
 
 # Generate an MD5 checksum from a file
-def genMD5(file, blocksize=65536):
-    buffer = file.read(blocksize)
+def genMD5(files, blocksize=65536):
+    buffers = file.read(blocksize)
     m = hashlib.md5()
-    while len(buffer) > 0:
-        m.update(buffer)
-        buffer = file.read(blocksize)
+    while len(buffers) > 0:
+        m.update(buffers)
+        buffers = files.read(blocksize)
     return m.digest()
 
 
 # Generate an MD5 checksum that can be read by the md5sum command from a file
-def genFinalMD5(file):
-    string = genMD5(file) + "  " + file + "\n"
+def genFinalMD5(files):
+    string = genMD5(files) + "  " + files + "\n"
     return string
