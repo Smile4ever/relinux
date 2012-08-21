@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 General filesystem utilities
 @author: Joel Leclerc (MiJyn) <lkjoel@ubuntu.com>

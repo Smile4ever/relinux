@@ -1,6 +1,7 @@
+# -*- coding: utf-8 -*-
 '''
 Utilities to manage configuration files
-@author: MiJyn
+@author: Joel Leclerc (MiJyn) <lkjoel@ubuntu.com>
 '''
 
 import re

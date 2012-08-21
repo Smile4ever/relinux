@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Main relinux script
 @author: Joel Leclerc (MiJyn) <lkjoel@ubuntu.com>

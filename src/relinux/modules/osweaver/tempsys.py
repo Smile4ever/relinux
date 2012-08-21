@@ -1,6 +1,7 @@
+# -*- coding: utf-8 -*-
 '''
 Generates a temporary filesystem to hack on
-@author: MiJyn
+@author: Joel Leclerc (MiJyn) <lkjoel@ubuntu.com>
 '''
 
 from relinux import logger, config, configutils, fsutil, pwdmanip, aptutil, numrange

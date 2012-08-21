@@ -1,6 +1,7 @@
+# -*- coding: utf-8 -*-
 '''
 Basic configuration
-@author: MiJyn
+@author: Joel Leclerc (MiJyn) <lkjoel@ubuntu.com>
 '''
 
 # We should not use any imports in this file

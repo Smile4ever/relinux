@@ -1,6 +1,7 @@
+# -*- coding: utf-8 -*-
 '''
 Various APT Utilities
-@author: MiJyn
+@author: Joel Leclerc (MiJyn) <lkjoel@ubuntu.com>
 '''
 
 import apt

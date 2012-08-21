@@ -1,9 +1,10 @@
+# -*- coding: utf-8 -*-
 '''
 ISO Utilities
     - Generates the basic tree
     - Fills it in
     - Creates the ISO and MD5 hashes
-@author: MiJyn
+@author: Joel Leclerc (MiJyn) <lkjoel@ubuntu.com>
 '''
 
 from relinux.modules.osweaver import tempsys

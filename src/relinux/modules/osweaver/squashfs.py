@@ -1,6 +1,7 @@
+# -*- coding: utf-8 -*-
 '''
 SquashFS Generation
-@author: MiJyn
+@author: Joel Leclerc (MiJyn) <lkjoel@ubuntu.com>
 '''
 
 from relinux import logger, fsutil, configutils, config
