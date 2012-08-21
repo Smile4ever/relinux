@@ -219,21 +219,25 @@ def chmod(files, mod, tn=""):
 # Current options:
 #    recurse (True or False): If True, recurse into the directory
 #    dirs (True or False): If True, show directories too
-#    symlinks (True or False): If True, show symlinks too
-def listdir(dirs, options={"recurse": True, "dirs": True, "symlinks": True}, tn=""):
+#    symlinks (True or False): If True and recurse is True, recurse into symlink directories
+def listdir(dirs, options={"recurse": True, "dirs": True, "symlinks": False}, tn=""):
     logger.logV(tn, _("Gathering a list of files in") + " " + dirs)
-    listed = os.listdir(dirs)
+    listed = []
+    if options["recurse"]:
+        listed = os.walk(dirs, True, None, options["symlinks"])
+    else:
+        listed = os.listdir(dirs)
     returnme = []
-    returnme.append(dirs)
     for i in listed:
-        if options["symlinks"] is True and os.path.islink(i):
-            returnme.append(i)
-        if options["dirs"] is True and os.path.isdir(i):
-            if options["recurse"] is True:
-                returnme.extend(listdir(i, options))
-            else:
+        if options["dirs"]:
+            if options["recurse"]:
+                returnme.append(i[0])
+            elif os.path.isdir(i):
                 returnme.append(i)
-        if os.path.isfile(i):
+        if options["recurse"]:
+            for x in i[2]:
+                returnme.append(os.path.join(i[0], x))
+        elif os.path.isfile(i) or os.path.islink(i):
             returnme.append(i)
     return returnme
 
@@ -241,32 +245,35 @@ def listdir(dirs, options={"recurse": True, "dirs": True, "symlinks": True}, tn=
 # Filesystem copier (like rsync --exclude... -a SRC DST)
 def fscopy(src, dst, excludes1, tn=""):
     # Get a list of all files
-    files = listdir(src, {"recurse": True, "dirs": True, "symlinks": True}, tn)
+    files = listdir(src, {"recurse": True, "dirs": True, "symlinks": False}, tn)
     # Exclude the files that are not wanted
     excludes = []
     if len(excludes1) > 0:
         excludes = exclude(files, excludes1)
     makedir(dst)
     # Copy the files
-    for files in files:
+    for file__ in files:
+        file_ = os.path.basename(file__)
         # Make sure we don't copy files that are supposed to be excluded
-        if files in excludes:
-            logger.logVV(tn, files + " " + _("is to be excluded. Skipping a CPU cycle"))
+        if file_ in excludes:
+            logger.logVV(tn, file_ + " " + _("is to be excluded. Skipping a CPU cycle"))
             continue
-        fullpath = os.path.join(src, files)
-        newpath = os.path.join(dst, files)
+        fullpath = file__
+        newpath = os.path.join(dst, file__[len(src):])
         dfile = delink(fullpath)
         if dfile is not None:
-            logger.logVV(tn, files + " " + _("is a symlink. Creating an identical symlink at") + " " + 
+            logger.logVV(tn, file_ + " " + _("is a symlink. Creating an identical symlink at") + " " + 
                          newpath)
             os.symlink(dfile, newpath)
         elif os.path.isdir(fullpath):
-            logger.logVV(tn, _("Recursing into") + " " + files)
-            fscopy(fullpath, newpath, excludes, tn)
+            logger.logVV(tn, _("Creating directory") + " " + file_)
+            makedir(newpath)
+            logger.logVV(tn, _("Setting permissions"))
+            shutil.copystat(fullpath, newpath)
         else:
             logger.logVV(tn, _("Copying") + " " + fullpath + " " + _("to") + " " + newpath)
             shutil.copy2(fullpath, newpath)
-    logger.logV(tn, _("Setting permissions"))
+    logger.logVV(tn, _("Setting permissions"))
     shutil.copystat(src, dst)
 
 
@@ -279,7 +286,7 @@ def fscopy(src, dst, excludes1, tn=""):
 #                                  referenced removed
 def adrm(dirs, options, excludes1=[], tn=""):
     # Get a list of all files inside the directory
-    files = listdir(dirs, {"recurse": True, "dirs": True, "symlinks": True}, tn)
+    files = listdir(dirs, {"recurse": True, "dirs": True, "symlinks": False}, tn)
     excludes = []
     # Exclude the files listed to exclude
     if options.excludes is True and len(excludes1) > 0:
