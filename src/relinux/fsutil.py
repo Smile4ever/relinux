@@ -22,14 +22,10 @@ def is_ascii(s):
 
 # Utf-8 utility
 def utf8(string):
-    try:
-        return unicode(string, 'utf-8')
-    except (TypeError, UnicodeDecodeError):
-        if not is_ascii(string):
-            return string.encode("utf-8")
-        else:
-            return string
-    return string
+    if not isinstance(string, unicode):
+        return unicode(string, "utf-8")
+    else:
+        return string
 
 # Reads the link location of a file or returns None
 def delink(files):
