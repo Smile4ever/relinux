@@ -4,7 +4,7 @@ SquashFS Generation
 '''
 
 from relinux import logger, fsutil, configutils, config
-from relinux.modules.osweaver import tempsys
+from relinux.modules.osweaver import tempsys, isoutil
 import os
 import threading
 
@@ -38,6 +38,8 @@ def doSFSChecks(files, isolvl):
 
 
 # Generate the SquashFS file (has to run after isoutil.genISOTree and tempsys.genTempSys)
+tmpthreads = tmpsys.threads
+tmpthreads.extend(isoutil.genISOTree)
 gensfs = {"deps": tempsys.threads, "tn": threadname}
 class genSFS(threading.Thread):
     def __init__(self):

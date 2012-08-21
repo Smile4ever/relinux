@@ -48,8 +48,8 @@ class copyEtcVar(threading.Thread):
     def run(self):
         logger.logI(self.tn, _("Copying files to the temporary filesystem"))
         excludes = configutils.getValue(configs[configutils.excludes])
-        fsutil.fscopy("etc", tmpsys + "etc", excludes, self.tn)
-        fsutil.fscopy("var", tmpsys + "var", excludes, self.tn)
+        fsutil.fscopy("/etc", tmpsys + "etc", excludes, self.tn)
+        fsutil.fscopy("/var", tmpsys + "var", excludes, self.tn)
 cpetcvar["thread"] = copyEtcVar()
 
 
