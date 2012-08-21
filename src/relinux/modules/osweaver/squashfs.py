@@ -38,7 +38,7 @@ def doSFSChecks(files, isolvl):
 
 
 # Generate the SquashFS file (has to run after isoutil.genISOTree and tempsys.genTempSys)
-tmpthreads = tmpsys.threads
+tmpthreads = tempsys.threads
 tmpthreads.extend(isoutil.genISOTree)
 gensfs = {"deps": tempsys.threads, "tn": threadname}
 class genSFS(threading.Thread):
