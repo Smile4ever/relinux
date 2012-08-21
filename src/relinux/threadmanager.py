@@ -45,10 +45,11 @@ def checkThread(threadid, threadsdone, threadsrunning, threads):
         if not getThread(threadid, threads)["thread"].isAlive():
             threadsrunning.remove(threadid)
             threadsdone.append(threadid)
-            logger.logV(tn, _("Thread") + " " + str(threadid) + " " + _("has finished. Number of threads running: ") + str(len(threadsrunning)) + ".")
+            logger.logV(tn, _("Thread") + " " + str(threadid) + " " +
+                        _("has finished. Number of threads running: ") + str(len(threadsrunning)))
 
 
-# Get a thread from an ID
+# Returns a thread from an ID
 def getThread(threadid, threads):
     return threads[threadid]
 

@@ -20,9 +20,9 @@ page = {}
 def runThreads():
     from relinux.modules.osweaver import isoutil, squashfs, tempsys
     threads = []
+    threads.extend(tempsys.threads)
     threads.extend(isoutil.threads)
     threads.extend(squashfs.threads)
-    threads.extend(tempsys.threads)
     threadmanager.threadLoop(threads)
 
 
