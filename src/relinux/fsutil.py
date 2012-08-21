@@ -12,6 +12,7 @@ import hashlib
 import gettext
 import subprocess
 import multiprocessing
+import re
 from relinux import configutils, logger
 
 
@@ -244,6 +245,8 @@ def listdir(dirs, options={"recurse": True, "dirs": True, "symlinks": False}, tn
 
 # Filesystem copier (like rsync --exclude... -a SRC DST)
 def fscopy(src, dst, excludes1, tn=""):
+    src1 = re.sub(r"/+$", "", src)
+    src = src1
     # Get a list of all files
     files = listdir(src, {"recurse": True, "dirs": True, "symlinks": False}, tn)
     # Exclude the files that are not wanted
@@ -260,8 +263,9 @@ def fscopy(src, dst, excludes1, tn=""):
             continue
         fullpath = file__
         #print(dst + " " + file__[len(src):])
-        print(os.path.join(dst, file__[len(src):]))
-        newpath = os.path.join(dst, file__[len(src):])
+        temp = re.sub(r"^/+", "", file__[len(src):])
+        print(os.path.join(dst, temp))
+        newpath = os.path.join(dst, temp)
         dfile = delink(fullpath)
         if dfile is not None:
             logger.logVV(tn, file_ + " " + _("is a symlink. Creating an identical symlink at") + " " + 
