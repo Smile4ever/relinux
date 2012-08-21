@@ -24,7 +24,7 @@ def is_ascii(s):
 def utf8(string):
     try:
         return unicode(string, 'utf-8')
-    except TypeError:
+    except (TypeError, UnicodeDecodeError):
         if not is_ascii(string):
             return string.encode("utf-8")
         else:
