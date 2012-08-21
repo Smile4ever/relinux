@@ -65,11 +65,10 @@ def threadLoop(threads):
     for i in range(len(threads)):
         for x in range(len(threads[i]["deps"])):
             if threads[i]["deps"][x] in threads:
-                val = 0
                 for y in range(len(threads)):
                     if threads[i]["deps"][x] == threads[y]:
-                        val = y
-                threads[i]["deps"][x] = val
+                        threads[i]["deps"][x] = y
+                        break
     while config.ThreadStop is False:
         # Clear old threads
         for x in threadsrunning:

@@ -107,6 +107,7 @@ def main():
     splash = gui.Splash(root, startProg)
     #root.overrideredirect(Tkinter.TRUE) # Coming soon!
     root.mainloop()
+    config.ThreadStop = True
 
 if __name__ == '__main__':
     from relinux import gui, configutils, logger, aptutil, modloader
