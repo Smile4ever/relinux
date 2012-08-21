@@ -259,7 +259,7 @@ def fscopy(src, dst, excludes1, tn=""):
             logger.logVV(tn, file_ + " " + _("is to be excluded. Skipping a CPU cycle"))
             continue
         fullpath = file__
-        print(file__[len(src):])
+        print(dst + " " + file__[len(src):])
         newpath = os.path.join(dst, file__[len(src):])
         dfile = delink(fullpath)
         if dfile is not None:
