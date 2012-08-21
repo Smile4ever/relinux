@@ -120,6 +120,13 @@ def makefiles(arr, tn=""):
         touch(i, tn)
 
 
+# Creates a symlink
+def symlink(files, dst, tn=""):
+    if not os.path.exists(files):
+        logger.logVV(tn, _("Creating symlink") + " " + str(dst))
+        os.symlink(files, dst)
+
+
 # Removes a file
 # If followlink is True, then it will remove both the link and the origin
 def rm(files, followlink=False, tn=""):
@@ -271,7 +278,7 @@ def fscopy(src, dst, excludes1, tn=""):
         if dfile is not None:
             logger.logVV(tn, file_ + " " + _("is a symlink. Creating an identical symlink at") + " " + 
                          newpath)
-            os.symlink(dfile, newpath)
+            symlink(dfile, newpath)
         elif os.path.isdir(fullpath):
             logger.logVV(tn, _("Creating directory") + " " + file_)
             makedir(newpath)
