@@ -6,7 +6,7 @@ ISO Utilities
 @author: MiJyn
 '''
 
-from relinux.modules.osweaver import squashfs, tempsys
+from relinux.modules.osweaver import tempsys
 from relinux import logger, config, fsutil, configutils
 import shutil
 import os
@@ -295,6 +295,7 @@ class genISO(threading.Thread):
     def run(self):
         logger.logI(self.tn, _("Starting generation of the ISO image"))
         # Make a last verification on the SquashFS
+        from relinux.modules.osweaver import squashfs
         squashfs.doSFSChecks(isotreel + "casper/filesystem.squashfs",
                              configutils.getValue(configs[configutils.isolevel]))
         # Generate MD5 checksums
