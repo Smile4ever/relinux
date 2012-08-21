@@ -17,14 +17,15 @@ def findRunnableThreads(threadids, threadsdone, threadsrunning, threads):
     for i in threadids:
         if not i in threadsdone and current < cpumax:
             thread = getThread(i, threads)
+            print(thread["tn"])
             deps = 0
             depsl = len(thread["deps"])
             for x in thread["deps"]:
                 if x in threadsdone:
-                    deps = deps + 1
+                    deps += 1
             if deps >= depsl:
                 returnme.append(i)
-            current = current + 1
+            current += 1
         if current >= cpumax:
             break
     return returnme
