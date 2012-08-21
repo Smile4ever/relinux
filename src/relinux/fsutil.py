@@ -17,10 +17,22 @@ import re
 from relinux import configutils, logger
 
 
+def is_ascii(s):
+    if isinstance(s, str):
+        return True
+    return False
+
+# Utf-8 utility
+def utf8(string):
+    if not is_ascii(string):
+        return unicode(string, "utf-8")
+    else:
+        return string
+
 # Reads the link location of a file or returns None
 def delink(files):
     if os.path.islink(files):
-        return unicode(os.readlink(files), "utf-8")
+        return utf8(os.readlink(files))
     return None
 
 
@@ -240,14 +252,14 @@ def listdir(dirs, options={"recurse": True, "dirs": True, "symlinks": False}, tn
     for i in listed:
         if options["dirs"]:
             if options["recurse"]:
-                returnme.append(unicode(i[0], "utf-8"))
+                returnme.append(utf8(i[0]))
             elif os.path.isdir(i):
-                returnme.append(unicode(i, "utf-8"))
+                returnme.append(utf8(i))
         if options["recurse"]:
             for x in i[2]:
-                returnme.append(unicode(os.path.join(i[0], x), "utf-8"))
+                returnme.append(utf8(os.path.join(i[0], x)))
         elif os.path.isfile(i) or os.path.islink(i):
-            returnme.append(unicode(i, "utf-8"))
+            returnme.append(utf8(i))
     return returnme
 
 
@@ -264,7 +276,7 @@ def fscopy(src, dst, excludes1, tn=""):
     makedir(dst)
     # Copy the files
     for file__ in files:
-        file_ = unicode(os.path.basename(file__), "utf-8")
+        file_ = utf8(os.path.basename(file__))
         # Make sure we don't copy files that are supposed to be excluded
         if file_ in excludes:
             logger.logVV(tn, file_ + " " + _("is to be excluded. Skipping a CPU cycle"))
@@ -273,7 +285,7 @@ def fscopy(src, dst, excludes1, tn=""):
         #print(dst + " " + file__[len(src):])
         temp = re.sub(r"^/+", "", file__[len(src):])
         print(os.path.join(dst, temp))
-        newpath = unicode(os.path.join(dst, temp), "utf-8")
+        newpath = utf8(os.path.join(dst, temp))
         dfile = delink(fullpath)
         if dfile is not None:
             logger.logVV(tn, file_ + " " + _("is a symlink. Creating an identical symlink at") + " " + 
@@ -307,13 +319,13 @@ def adrm(dirs, options, excludes1=[], tn=""):
         excludes = exclude(files, excludes1)
     # Remove the wanted files
     for file_ in files:
-        file__ = unicode(file_, "utf-8")
+        file__ = utf8(file_)
         file_ = file__
         # Make sure we don't remove files that are listed to exclude from removal
         if file_ in excludes:
             logger.logVV(tn, file_ + " " + _("is to be excluded. Skipping a CPU cycle"))
             continue
-        fullpath = unicode(os.path.join(dirs, file_), "utf-8")
+        fullpath = utf8(os.path.join(dirs, file_))
         dfile = delink(fullpath)
         if dfile is not None:
             if os.path.isfile(dfile):
