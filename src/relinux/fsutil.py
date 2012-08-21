@@ -325,7 +325,7 @@ def adrm(dirs, options, excludes1=[], tn=""):
             continue
         fullpath = utf8(os.path.join(dirs, file_))
         dfile = delink(fullpath)
-        if dfile is not None:
+        if dfile == None:
             if os.path.isfile(dfile):
                 rm(fullpath)
                 continue
@@ -338,7 +338,8 @@ def adrm(dirs, options, excludes1=[], tn=""):
             if options["remfullpath"]:
                 logger.logVV(tn, _("Removing") + " " + dfile + " (" + _("directed by symlink")
                               + fullpath + ")")
-    if options.remdirs is True:
+                rm(dfile)
+    if options["remdirs"] is True:
         logger.logVV(tn, _("Removing source directory") + " " + dirs)
         rm(dirs)
 
