@@ -240,14 +240,14 @@ def listdir(dirs, options={"recurse": True, "dirs": True, "symlinks": False}, tn
     for i in listed:
         if options["dirs"]:
             if options["recurse"]:
-                returnme.append(i[0])
+                returnme.append(unicode(i[0], "utf-8"))
             elif os.path.isdir(i):
-                returnme.append(i)
+                returnme.append(unicode(i, "utf-8"))
         if options["recurse"]:
             for x in i[2]:
-                returnme.append(os.path.join(i[0], x))
+                returnme.append(unicode(os.path.join(i[0], x), "utf-8"))
         elif os.path.isfile(i) or os.path.islink(i):
-            returnme.append(i)
+            returnme.append(unicode(i, "utf-8"))
     return returnme
 
 
@@ -303,15 +303,17 @@ def adrm(dirs, options, excludes1=[], tn=""):
     files = listdir(dirs, {"recurse": True, "dirs": True, "symlinks": False}, tn)
     excludes = []
     # Exclude the files listed to exclude
-    if options.excludes is True and len(excludes1) > 0:
+    if options["excludes"] and len(excludes1) > 0:
         excludes = exclude(files, excludes1)
     # Remove the wanted files
-    for files in files:
+    for file_ in files:
+        file__ = unicode(file_, "utf-8")
+        file_ = file__
         # Make sure we don't remove files that are listed to exclude from removal
-        if files in excludes:
-            logger.logVV(tn, files + " " + _("is to be excluded. Skipping a CPU cycle"))
+        if file_ in excludes:
+            logger.logVV(tn, file_ + " " + _("is to be excluded. Skipping a CPU cycle"))
             continue
-        fullpath = os.path.join(dirs, files)
+        fullpath = unicode(os.path.join(dirs, file_), "utf-8")
         dfile = delink(fullpath)
         if dfile is not None:
             if os.path.isfile(dfile):
@@ -320,10 +322,10 @@ def adrm(dirs, options, excludes1=[], tn=""):
             elif os.path.isdir(fullpath):
                 adrm(fullpath, options, excludes1, tn)
         else:
-            if options.remsymlink is True:
+            if options["remsymlink"]:
                 logger.logVV(tn, _("Removing symlink") + " " + fullpath)
                 rm(fullpath)
-            if options.remfullpath is True:
+            if options["remfullpath"]:
                 logger.logVV(tn, _("Removing") + " " + dfile + " (" + _("directed by symlink")
                               + fullpath + ")")
     if options.remdirs is True:
