@@ -20,7 +20,7 @@ from relinux import configutils, logger
 # Reads the link location of a file or returns None
 def delink(files):
     if os.path.islink(files):
-        return os.readlink(files)
+        return unicode(os.readlink(files), "utf-8")
     return None
 
 
@@ -273,7 +273,7 @@ def fscopy(src, dst, excludes1, tn=""):
         #print(dst + " " + file__[len(src):])
         temp = re.sub(r"^/+", "", file__[len(src):])
         print(os.path.join(dst, temp))
-        newpath = os.path.join(dst, temp)
+        newpath = unicode(os.path.join(dst, temp), "utf-8")
         dfile = delink(fullpath)
         if dfile is not None:
             logger.logVV(tn, file_ + " " + _("is a symlink. Creating an identical symlink at") + " " + 
