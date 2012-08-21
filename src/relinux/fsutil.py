@@ -29,6 +29,7 @@ def utf8(string):
             return string.encode("utf-8")
         else:
             return string
+    return string
 
 # Reads the link location of a file or returns None
 def delink(files):
