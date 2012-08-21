@@ -264,7 +264,7 @@ def fscopy(src, dst, excludes1, tn=""):
     makedir(dst)
     # Copy the files
     for file__ in files:
-        file_ = os.path.basename(file__)
+        file_ = unicode(os.path.basename(file__), "utf-8")
         # Make sure we don't copy files that are supposed to be excluded
         if file_ in excludes:
             logger.logVV(tn, file_ + " " + _("is to be excluded. Skipping a CPU cycle"))
