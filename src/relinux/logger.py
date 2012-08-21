@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Contains streams for logging information
 @author: Joel Leclerc (MiJyn) <lkjoel@ubuntu.com>
