@@ -39,8 +39,8 @@ def exclude(names, files, tn=""):
     excludes = []
     for i in files:
         excludes.extend(fnmatch.filter(names, i))
-    logger.logV(tn, _("Created exclude list") + +" " + "(" + len(excludes) + " " + 
-                gettext.ngettext("entry", "entries", len(excludes)) + " " + _("allocated") + ")")
+    logger.logV(tn, _("Created exclude list") + +" " + "(" + str(len(excludes)) + " " + 
+                str(gettext.ngettext("entry", "entries", len(excludes))) + " " + _("allocated") + ")")
     return excludes
 
 
