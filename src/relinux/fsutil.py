@@ -18,14 +18,7 @@ from relinux import configutils, logger
 
 
 def is_ascii(s):
-    if isinstance(s, str):
-        try:
-            s.encode("ascii")
-        except UnicodeDecodeError:
-            return False
-        else:
-            return True
-    return False
+    return all(ord(c) < 128 for c in s)
 
 # Utf-8 utility
 def utf8(string):
