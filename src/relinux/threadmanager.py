@@ -17,7 +17,6 @@ def findRunnableThreads(threadids, threadsdone, threadsrunning, threads):
     for i in threadids:
         if not i in threadsdone and current < cpumax:
             thread = getThread(i, threads)
-            print(str(thread["deps"]) + " " + str(threadsdone))
             deps = 0
             depsl = len(thread["deps"])
             for x in thread["deps"]:
@@ -56,10 +55,14 @@ def getThread(threadid, threads):
 
 
 # Thread loop
-def threadLoop(threads):
+def threadLoop(threads1):
     threadsdone = []
     threadsrunning = []
     threadids = []
+    threads = []
+    for i in threads1:
+        if not i in threads:
+            threads.append(i)
     for i in range(len(threads)):
         threadids.append(i)
     for i in range(len(threads)):
