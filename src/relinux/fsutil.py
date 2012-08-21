@@ -123,7 +123,7 @@ def makefiles(arr, tn=""):
 # Creates a symlink
 def symlink(files, dst, tn=""):
     if not os.path.lexists(dst) and not os.path.exists(dst):
-        logger.logVV(tn, _("Creating symlink") + " " + str(dst))
+        logger.logVV(tn, _("Creating symlink") + " " + dst)
         os.symlink(files, dst)
 
 
