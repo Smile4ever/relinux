@@ -226,10 +226,10 @@ def listdir(dirs, options={"recurse": True, "dirs": True, "symlinks": True}, tn=
     returnme = []
     returnme.append(dirs)
     for i in listed:
-        if options.symlinks is True and os.path.islink(i):
+        if options["symlinks"] is True and os.path.islink(i):
             returnme.append(i)
-        if options.dirs is True and os.path.isdir(i):
-            if options.recurse is True:
+        if options["dirs"] is True and os.path.isdir(i):
+            if options["recurse"] is True:
                 returnme.extend(listdir(i, options))
             else:
                 returnme.append(i)
