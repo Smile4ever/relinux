@@ -280,20 +280,21 @@ def fscopy(src, dst, excludes1, tn=""):
     makedir(dst)
     # Copy the files
     for file__ in files:
-        file_ = utf8(os.path.basename(file__))
+        file_ = utf8(os.path.basename(utf8(file__)))
         # Make sure we don't copy files that are supposed to be excluded
         if file_ in excludes:
             logger.logVV(tn, file_ + " " + _("is to be excluded. Skipping a CPU cycle"))
             continue
-        fullpath = file__
+        fullpath = utf8(file__)
         #print(dst + " " + file__[len(src):])
         temp = re.sub(r"^/+", "", file__[len(src):])
         print(os.path.join(dst, temp))
         newpath = utf8(os.path.join(dst, temp))
         dfile = delink(fullpath)
         if dfile is not None:
-            logger.logVV(tn, file_ + " " + _("is a symlink. Creating an identical symlink at") + " " + 
-                         newpath)
+            logger.logVV(tn, utf8(file_ + utf8(" ") +
+                                  utf8(_("is a symlink. Creating an identical symlink at")) + utf8(" ")
+                                  + utf8(newpath)))
             symlink(dfile, newpath)
         elif os.path.isdir(fullpath):
             logger.logVV(tn, _("Creating directory") + " " + file_)
