@@ -18,14 +18,20 @@ from relinux import configutils, logger
 
 
 def is_ascii(s):
-    return all(ord(c) < 128 for c in s)
+    for c in s:
+        if ord(c) >= 128:
+            return False
+    return True
 
 # Utf-8 utility
 def utf8(string):
-    if not isinstance(string, unicode):
-        return unicode(string, "utf-8")
-    else:
-        return string
+    if isinstance(string, unicode):
+        return string.encode("utf-8")
+    if not is_ascii(string):
+        # This will simply make sure that it is under the utf-8 format
+        return string.decode("utf-8").encode("utf-8")
+    return string
+
 
 # Reads the link location of a file or returns None
 def delink(files):
@@ -243,9 +249,9 @@ def listdir(dirs, options={"recurse": True, "dirs": True, "symlinks": False}, tn
     logger.logV(tn, _("Gathering a list of files in") + " " + dirs)
     listed = []
     if options["recurse"]:
-        listed = os.walk(dirs, True, None, options["symlinks"])
+        listed = os.walk(utf8(dirs), True, None, options["symlinks"])
     else:
-        listed = os.listdir(dirs)
+        listed = os.listdir(utf8(dirs))
     returnme = []
     for i in listed:
         if options["dirs"]:
