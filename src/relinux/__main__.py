@@ -13,13 +13,10 @@ sys.path.append(".")
 from relinux import config
 import gettext
 gettext.install(config.productunix, config.localedir, config.unicode)
-from argparse import ArgumentParser
-import Tkinter
-import time
 
 
-def exitprog():
-    sys.exit()
+def exitprog(exitcode=0):
+    sys.exit(exitcode)
 
 def version():
     print((config.version_string))
@@ -30,6 +27,36 @@ captop = 0
 minis = 0.0
 
 def main():
+    def parsePyHex(string1):
+        string = "%x" % string1
+        count = 0
+        result = ""
+        for char in string:
+            if count == 0 or count == 2 or count == 4:
+                result += char
+                if count != 4:
+                    result += "."
+            elif count == 5:
+                if char.lower() == "f":
+                    break
+                else:
+                    result += char.lower()
+            elif count == 6:
+                result += char
+            count += 1
+        return result
+    if not config.python_ok:
+        print(_("Relinux only supports python ") + parsePyHex(config.min_python_version) + "-" + 
+              parsePyHex(config.max_python_version) + ", " + _("but python ") +
+              parsePyHex(sys.hexversion) + " " + _("was used."))
+        exitprog(1)
+    from argparse import ArgumentParser
+    if config.python3:
+        import tkinter as Tkinter
+    else:
+        import Tkinter
+    import time
+    from relinux import gui, configutils, logger, aptutil, modloader
     logger.normal()
     parser = ArgumentParser()
     parser.add_argument("-V", "--version", action="store_true",
@@ -111,5 +138,4 @@ def main():
     config.ThreadStop = True
 
 if __name__ == '__main__':
-    from relinux import gui, configutils, logger, aptutil, modloader
     main()

@@ -14,7 +14,7 @@ import gettext
 import subprocess
 import multiprocessing
 import re
-from relinux import configutils, logger
+from relinux import config, configutils, logger
 
 
 def is_ascii(s):
@@ -25,6 +25,9 @@ def is_ascii(s):
 
 # Utf-8 utility
 def utf8(string):
+    if config.python3:
+        # Python 3 uses unicode for its strings, so we'll just make sure it is under utf-8
+        return string.decode("utf-8").encode("utf-8")
     if isinstance(string, unicode):
         return string.encode("utf-8")
     if not is_ascii(string):
@@ -292,9 +295,8 @@ def fscopy(src, dst, excludes1, tn=""):
         newpath = utf8(os.path.join(dst, temp))
         dfile = delink(fullpath)
         if dfile is not None:
-            logger.logVV(tn, utf8(file_ + utf8(" ") +
-                                  utf8(_("is a symlink. Creating an identical symlink at")) + utf8(" ")
-                                  + utf8(newpath)))
+            logger.logVV(tn, file_ + " " + _("is a symlink. Creating an identical symlink at") + " "
+                                  + newpath)
             symlink(dfile, newpath)
         elif os.path.isdir(fullpath):
             logger.logVV(tn, _("Creating directory") + " " + file_)

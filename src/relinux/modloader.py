@@ -5,6 +5,7 @@ Module Loader
 
 import imp
 import os
+import collections
 from relinux import config, logger
 
 
@@ -13,7 +14,9 @@ tn = logger.genTN("ModLoader")
 
 # Checks if a folder is a module
 def isModule(module):
-    if hasattr(module, "relinuxmodule") and hasattr(module, "relinuxmoduleapi") and module.relinuxmodule is True and hasattr(module, "run") and callable(getattr(module, "run")):
+    if (hasattr(module, "relinuxmodule") and hasattr(module, "relinuxmoduleapi") and
+        module.relinuxmodule is True and hasattr(module, "run") and
+        isinstance(getattr(module, "run"), collections.Callable)):
         return True
     return False
 

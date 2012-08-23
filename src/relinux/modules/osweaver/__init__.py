@@ -5,7 +5,10 @@ OSWeaver Module for relinux
 '''
 
 from relinux import threadmanager, config, gui, configutils, fsutil
-import Tkinter
+if config.python3:
+    import tkinter as Tkinter
+else:
+    import Tkinter
 
 relinuxmodule = True
 relinuxmoduleapi = "0.4a1"

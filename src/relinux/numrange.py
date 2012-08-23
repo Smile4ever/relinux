@@ -111,9 +111,9 @@ def gen_num_range(min_, max_, capturing=False):
     nr_dig_max = len(str(max_))
     if nr_dig_min != nr_dig_max:
         middle = ""
-        for i in xrange(nr_dig_min, nr_dig_max - 1):
+        for i in range(nr_dig_min, nr_dig_max - 1):
             middle += "|[1-9]"
-            for x in xrange(i):
+            for x in range(i):
                 middle += "[0-9]"
         starting = generate_to_bound(min_, "upper")
         ending = _generate_for_same_len_nr("1" + "0" * (len(max_) - 1), max_)

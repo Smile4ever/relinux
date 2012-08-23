@@ -3,15 +3,20 @@ Anything GUI-related goes here
 @author: MiJyn
 '''
 
-import Tkinter
-import tkFileDialog
-import tkFont
+from relinux import config, configutils, logger
+if config.python3:
+    import tkinter as Tkinter
+    from tkinter import font as tkFont
+    from tkinter import filedialog as tkFileDialog
+else:
+    import Tkinter
+    import tkFileDialog
+    import tkFont
+    from PIL import Image, ImageTk
 import time
 import threading
 import copy
 import math
-from PIL import Image, ImageTk
-from relinux import config, configutils, logger
 from relinux.__main__ import exitprog
 
 
@@ -70,12 +75,13 @@ def _gradient(rgb1, rgb2, percent):
 
 class FuncThread(threading.Thread):
     def __init__(self, target, ondie, *args):
+        threading.Thread.__init__(self)
         self._target = target
         self._args = args
         self.ondie = ondie
-        threading.Thread.__init__(self)
  
     def run(self):
+        print(self._target)
         self._target(*self._args)
         if self.ondie != None:
             self.ondie()
@@ -894,29 +900,35 @@ class Splash(Tkinter.Toplevel):
         self.root.withdraw()
         self.overrideredirect(Tkinter.TRUE)
         self.progress = Progressbar(self)
-        self.image1 = Image.open("../../splash.png")
-        self.image2 = Image.open("../../splash_glowy.png")
-        self.images = []
-        for i in range(0, 11):
-            percent = float(float(i) / 10)
-            self.images.append(ImageTk.PhotoImage(Image.blend(self.image1, self.image2, percent)))
-        #self.image = ImageTk.PhotoImage(Image.blend(self.image1, self.image2, 0.0))
-        self.image = self.images[0]
+        if not config.python3:
+            self.image1 = Image.open("../../splash.png")
+            self.image2 = Image.open("../../splash_glowy.png")
+            self.images = []
+            for i in range(0, 11):
+                percent = float(float(i) / 10)
+                self.images.append(ImageTk.PhotoImage(Image.blend(self.image1, self.image2, percent)))
+            #self.image = ImageTk.PhotoImage(Image.blend(self.image1, self.image2, 0.0))
+            self.image = self.images[0]
+            self.imgw = self.image.width()
+            self.imgh = self.image.height()
+        else:
+            self.imgw = 400
+            self.imgh = 0
         self.textvar = Tkinter.StringVar()
         self.progresstext = Label(self, textvariable=self.textvar,
                                   height=15, width=480, anchor=Tkinter.W)
-        self.imgw = self.image.width()
-        self.imgh = self.image.height()
         self.w = self.imgw
         self.h = self.imgh + 32
         self.x = self.root.winfo_screenwidth() / 2 - self.w / 2
         self.y = self.root.winfo_screenheight() / 2 - self.h / 2
         self.geometry("%dx%d+%d+%d" % (self.w, self.h, self.x, self.y))
-        self.panel = Label(self, image=self.image)
-        self.panel.pack(side=Tkinter.TOP, fill=Tkinter.BOTH, expand=True)
+        if not config.python3:
+            self.panel = Label(self, image=self.image)
+            self.panel.pack(side=Tkinter.TOP, fill=Tkinter.BOTH, expand=True)
         self.progress.pack(side=Tkinter.BOTTOM, fill=Tkinter.X, expand=True)
         self.progresstext.pack(side=Tkinter.BOTTOM, fill=Tkinter.X, expand=True)
         self.update()
+        print(func != None)
         self.thread = FuncThread(func, self.endSplash, self)
         self.thread.start()
 
@@ -928,10 +940,11 @@ class Splash(Tkinter.Toplevel):
             progress = 0
         self.progress.setProgress(progress)
         self.textvar.set(text)
-        percent = float(float(progress) / 100)
-        self.image = self.images[progress / 10]
-        #self.image = ImageTk.PhotoImage(Image.blend(self.image1, self.image2, percent))
-        self.panel.configure(image=self.image)
+        if not config.python3:
+            percent = float(float(progress) / 100)
+            self.image = self.images[progress / 10]
+            #self.image = ImageTk.PhotoImage(Image.blend(self.image1, self.image2, percent))
+            self.panel.configure(image=self.image)
         self.update()
     
     def endSplash(self):
