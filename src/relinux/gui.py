@@ -912,8 +912,9 @@ class Splash(Tkinter.Toplevel):
             self.imgw = self.image.width()
             self.imgh = self.image.height()
         else:
-            self.imgw = 400
-            self.imgh = 0
+            self.image = Tkinter.PhotoImage(file="../../splash.ppm")
+            self.imgw = self.image.width()
+            self.imgh = self.image.height()
         self.textvar = Tkinter.StringVar()
         self.progresstext = Label(self, textvariable=self.textvar,
                                   height=15, width=480, anchor=Tkinter.W)
@@ -922,9 +923,8 @@ class Splash(Tkinter.Toplevel):
         self.x = self.root.winfo_screenwidth() / 2 - self.w / 2
         self.y = self.root.winfo_screenheight() / 2 - self.h / 2
         self.geometry("%dx%d+%d+%d" % (self.w, self.h, self.x, self.y))
-        if not config.python3:
-            self.panel = Label(self, image=self.image)
-            self.panel.pack(side=Tkinter.TOP, fill=Tkinter.BOTH, expand=True)
+        self.panel = Label(self, image=self.image)
+        self.panel.pack(side=Tkinter.TOP, fill=Tkinter.BOTH, expand=True)
         self.progress.pack(side=Tkinter.BOTTOM, fill=Tkinter.X, expand=True)
         self.progresstext.pack(side=Tkinter.BOTTOM, fill=Tkinter.X, expand=True)
         self.update()
