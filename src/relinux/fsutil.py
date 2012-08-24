@@ -326,19 +326,18 @@ def adrm(dirs, options, excludes1=[], tn=""):
     # Remove the wanted files
     for file_ in files:
         file__ = utf8(file_)
-        file_ = file__
+        file_ = utf8(os.path.basename(file__))
         # Make sure we don't remove files that are listed to exclude from removal
-        if file_ in excludes:
+        if file__ in excludes:
             logger.logVV(tn, file_ + " " + _("is to be excluded. Skipping a CPU cycle"))
             continue
-        fullpath = utf8(os.path.join(dirs, file_))
+        fullpath = file__
         dfile = delink(fullpath)
         if dfile == None:
-            if os.path.isfile(dfile):
+            if os.path.isfile(fullpath):
                 rm(fullpath)
-                continue
-            elif os.path.isdir(fullpath):
-                adrm(fullpath, options, excludes1, tn)
+            elif os.path.isdir(fullpath) and options["remdirs"]:
+                rm(fullpath)
         else:
             if options["remsymlink"]:
                 logger.logVV(tn, _("Removing symlink") + " " + fullpath)
