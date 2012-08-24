@@ -125,7 +125,7 @@ class genVarLogs(threading.Thread):
         for i in ["dpkg.log", "lastlog", "mail.log", "syslog", "auth.log", "daemon.log", "faillog",
                           "lpr.log", "mail.warn", "user.log", "boot", "debug", "mail.err", "messages", "wtmp",
                           "bootstrap.log", "dmesg", "kern.log", "mail.info"]:
-            logger.logVV(logger.MTab + _("Creating") + " " + i)
+            logger.logVV(self.tn, logger.MTab + _("Creating") + " " + i)
             fsutil.touch(tmpsys + "var/log/" + i)
 genvarlogs["thread"] = genVarLogs()
 
