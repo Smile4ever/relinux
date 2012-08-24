@@ -148,7 +148,8 @@ class remUsers(threading.Thread):
             # Removes the user from all groups it is inside
             if x["user"] in i["users"]:
                 i["users"].remove(x["user"])
-        if addme is True:
+        print(addme)
+        if addme:
             return [True, pwdmanip.PGtoEntry(i)]
         else:
             return [False, ""]
@@ -161,7 +162,7 @@ class remUsers(threading.Thread):
             if i["user"] == x["user"]:
                 addme = False
                 return
-        if addme is True:
+        if addme:
             return [True, pwdmanip.PStoEntry(i)]
         else:
             return [False, ""]
