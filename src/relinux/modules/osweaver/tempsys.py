@@ -144,11 +144,10 @@ class remUsers(threading.Thread):
             # Removes all groups the "offending" user created for itself
             if i["group"] == x["user"]:
                 addme = False
-                return
+                break
             # Removes the user from all groups it is inside
             if x["user"] in i["users"]:
                 i["users"].remove(x["user"])
-        print(addme)
         if addme:
             return [True, pwdmanip.PGtoEntry(i)]
         else:
