@@ -84,40 +84,21 @@ def _join(arr, char):
 
 
 # The function opposite to parsePasswdEntries
-def PPtoEntry(buffers):
-    returnme = []
-    for i in buffers:
-        returnme.append(_join([i["user"], i["passwd"], i["uid"], i["gid"], i["name"], i["home"],
-                               i["shell"]], ":"))
-    return returnme
+def PPtoEntry(i):
+    return _join([i["user"], i["passwd"], i["uid"], i["gid"], i["name"], i["home"],
+                            i["shell"]], ":")
 
 
 # The function opposite to parseGroupEntries
-def PGtoEntry(buffers):
-    returnme = []
-    for i in buffers:
-        # Sort of hard to read (at least for me) so I'll split it up
-        # returnme.append(
-        #     _join([
-        #         i["group"],
-        #         i["passwd"],
-        #         i["gid"],
-        #         _join([
-        #             i["users"]
-        #         ], ",")
-        #     ], ":")
-        # )
-        returnme.append(_join([i["group"], i["passwd"], i["gid"], _join(i["users"], ",")], ":"))
+def PGtoEntry(i):
+    return _join([i["group"], i["passwd"], i["gid"], _join(i["users"], ",")], ":")
 
 
 # The function opposite to parseShadowEntries
-def PStoEntry(buffers):
-    returnme = []
-    for i in buffers:
-        returnme.append(_join([i["user"], i["passwd"], i["lastpwdchange"], i["minpwdchange"],
+def PStoEntry(i):
+    return _join([i["user"], i["passwd"], i["lastpwdchange"], i["minpwdchange"],
                                i["maxpwdchange"], i["warnperiod"], i["inactive"], i["expire"],
-                               i["reserved"]], ":"))
-    return returnme
+                               i["reserved"]], ":")
 
 
 # Returns a list of entries from a user ID regex (buffer must contain PP entries)
