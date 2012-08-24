@@ -14,31 +14,13 @@ import gettext
 import subprocess
 import multiprocessing
 import re
-from relinux import config, configutils, logger
-
-
-def is_ascii(s):
-    for c in s:
-        if ord(c) >= 128:
-            return False
-    return True
-
-# Utf-8 utility
-def utf8(string):
-    if config.python3:
-        return string
-    if isinstance(string, unicode):
-        return string.encode("utf-8")
-    if not is_ascii(string):
-        # This will simply make sure that it is under the utf-8 format
-        return string.decode("utf-8").encode("utf-8")
-    return string
+from relinux import configutils, logger, utilities
 
 
 # Reads the link location of a file or returns None
 def delink(files):
     if os.path.islink(files):
-        return utf8(os.readlink(files))
+        return utilities.utf8(os.readlink(files))
     return None
 
 
@@ -251,21 +233,21 @@ def listdir(dirs, options={"recurse": True, "dirs": True, "symlinks": False}, tn
     logger.logV(tn, _("Gathering a list of files in") + " " + dirs)
     listed = []
     if options["recurse"]:
-        listed = os.walk(utf8(dirs), True, None, options["symlinks"])
+        listed = os.walk(utilities.utf8(dirs), True, None, options["symlinks"])
     else:
-        listed = os.listdir(utf8(dirs))
+        listed = os.listdir(utilities.utf8(dirs))
     returnme = []
     for i in listed:
         if options["dirs"]:
             if options["recurse"]:
-                returnme.append(utf8(i[0]))
+                returnme.append(utilities.utf8(i[0]))
             elif os.path.isdir(i):
-                returnme.append(utf8(i))
+                returnme.append(utilities.utf8(i))
         if options["recurse"]:
             for x in i[2]:
-                returnme.append(utf8(os.path.join(i[0], x)))
+                returnme.append(utilities.utf8(os.path.join(i[0], x)))
         elif os.path.isfile(i) or os.path.islink(i):
-            returnme.append(utf8(i))
+            returnme.append(utilities.utf8(i))
     return returnme
 
 
@@ -282,16 +264,16 @@ def fscopy(src, dst, excludes1, tn=""):
     makedir(dst)
     # Copy the files
     for file__ in files:
-        file_ = utf8(os.path.basename(utf8(file__)))
+        file_ = utilities.utf8(os.path.basename(utilities.utf8(file__)))
         # Make sure we don't copy files that are supposed to be excluded
         if file_ in excludes:
             logger.logVV(tn, file_ + " " + _("is to be excluded. Skipping a CPU cycle"))
             continue
-        fullpath = utf8(file__)
+        fullpath = utilities.utf8(file__)
         #print(dst + " " + file__[len(src):])
         temp = re.sub(r"^/+", "", file__[len(src):])
         print(os.path.join(dst, temp))
-        newpath = utf8(os.path.join(dst, temp))
+        newpath = utilities.utf8(os.path.join(dst, temp))
         dfile = delink(fullpath)
         if dfile is not None:
             logger.logVV(tn, file_ + " " + _("is a symlink. Creating an identical symlink at") + " "
@@ -325,8 +307,8 @@ def adrm(dirs, options, excludes1=[], tn=""):
         excludes = exclude(files, excludes1)
     # Remove the wanted files
     for file_ in files:
-        file__ = utf8(file_)
-        file_ = utf8(os.path.basename(file__))
+        file__ = utilities.utf8(file_)
+        file_ = utilities.utf8(os.path.basename(file__))
         # Make sure we don't remove files that are listed to exclude from removal
         if file__ in excludes:
             logger.logVV(tn, file_ + " " + _("is to be excluded. Skipping a CPU cycle"))

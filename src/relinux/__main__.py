@@ -51,10 +51,10 @@ def main():
               parsePyHex(sys.hexversion) + " " + _("was used."))
         exitprog(1)
     from argparse import ArgumentParser
+    tkname = "Tkinter"
     if config.python3:
-        import tkinter as Tkinter
-    else:
-        import Tkinter
+        tkname = "tkinter"
+    Tkinter = __import__(tkname)
     import time
     from relinux import gui, configutils, logger, aptutil, modloader
     logger.normal()

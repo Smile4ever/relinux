@@ -3,7 +3,7 @@ Password and group file manipulation
 @author: MiJyn
 '''
 
-from relinux import configutils
+from relinux import configutils, utilities
 import re
 
 
@@ -69,7 +69,8 @@ def parseShadowEntries(buffers):
 
 
 # Helper function that joins sections together with a custom character
-def _join(arr, char):
+def _join(arr1, char):
+    arr = utilities.flatten(arr1)
     returnme = ""
     c = 0
     l = len(arr) - 1

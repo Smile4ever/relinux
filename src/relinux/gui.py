@@ -9,7 +9,7 @@ if config.python3:
     from tkinter import font as tkFont
     from tkinter import filedialog as tkFileDialog
 else:
-    import Tkinter
+    import tkinter
     import tkFileDialog
     import tkFont
     from PIL import Image, ImageTk

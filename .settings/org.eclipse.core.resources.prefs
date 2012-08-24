@@ -9,3 +9,4 @@ encoding//src/relinux/modules/osweaver/__init__.py=utf-8
 encoding//src/relinux/modules/osweaver/isoutil.py=utf-8
 encoding//src/relinux/modules/osweaver/squashfs.py=utf-8
 encoding//src/relinux/modules/osweaver/tempsys.py=utf-8
+encoding//src/relinux/utilities.py=utf-8
