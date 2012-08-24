@@ -287,7 +287,7 @@ def fscopy(src, dst, excludes1, tn=""):
         if file_ in excludes:
             logger.logVV(tn, file_ + " " + _("is to be excluded. Skipping a CPU cycle"))
             continue
-        if re.search(".*passwd.*", file_) != None:
+        if re.search(".*passwd", file_) != None:
             print(file_)
             # Make an error
             logger.logVV("blahblah")
