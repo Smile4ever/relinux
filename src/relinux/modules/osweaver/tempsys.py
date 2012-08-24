@@ -179,7 +179,7 @@ class remUsers(threading.Thread):
         pe = pwdmanip.parsePasswdEntries(buffers[3])
         buffers[3] = pe
         # Users to "delete" on the live system
-        logger.logV("Gathering users to remove")
+        logger.logV(self.tn, _("Gathering users to remove"))
         nobody = ""
         for x in pe:
             if x["user"] == "nobody":
@@ -210,8 +210,8 @@ class remUsers(threading.Thread):
             sysrange = 555
         usrs = pwdmanip.getPPByUID(numrange.gen_num_range(sysrange, max_uid), pe)
         if config.VVStatus is False:
-            logger.logV(_("Removing them"))
-        logger.logVV(_("Removing users in /etc/passwd"))
+            logger.logV(self.tn, _("Removing them"))
+        logger.logVV(self.tn, _("Removing users in /etc/passwd"))
         fsutil.ife(buffers, lambda line: [True, pwdmanip.PPtoEntry(line)] if not line in usrs else [False, ""])
         # Rewrite the password file
         #for i in ppe:
