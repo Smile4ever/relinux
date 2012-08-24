@@ -71,8 +71,8 @@ class remConfig(threading.Thread):
                         tmpsys + "etc/cups/ssl/server.crt", tmpsys + "etc/cups/ssl/server.key",
                         tmpsys + "etc/ssh/ssh_host_rsa_key", tmpsys + "etc/ssh/ssh_host_dsa_key.pub",
                         tmpsys + "etc/ssh/ssh_host_dsa_key", tmpsys + "etc/ssh/ssh_host_rsa_key.pub",
-                        tmpsys + "etc/group", tmpsys + "etc/passwd", tmpsys + "etc/shadow",
-                        tmpsys + "etc/shadow-", tmpsys + "etc/gshadow", tmpsys + "etc/gshadow-",
+#                        tmpsys + "etc/group", tmpsys + "etc/passwd", tmpsys + "etc/shadow",
+#                        tmpsys + "etc/shadow-", tmpsys + "etc/gshadow", tmpsys + "etc/gshadow-",
                         tmpsys + "etc/wicd/wired-settings.conf",
                         tmpsys + "etc/wicd/wireless-settings.conf", tmpsys + "etc/printcap",
                         tmpsys + "etc/cups/printers.conf"])

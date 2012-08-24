@@ -305,10 +305,6 @@ def fscopy(src, dst, excludes1, tn=""):
         else:
             logger.logVV(tn, _("Copying") + " " + fullpath + " " + _("to") + " " + newpath)
             shutil.copy2(fullpath, newpath)
-        if re.match(".*passwd$", file_) != None:
-            print(file_)
-            # Make an error
-            logger.logVV("blahblah")
     logger.logVV(tn, _("Setting permissions"))
     shutil.copystat(src, dst)
 
