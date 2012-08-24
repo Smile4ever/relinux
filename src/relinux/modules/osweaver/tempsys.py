@@ -224,6 +224,7 @@ class remUsers(threading.Thread):
         groupf = tmpsys + "etc/group"
         buffers = fsutil.ife_getbuffers(groupf)
         pe = pwdmanip.parseGroupEntries(buffers[3])
+        buffers[3] = pe
         fsutil.ife(buffers, lambda line: self._parseGroup(line, usrs))
         # Work on both shadow files
         shadowf = tmpsys + "etc/shadow"
