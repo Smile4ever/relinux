@@ -26,8 +26,7 @@ def is_ascii(s):
 # Utf-8 utility
 def utf8(string):
     if config.python3:
-        # Python 3 uses unicode for its strings, so we'll just make sure it is under utf-8
-        return string.decode("utf-8").encode("utf-8")
+        return string
     if isinstance(string, unicode):
         return string.encode("utf-8")
     if not is_ascii(string):
@@ -445,7 +444,7 @@ def getSFSInstSize(files):
 
 # Generate an MD5 checksum from a file
 def genMD5(files, blocksize=65536):
-    buffers = file.read(blocksize)
+    buffers = files.read(blocksize)
     m = hashlib.md5()
     while len(buffers) > 0:
         m.update(buffers)
