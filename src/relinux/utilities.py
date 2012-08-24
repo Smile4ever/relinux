@@ -19,14 +19,14 @@ def is_ascii(s):
 def utf8(string):
     if config.python3:
         return string
-        # Fix that stupid PyDev "error" (thinking that unicode does not exist)
-        # Notice that these lines will not be run
-        #unicode = ""
     if isinstance(string, unicode):
+        print("UNICODE_TYPE")
         return string.encode("utf-8")
     if not is_ascii(string):
+        print("NOT ASCII")
         # This will simply make sure that it is under the utf-8 format
         return string.decode("utf-8").encode("utf-8")
+    print("ASCII")
     return string
 
 # List flattener, based on: http://stackoverflow.com/a/4676482/999400
