@@ -21,7 +21,7 @@ def utf8(string):
         return string
         # Fix that stupid PyDev "error" (thinking that unicode does not exist)
         # Notice that these lines will not be run
-        unicode = ""
+        #unicode = ""
     if isinstance(string, unicode):
         return string.encode("utf-8")
     if not is_ascii(string):
