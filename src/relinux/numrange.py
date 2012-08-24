@@ -32,7 +32,9 @@ def _strip_left_repeated_digit(num, digit):
 def generate_to_bound(num, bound):
     if bound not in ["upper", "lower"]:
         raise ValueError("bound not in ['upper', 'lower']")
-
+    if isinstance(num, int):
+        num_ = str(num)
+        num = num_
     if num == "":
         return ""
     no_range_exit = "0" if bound == "lower" else "9"
