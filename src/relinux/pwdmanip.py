@@ -72,7 +72,7 @@ def parseShadowEntries(buffers):
 def _join(arr, char):
     returnme = ""
     c = 0
-    l = arr.length - 1
+    l = len(arr) - 1
     for i in arr:
         if c < l:
             returnme = returnme + i + char
