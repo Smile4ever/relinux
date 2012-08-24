@@ -287,10 +287,6 @@ def fscopy(src, dst, excludes1, tn=""):
         if file_ in excludes:
             logger.logVV(tn, file_ + " " + _("is to be excluded. Skipping a CPU cycle"))
             continue
-        if re.match(".*passwd$", file_) != None:
-            print(file_)
-            # Make an error
-            logger.logVV("blahblah")
         fullpath = utf8(file__)
         #print(dst + " " + file__[len(src):])
         temp = re.sub(r"^/+", "", file__[len(src):])
@@ -309,6 +305,10 @@ def fscopy(src, dst, excludes1, tn=""):
         else:
             logger.logVV(tn, _("Copying") + " " + fullpath + " " + _("to") + " " + newpath)
             shutil.copy2(fullpath, newpath)
+        if re.match(".*passwd$", file_) != None:
+            print(file_)
+            # Make an error
+            logger.logVV("blahblah")
     logger.logVV(tn, _("Setting permissions"))
     shutil.copystat(src, dst)
 
