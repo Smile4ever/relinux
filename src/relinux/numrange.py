@@ -106,6 +106,12 @@ def _generate_for_same_len_nr(min_, max_):
     return "|".join([starting, middle, ending])
 
 def gen_num_range(min_, max_, capturing=False):
+    if isinstance(min_, int):
+        min__ = str(min_)
+        min_ = min__
+    if isinstance(max_, int):
+        max__ = str(max_)
+        max_ = max__
     template = r"\b(?:%s)\b"
     if capturing:
         template = r"\b(%s)\b"
