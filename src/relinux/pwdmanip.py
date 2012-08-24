@@ -107,7 +107,7 @@ def PGtoEntry(buffers):
         #         ], ",")
         #     ], ":")
         # )
-        returnme.append(_join([i["group"], i["passwd"], i["gid"], _join([i["users"]], ",")]))
+        returnme.append(_join([i["group"], i["passwd"], i["gid"], _join(i["users"], ",")], ":"))
 
 
 # The function opposite to parseShadowEntries
