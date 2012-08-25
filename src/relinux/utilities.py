@@ -28,6 +28,7 @@ def utf8(string):
         return string.decode("utf-8").encode("utf-8")
     return string
 
+
 # List flattener, based on: http://stackoverflow.com/a/4676482/999400
 def flatten(list_):
     nested = True
@@ -44,3 +45,25 @@ def flatten(list_):
         list_ = temp[:]
     return list_
 
+
+# Joins sections together with a custom character
+def join(arr1, char):
+    arr = flatten(arr1)
+    returnme = ""
+    c = 0
+    l = len(arr) - 1
+    for i in arr:
+        if c < l:
+            returnme = returnme + i + char
+        else:
+            returnme = returnme + i
+        c = c + 1
+    return returnme
+
+
+# Runs a function on all of the arguments
+def runall(func, *args):
+    returnme = []
+    for i in args:
+        returnme.append(func(i))
+    return returnme

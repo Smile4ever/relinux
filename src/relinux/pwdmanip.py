@@ -68,38 +68,22 @@ def parseShadowEntries(buffers):
     return returnme
 
 
-# Helper function that joins sections together with a custom character
-def _join(arr1, char):
-    arr = utilities.flatten(arr1)
-    returnme = ""
-    c = 0
-    l = len(arr) - 1
-    for i in arr:
-        if c < l:
-            returnme = returnme + i + char
-        else:
-            returnme = returnme + i
-        c = c + 1
-    returnme = returnme + "\n"
-    return returnme
-
-
 # The function opposite to parsePasswdEntries
 def PPtoEntry(i):
-    return _join([i["user"], i["passwd"], i["uid"], i["gid"], i["name"], i["home"],
-                            i["shell"]], ":")
+    return utilities.join([i["user"], i["passwd"], i["uid"], i["gid"], i["name"], i["home"],
+                            i["shell"]], ":") + "\n"
 
 
 # The function opposite to parseGroupEntries
 def PGtoEntry(i):
-    return _join([i["group"], i["passwd"], i["gid"], _join(i["users"], ",")], ":")
+    return utilities.join([i["group"], i["passwd"], i["gid"], utilities.join(i["users"], ",")], ":") + "\n"
 
 
 # The function opposite to parseShadowEntries
 def PStoEntry(i):
-    return _join([i["user"], i["passwd"], i["lastpwdchange"], i["minpwdchange"],
+    return utilities.join([i["user"], i["passwd"], i["lastpwdchange"], i["minpwdchange"],
                                i["maxpwdchange"], i["warnperiod"], i["inactive"], i["expire"],
-                               i["reserved"]], ":")
+                               i["reserved"]], ":") + "\n"
 
 
 # Returns a list of entries from a user ID regex (buffer must contain PP entries)

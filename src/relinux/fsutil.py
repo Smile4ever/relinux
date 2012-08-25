@@ -276,8 +276,10 @@ def fscopy(src, dst, excludes1, tn=""):
         newpath = utilities.utf8(os.path.join(dst, temp))
         dfile = delink(fullpath)
         if dfile is not None:
-            logger.logVV(tn, utilities.utf8(file_ + " " + _("is a symlink. Creating an identical symlink at") + " "
-                                  + newpath))
+            logger.logVV(tn, utilities.join(utilities.runall(utilities.utf8,
+                                            file_, " ",
+                                            _("is a symlink. Creating an identical symlink at"), " ",
+                                            newpath)))
             symlink(dfile, newpath)
         elif os.path.isdir(fullpath):
             logger.logVV(tn, _("Creating directory") + " " + file_)
