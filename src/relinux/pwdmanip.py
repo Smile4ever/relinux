@@ -88,7 +88,7 @@ def PStoEntry(i):
 
 # Returns a list of entries from a user ID regex (buffer must contain PP entries)
 def getPPByUID(regex, buffers):
-    patt = re.compile("^.*" + regex + ".*$")
+    patt = re.compile("^" + regex + "$")
     returnme = []
     for i in buffers:
         m = patt.match(i["uid"])
