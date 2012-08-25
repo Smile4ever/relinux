@@ -47,6 +47,7 @@ class copyEtcVar(threading.Thread):
         self.tn = logger.genTN(cpetcvar["tn"])
 
     def run(self):
+        return
         logger.logI(self.tn, _("Copying files to the temporary filesystem"))
         excludes = configutils.getValue(configs[configutils.excludes])
         fsutil.fscopy("/etc", tmpsys + "etc", excludes, self.tn)
@@ -209,6 +210,7 @@ class remUsers(threading.Thread):
             max_uid = 1999
             sysrange = 555
         usrs = pwdmanip.getPPByUID(numrange.gen_num_range(sysrange, max_uid), pe)
+        print(usrs)
         if config.VVStatus is False:
             logger.logV(self.tn, _("Removing them"))
         logger.logVV(self.tn, _("Removing users in /etc/passwd"))
