@@ -5,7 +5,7 @@ SquashFS Generation
 '''
 
 from relinux import logger, fsutil, configutils, config
-from relinux.modules.osweaver import tempsys, isoutil
+from relinux.modules.osweaver import tempsys
 import os
 import threading
 
@@ -41,7 +41,6 @@ def doSFSChecks(files, isolvl):
 # Generate the SquashFS file (has to run after isoutil.genISOTree and tempsys.genTempSys)
 tmpthreads = []
 tmpthreads.extend(tempsys.threads)
-tmpthreads.extend(isoutil.genisotree)
 gensfs = {"deps": tmpthreads, "tn": threadname}
 class genSFS(threading.Thread):
     def __init__(self):
@@ -60,6 +59,7 @@ class genSFS(threading.Thread):
         opts = opts + " -comp " + configutils.getValue(configs[configutils.sfscomp])
         opts = opts + " " + configutils.getValue(configs[configutils.sfsopts])
         sfsex = "dev etc home media mnt proc sys var usr/lib/ubiquity/apt-setup/generators/40cdrom"
+        fsutil.makedir(isotreel + "casper")
         sfspath = isotreel + "casper/filesystem.squashfs"
         logger.logI(tn, _("Adding the edited /etc and /var to the filesystem"))
         os.system("mksquashfs " + tmpsys + " " + sfspath + " " + opts)
