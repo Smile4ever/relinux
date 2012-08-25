@@ -283,7 +283,7 @@ class CasperConfEditor(threading.Thread):
         buffers = open(files, "a")
         for i in lists:
             if lists[i] is not None:
-                buffers.write("export " + i + "=" + lists[i] + "\n")
+                buffers.write("export " + i + "=\"" + lists[i] + "\"\n")
         buffers.close()
 
     def run(self):
@@ -327,10 +327,12 @@ class UbiquitySetup(threading.Thread):
     def run(self):
         # If the user-setup-apply file does not exist, and there is an alternative, we'll copy it over
         logger.logI(self.tn, _("Setting up the installer"))
-        if os.path.isfile("/usr/lib/ubiquity/user-setup/user-setup-apply.orig") and not os.path.isfile("/usr/lib/ubiquity/user-setup/user-setup-apply"):
+        if (os.path.isfile("/usr/lib/ubiquity/user-setup/user-setup-apply.orig") and not
+            os.path.isfile("/usr/lib/ubiquity/user-setup/user-setup-apply")):
             shutil.copy2("/usr/lib/ubiquity/user-setup/user-setup-apply.orig",
                          "/usr/lib/ubiquity/user-setup/user-setup-apply")
-        if configutils.parseBoolean(configutils.getValue(configs[configutils.aptlistchange])) is True:
+        if (True or
+            configutils.parseBoolean(configutils.getValue(configs[configutils.aptlistchange]))):
             fsutil.makedir(tmpsys + "usr/share/ubiquity/")
             aptsetup = open(tmpsys + "usr/share/ubiquity/apt-setup", "w")
             aptsetup.write("#!/bin/sh\n")
