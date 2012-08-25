@@ -313,7 +313,8 @@ class genISO(threading.Thread):
                     files.write(fmd5)
         files.close()
         logger.logI(self.tn, _("Generating the ISO"))
-        location = isotreel + configutils.getValue(configs[configutils.isolocation])
+        location = (configutils.getValue(configs[configutils.isodir]) +
+                    configutils.getValue(configs[configutils.isolocation]))
         os.system(configutils.getValue(configs[configutils.isogenerator]) + " -o " + location +
                   " " + isogenopts + " -V \"" + configutils.getValue(configs[configutils.label])
                   + "\" " + isotreel)
