@@ -7,7 +7,7 @@ ISO Utilities
 @author: Joel Leclerc (MiJyn) <lkjoel@ubuntu.com>
 '''
 
-from relinux.modules.osweaver import tempsys, squashfs
+from relinux.modules.osweaver import tempsys
 from relinux import logger, config, fsutil, configutils
 import shutil
 import os
@@ -282,6 +282,7 @@ class USBComp(threading.Thread):
 usbcomp["thread"] = USBComp()
 
 
+from relinux.modules.osweaver import squashfs
 threads1 = [genisotree, copypreseed, copymemtest, copysyslinux, diskdefines, pakmanifest, genramdisk,
             copykernel, genwubi, usbcomp]
 githreads = threads1
