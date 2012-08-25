@@ -7,7 +7,7 @@ ISO Utilities
 @author: Joel Leclerc (MiJyn) <lkjoel@ubuntu.com>
 '''
 
-from relinux.modules.osweaver import tempsys
+from relinux.modules.osweaver import tempsys, squashfs
 from relinux import logger, config, fsutil, configutils
 import shutil
 import os
@@ -284,6 +284,7 @@ threads1 = [genisotree, copypreseed, copymemtest, copysyslinux, diskdefines, pak
             copykernel, genwubi, usbcomp]
 githreads = threads1
 githreads.extend(tempsys.threads)
+githreads.extend(squashfs.threads)
 
 
 # Generates the ISO

@@ -24,6 +24,8 @@ def findRunnableThreads(threadids, threadsdone, threadsrunning, threads):
                     deps += 1
             if deps >= depsl:
                 returnme.append(i)
+            else:
+                print(thread["tn"])
             current += 1
         if current >= cpumax:
             break
