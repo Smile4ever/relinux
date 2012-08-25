@@ -100,7 +100,7 @@ def makedir(dirs1, tn=""):
         dirs = dirs1[0]
         mode = dirs1[1]
     if not os.path.exists(dirs):
-        logger.logVV(tn, _("Creating directory") + " " + str(dir))
+        logger.logVV(tn, _("Creating directory") + " " + str(dirs))
         os.makedirs(dirs, mode)
 
 
@@ -352,13 +352,13 @@ def getMode(stats):
 
 
 # Specific implementation of shutil's copystat function
-def copystat(stat, dst):
+def copystat(stats, dst):
     if hasattr(os, "utime") and False:
-        os.utime(dst, (stat.st_atime, stat.st_mtime))
-    if hasattr(os, "chmod"):
-        os.chmod(dst, getMode(stat))
-    if hasattr(os, "chflags") and hasattr(stat, "st_flags"):
-        os.chflags(dst, stat.st_flags)
+        os.utime(dst, (stats.st_atime, stats.st_mtime))
+    if hasattr(stats, "st_mode"):
+        chmod(dst, oct(getMode(stats)))
+    if hasattr(os, "chflags") and hasattr(stats, "st_flags"):
+        os.chflags(dst, stats.st_flags)
 
 
 # Interactive file editor - Get all buffers needed
