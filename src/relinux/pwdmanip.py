@@ -27,6 +27,7 @@ def parsePasswdEntries(buffers):
             buff["name"] = m.group(5)
             buff["home"] = m.group(6)
             buff["shell"] = m.group(7)
+            print("SHELL" + buff["shell"])
             returnme.append(buff)
     return returnme
 
