@@ -70,7 +70,7 @@ class genSFS(threading.Thread):
         # Find the size after it is uncompressed
         logger.logV(tn, _("Writing the size"))
         files = open(isotreel + "casper/filesystem.size", "w")
-        files.write(fsutil.getSFSInstSize(sfspath) + "\n")
+        files.write(str(fsutil.getSFSInstSize(sfspath)) + "\n")
         files.close()
         # TODO: Discuss on whether to add MD5 sum or not
         # Could prevent problems, but might also prevent the user from editing
