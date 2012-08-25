@@ -159,6 +159,7 @@ class remUsers(threading.Thread):
         for x in usrs:
             # Removes the "offending" user
             if i["user"] == x["user"]:
+                print("NOTADDING")
                 addme = False
                 return
         if addme:
