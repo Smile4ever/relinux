@@ -318,7 +318,7 @@ class genISO(threading.Thread):
         # Generate the MD5 sum
         logger.logV(self.tn, _("Generating MD5 sum for the ISO"))
         files = open(location + ".md5", "w")
-        files.write(fsutil.genFinalMD5(i))
+        files.write(fsutil.genFinalMD5(i, "./" + configutils.getValue(configs[configutils.isolocation])))
         files.close()
 geniso["thread"] = genISO()
 
