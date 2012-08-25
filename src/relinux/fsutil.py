@@ -123,7 +123,7 @@ def makefiles(arr, tn=""):
 # Creates a symlink
 def symlink(files, dst, tn=""):
     if not os.path.lexists(dst) and not os.path.exists(dst):
-        logger.logVV(tn, _("Creating symlink") + " " + dst)
+        logger.logVV(tn, utilities.utf8all(_("Creating symlink"), " ", dst))
         os.symlink(files, dst)
 
 
@@ -138,19 +138,19 @@ def rm(files, followlink=False, tn=""):
     if dfile != None:
         files = dfile
         if os.path.isfile(files):
-            logger.logVV(tn, _("Removing symlink") + " " + rfile)
+            logger.logVV(tn, utilities.utf8all(_("Removing symlink"), " ", rfile))
         elif os.path.isdir(files):
-            logger.logVV(tn, _("Removing directory symlink") + " " + rfile)
+            logger.logVV(tn, utilities.utf8all(_("Removing directory symlink"), " ", rfile))
         os.remove(rfile)
         if followlink:
             files = rfile
         else:
             return
     if os.path.isfile(files):
-        logger.logVV(tn, _(rmstring) + files)
+        logger.logVV(tn, utilities.utf8all(_(rmstring), files))
         os.remove(rfile)
     elif os.path.isdir(files):
-        logger.logVV(tn, _(rmstring + files))
+        logger.logVV(tn, utilities.utf8all(_(rmstring), files))
         shutil.rmtree(rfile)
 
 
@@ -210,7 +210,7 @@ def _chmod(c, mi):
 def chmod(files, mod, tn=""):
     val = 0x00
     c = 0
-    logger.logVV(tn, _("Calculating permissions of") + " " + files)
+    logger.logVV(tn, utilities.utf8all(_("Calculating permissions of"), " ", files))
     # In case the user of this function used UGO instead of SUGO, we'll cover up for that
     if len(mod) < 4:
         c = 1
@@ -220,7 +220,7 @@ def chmod(files, mod, tn=""):
         val = val | _chmod(c, int(i))
         c = c + 1
     # Chmod it
-    logger.logVV(tn, _("Setting permissions of") + " " + files + " " + _("to") + " " + mod)
+    logger.logVV(tn, utilities.utf8all(_("Setting permissions of"), " ", files, " ", _("to"), " ", mod))
     os.chmod(files, int(val))
 
 
@@ -230,7 +230,7 @@ def chmod(files, mod, tn=""):
 #    dirs (True or False): If True, show directories too
 #    symlinks (True or False): If True and recurse is True, recurse into symlink directories
 def listdir(dirs, options={"recurse": True, "dirs": True, "symlinks": False}, tn=""):
-    logger.logV(tn, _("Gathering a list of files in") + " " + dirs)
+    logger.logV(tn, utilities.utf8all(_("Gathering a list of files in"), " ", dirs))
     listed = []
     if options["recurse"]:
         listed = os.walk(utilities.utf8(dirs), True, None, options["symlinks"])
@@ -267,7 +267,7 @@ def fscopy(src, dst, excludes1, tn=""):
         file_ = utilities.utf8(os.path.basename(utilities.utf8(file__)))
         # Make sure we don't copy files that are supposed to be excluded
         if file_ in excludes:
-            logger.logVV(tn, file_ + " " + _("is to be excluded. Skipping a CPU cycle"))
+            logger.logVV(tn, utilities.utf8all(file_, " ", _("is to be excluded. Skipping a CPU cycle")))
             continue
         fullpath = utilities.utf8(file__)
         #print(dst + " " + file__[len(src):])
@@ -276,18 +276,17 @@ def fscopy(src, dst, excludes1, tn=""):
         newpath = utilities.utf8(os.path.join(dst, temp))
         dfile = delink(fullpath)
         if dfile is not None:
-            logger.logVV(tn, utilities.join(utilities.runall(utilities.utf8,
-                                            file_, " ",
+            logger.logVV(tn, utilities.utf8all(file_, " ",
                                             _("is a symlink. Creating an identical symlink at"), " ",
-                                            newpath), ""))
+                                            newpath))
             symlink(dfile, newpath)
         elif os.path.isdir(fullpath):
-            logger.logVV(tn, _("Creating directory") + " " + file_)
+            logger.logVV(tn, utilities.utf8all( _("Creating directory"), " ", file_))
             makedir(newpath)
             logger.logVV(tn, _("Setting permissions"))
             shutil.copystat(fullpath, newpath)
         else:
-            logger.logVV(tn, _("Copying") + " " + fullpath + " " + _("to") + " " + newpath)
+            logger.logVV(tn, utilities.utf8all( _("Copying"), " ", fullpath, " ", _("to"), " ", newpath))
             shutil.copy2(fullpath, newpath)
     logger.logVV(tn, _("Setting permissions"))
     shutil.copystat(src, dst)
@@ -313,7 +312,7 @@ def adrm(dirs, options, excludes1=[], tn=""):
         file_ = utilities.utf8(os.path.basename(file__))
         # Make sure we don't remove files that are listed to exclude from removal
         if file__ in excludes:
-            logger.logVV(tn, file_ + " " + _("is to be excluded. Skipping a CPU cycle"))
+            logger.logVV(tn, utilities.utf8all(file_, " ", _("is to be excluded. Skipping a CPU cycle")))
             continue
         fullpath = file__
         dfile = delink(fullpath)
@@ -324,14 +323,14 @@ def adrm(dirs, options, excludes1=[], tn=""):
                 rm(fullpath)
         else:
             if options["remsymlink"]:
-                logger.logVV(tn, _("Removing symlink") + " " + fullpath)
+                logger.logVV(tn, utilities.utf8all(_("Removing symlink"), " ", fullpath))
                 rm(fullpath)
             if options["remfullpath"]:
-                logger.logVV(tn, _("Removing") + " " + dfile + " (" + _("directed by symlink")
-                              + fullpath + ")")
+                logger.logVV(tn, utilities.utf8all(_("Removing"), " ", dfile, " (",
+                                                   _("directed by symlink"), fullpath, ")"))
                 rm(dfile)
     if options["remdirs"] is True:
-        logger.logVV(tn, _("Removing source directory") + " " + dirs)
+        logger.logVV(tn, utilities.utf8all(_("Removing source directory"), " ", dirs))
         rm(dirs)
 
 

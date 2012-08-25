@@ -67,3 +67,11 @@ def runall(func, *args):
     for i in args:
         returnme.append(func(i))
     return returnme
+
+
+# UTF-8's a string and returns it
+def utf8all(*args):
+    if config.python3:
+        # Save some time
+        return join(args, "")
+    return join(runall(utf8, *args), "")
