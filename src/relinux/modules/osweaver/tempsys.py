@@ -301,7 +301,7 @@ class CasperConfEditor(threading.Thread):
         logger.logV(self.tn, _("Editing lsb-release"))
         self.varEditor(tmpsys + "etc/lsb-release", {
                                     "DISTRIB_ID": configutils.getValue(configs[configutils.sysname]),
-                                    "DISTRIB_RELEASE": configutils.getValue(configs[configutils.version]),
+                                    "DISTRIB_RELEASE": configutils.getValue(configs[configutils.sysversion]),
                                     "DISTRIB_CODENAME": configutils.getValue(configs[configutils.codename]),
                                     "DISTRIB_DESCRIPTION":
         configutils.getValue(configs[configutils.description])})
