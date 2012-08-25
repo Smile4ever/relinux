@@ -353,9 +353,12 @@ def getMode(stats):
 
 # Specific implementation of shutil's copystat function
 def copystat(stats, dst):
+    if isinstance(stats, str):
+        stats_ = getStat(stats)
+        stats = stats_
     if hasattr(os, "utime") and False:
         os.utime(dst, (stats.st_atime, stats.st_mtime))
-    if hasattr(stats, "st_mode"):
+    if hasattr(os, "chmod") and hasattr(stats, "st_mode"):
         chmod(dst, oct(getMode(stats)))
     if hasattr(os, "chflags") and hasattr(stats, "st_flags"):
         os.chflags(dst, stats.st_flags)
