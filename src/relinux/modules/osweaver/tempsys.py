@@ -254,7 +254,7 @@ class CasperConfEditor(threading.Thread):
         self.tn = logger.genTN(casperconf["tn"])
 
     # Helper function
-    def __varEditor(self, line, lists):
+    def _varEditor(self, line, lists):
         patt = re.compile("^.*? *([A-Za-z_-]*?)=.*$")
         m = patt.match(line)
         #if configutils.checkMatched(m):
@@ -267,9 +267,9 @@ class CasperConfEditor(threading.Thread):
 
     # Casper Variable Editor
     # lists - Dictionary containing all options needed
-    def _varEditor(self, files, lists):
+    def varEditor(self, files, lists):
         buffers = fsutil.ife_getbuffers(files)
-        fsutil.ife(buffers, lambda line: self.__varEditor(line, lists))
+        fsutil.ife(buffers, lambda line: self._varEditor(line, lists))
         # In case the file is broken, we'll add the lines needed
         buffers = open(files, "a")
         for i in lists:
