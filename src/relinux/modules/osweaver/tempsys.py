@@ -257,12 +257,11 @@ class CasperConfEditor(threading.Thread):
     def _varEditor(self, line, lists):
         patt = re.compile("^.*? *([A-Za-z_-]*?)=.*$")
         m = patt.match(line)
-        #if configutils.checkMatched(m):
-        if m.group(0) is not None:
+        if configutils.checkMatched(m):
             for i in lists.keys():
                 if m.group(1) == i:
                     lists[i] = None
-                    return [True, i + "=" + lists[i]]
+                    return [True, "export " + i + "=" + lists[i]]
         return [False, ""]
 
     # Casper Variable Editor
