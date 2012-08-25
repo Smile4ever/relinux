@@ -20,7 +20,7 @@ def findRunnableThreads(threadids, threadsdone, threadsrunning, threads):
             deps = 0
             depsl = len(thread["deps"])
             for x in thread["deps"]:
-                if x in threadsdone:
+                if x in threadsdone or x == i:
                     deps += 1
             if deps >= depsl:
                 returnme.append(i)
