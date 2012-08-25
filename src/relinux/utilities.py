@@ -20,10 +20,8 @@ def utf8(string):
     if config.python3:
         return string
     if isinstance(string, unicode):
-        print("UNICODE_TYPE")
         return string.encode("utf-8")
     if not is_ascii(string):
-        print("NOT ASCII")
         # This will simply make sure that it is under the utf-8 format
         return string.decode("utf-8").encode("utf-8")
     return string

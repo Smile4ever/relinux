@@ -156,13 +156,11 @@ class remUsers(threading.Thread):
     # Helper function for changing the /etc/shadow file
     def _parseShadow(self, i, usrs):
         addme = True
-        print(i)
         for x in usrs:
             # Removes the "offending" user
             if i["user"] == x["user"]:
-                print("NOTADDING")
                 addme = False
-                return
+                break
         if addme:
             return [True, pwdmanip.PStoEntry(i)]
         else:
