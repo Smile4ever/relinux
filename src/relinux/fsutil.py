@@ -57,10 +57,11 @@ def getSize(path):
 #         M = Megabytes
 #         K = Kilobytes
 #         B = Bytes
-# htom = Human to Machine (i.e. 4KB to 4096B). If not true, it accepts these values:
+# htom = Human to Machine (i.e. 4KB to 4096B). If not True, it accepts these values:
 #         T = Bytes-to-Terabytes
 #         etc...
 def sizeTrans(size, htom=True):
+    utilities.setDefault(size, T=0, G=0, M=0, K=0, B=0)
     KB = 1024
     MB = 1048576
     GB = 1073741824
@@ -76,7 +77,7 @@ def sizeTrans(size, htom=True):
         addme = addme + size["K"] * KB
     if size["B"] > 0:
         addme = addme + size["B"]
-    if htom is True:
+    if htom:
         return addme
     else:
         if htom == "T":

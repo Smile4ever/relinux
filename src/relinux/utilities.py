@@ -73,3 +73,10 @@ def utf8all(*args):
         # Save some time
         return join(args, "")
     return join(runall(utf8, *args), "")
+
+
+# Sets the default arguments for a dictionary
+def setDefault(lists, **kw):
+    for i in kw.keys():
+        if not i in lists:
+            lists[i] = kw[i]

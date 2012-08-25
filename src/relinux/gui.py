@@ -3,7 +3,7 @@ Anything GUI-related goes here
 @author: MiJyn
 '''
 
-from relinux import config, configutils, logger
+from relinux import config, configutils, logger, utilities
 if config.python3:
     import tkinter as Tkinter
     from tkinter import font as tkFont
@@ -35,12 +35,6 @@ clickc = (255, 0, 0)
 
 def _rgbtohex(rgb):
     return '#%02x%02x%02x' % rgb
-
-
-def _setDefault(lists, **kw):
-    for i in kw.keys():
-        if not i in lists:
-            lists[i] = kw[i]
 
 def _setPixel(obj, pixel, x, y, color):
     if obj.busy:
@@ -195,7 +189,7 @@ class GlowyRectangleRenderer(threading.Thread):
 # Glowy component
 class Component(Tkinter.Canvas):
     def __init__(self, parent, *args, **kw):
-        _setDefault(kw, background=bg, borderwidth=0, highlightthickness=0)
+        utilities.setDefault(kw, background=bg, borderwidth=0, highlightthickness=0)
         Tkinter.Canvas.__init__(self, parent, *args, **kw)
         self.height = 0
         self.width = 0
@@ -267,7 +261,7 @@ class Component(Tkinter.Canvas):
 # Temporary Frame
 class Frame(Tkinter.Frame):
     def __init__(self, parent, *args, **kw):
-        _setDefault(kw, highlightthickness=0, borderwidth=0, background=bg, relief=Tkinter.FLAT)
+        utilities.setDefault(kw, highlightthickness=0, borderwidth=0, background=bg, relief=Tkinter.FLAT)
         Tkinter.Frame.__init__(self, parent, *args, **kw)
 
 
@@ -280,7 +274,7 @@ class Button(Tkinter.Canvas):
         bindclick = kw.pop("bindclick", True)
         bindunclick = kw.pop("bindunclick", True)
         self.mousedown = kw.pop("mousedown", None)
-        _setDefault(kw, background=bg, borderwidth=0, highlightthickness=0)
+        utilities.setDefault(kw, background=bg, borderwidth=0, highlightthickness=0)
         Tkinter.Canvas.__init__(self, parent, *args, **kw)
         label = Tkinter.Label(self, text="Unused")
         self.font = tkFont.Font(font=label["font"])
@@ -406,7 +400,7 @@ class Button(Tkinter.Label):
         bindclick = kw.pop("bindclick", True)
         bindunclick = kw.pop("bindunclick", True)
         self.mousedown = kw.pop("mousedown", None)
-        _setDefault(kw, background=bg, foreground="white", borderwidth=0, pady=3, padx=8,
+        utilities.setDefault(kw, background=bg, foreground="white", borderwidth=0, pady=3, padx=8,
                         highlightbackground=_rgbtohex(normalc), highlightthickness=1)
         Tkinter.Label.__init__(self, parent, *args, **kw)
         self.lastcolor = normalc
@@ -462,7 +456,7 @@ class Button(Tkinter.Label):
 # Temporary Entry Box
 class Entry(Tkinter.Entry):
     def __init__(self, parent, *args, **kw):
-        _setDefault(kw, background=bg, foreground="white", selectbackground="white",
+        utilities.setDefault(kw, background=bg, foreground="white", selectbackground="white",
                     selectforeground=bg, borderwidth=0, highlightbackground=_rgbtohex(normalc),
                     highlightcolor=_rgbtohex(clickc))
         self.lastcolor = normalc
@@ -493,7 +487,7 @@ class Entry(Tkinter.Entry):
 # Temporary Label
 class Label(Tkinter.Label):
     def __init__(self, parent, *args, **kw):
-        _setDefault(kw, background=bg, foreground="white", borderwidth=0, pady=6, padx=6,
+        utilities.setDefault(kw, background=bg, foreground="white", borderwidth=0, pady=6, padx=6,
                     highlightbackground=_rgbtohex(normalc), highlightcolor=_rgbtohex(hoverc))
         Tkinter.Label.__init__(self, parent, *args, **kw)
 
@@ -501,7 +495,7 @@ class Label(Tkinter.Label):
 # Temporary Scrollbar
 class GScrollbar(Tkinter.Scrollbar):
     def __init__(self, parent, *args, **kw):
-        _setDefault(kw, background=lightbg, borderwidth=0, relief=Tkinter.FLAT,
+        utilities.setDefault(kw, background=lightbg, borderwidth=0, relief=Tkinter.FLAT,
                     activebackground=lightbghover, troughcolor=bg)
         Tkinter.Scrollbar.__init__(self, parent, *args, **kw)
         self.bind("<ButtonPress-1>", self.onclick)
@@ -557,7 +551,7 @@ class Radiobutton(Button):
     def __init__(self, parent, *args, **kw):
         self.variable = kw.pop("variable", Tkinter.IntVar(0))
         self.value = kw.pop("value", 0)
-        _setDefault(kw, bindunclick=False, mousedown=self.select)
+        utilities.setDefault(kw, bindunclick=False, mousedown=self.select)
         Button.__init__(self, parent, *args, **kw)
         self._callback()
         self.variable.trace("w", self._callback)
@@ -584,7 +578,7 @@ class Notebook(Frame):
         self.old = 0
         self.finishedtb = None
         npages = kw.pop('npages', 0)
-        _setDefault(kw, background=bg, borderwidth=0, highlightthickness=0)
+        utilities.setDefault(kw, background=bg, borderwidth=0, highlightthickness=0)
         Frame.__init__(self, master, *args, **kw)
         if npages > 0:
             for page in range(npages):
@@ -651,7 +645,7 @@ class Notebook(Frame):
 # Scrolling frame, based on http://Tkinter.unpy.net/wiki/VerticalScrolledFrame
 class VerticalScrolledFrame(Frame):
     def __init__(self, parent, *args, **kw):
-        _setDefault(kw, background=bg, borderwidth=0, highlightthickness=0, relief=Tkinter.FLAT)
+        utilities.setDefault(kw, background=bg, borderwidth=0, highlightthickness=0, relief=Tkinter.FLAT)
         Frame.__init__(self, parent, *args, **kw)
         vscrollbar = GScrollbar(self, orient=Tkinter.VERTICAL)
         vscrollbar.pack(fill=Tkinter.Y, side=Tkinter.RIGHT, expand=Tkinter.FALSE)
@@ -694,7 +688,7 @@ class Wizard(Notebook):
         #self.pages = []
         #self.current = 0
         #npages = kw.pop('npages', 0)
-        #_setDefault(kw, background=bg, borderwidth=0, highlightthickness=0)
+        #utilities.setDefault(kw, background=bg, borderwidth=0, highlightthickness=0)
         Notebook.__init__(self, master, *args, **kw)
         self.finishedtb = self._wizard_buttons
         '''for page in range(npages):
@@ -872,7 +866,7 @@ class Multiple(Frame):
 
 class Progressbar(Tkinter.Canvas):
     def __init__(self, parent, *args, **kw):
-        _setDefault(kw, border=0, highlightthickness=1, bg=bg, highlightbackground="black",
+        utilities.setDefault(kw, border=0, highlightthickness=1, bg=bg, highlightbackground="black",
                     height=15)
         Tkinter.Canvas.__init__(self, parent, *args, **kw)
         self.progressbar = self.create_rectangle(0, 0, 0, 0, fill=lightbg)
