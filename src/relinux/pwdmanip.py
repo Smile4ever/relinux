@@ -14,7 +14,7 @@ def checkMatched(m):
 
 # Returns a parsed list of /etc/passwd entries (i.e. PP Entry)
 def parsePasswdEntries(buffers):
-    patt = re.compile("^(.*?):(.*?):(.*?):(.*?):(.*?):(.*?):(.*?)")
+    patt = re.compile("^(.*?):(.*?):(.*?):(.*?):(.*?):(.*?):(.*?)$")
     returnme = []
     for i in buffers:
         m = patt.match(i)
@@ -34,7 +34,7 @@ def parsePasswdEntries(buffers):
 
 # Returns a parsed list of /etc/group entries (i.e. PG Entry)
 def parseGroupEntries(buffers):
-    patt = re.compile("^(.*?):(.*?):(.*?):(.*?)")
+    patt = re.compile("^(.*?):(.*?):(.*?):(.*?)$")
     returnme = []
     for i in buffers:
         m = patt.match(i)
@@ -51,7 +51,7 @@ def parseGroupEntries(buffers):
 
 # Returns a parsed list of /etc/shadow entries (i.e. PS Entry)
 def parseShadowEntries(buffers):
-    patt = re.compile("^(.*?):(.*?):(.*?):(.*?):(.*?):(.*?):(.*?):(.*?):(.*?)")
+    patt = re.compile("^(.*?):(.*?):(.*?):(.*?):(.*?):(.*?):(.*?):(.*?):(.*?)$")
     returnme = []
     for i in buffers:
         m = patt.match(i)
