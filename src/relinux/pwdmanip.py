@@ -27,7 +27,6 @@ def parsePasswdEntries(buffers):
             buff["name"] = m.group(5)
             buff["home"] = m.group(6)
             buff["shell"] = m.group(7)
-            print("SHELL" + buff["shell"])
             returnme.append(buff)
     return returnme
 
@@ -66,6 +65,7 @@ def parseShadowEntries(buffers):
             buff["inactive"] = m.group(7)
             buff["expire"] = m.group(8)
             buff["reserved"] = m.group(9)
+            returnme.append(buff)
     return returnme
 
 
