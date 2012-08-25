@@ -263,7 +263,7 @@ class CasperConfEditor(threading.Thread):
                 if m.group(1) == i:
                     bak = copy.copy(lists[i])
                     lists[i] = None
-                    return [True, "export " + i + "=" + bak + "\n"]
+                    return [True, "export " + i + "=\"" + bak + "\"\n"]
         patt = re.compile("^ *#.*$")
         m = patt.match(line)
         if configutils.checkMatched(m):
