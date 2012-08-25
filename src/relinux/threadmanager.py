@@ -24,7 +24,7 @@ def findRunnableThreads(threadids, threadsdone, threadsrunning, threads):
                     deps += 1
             if deps >= depsl:
                 returnme.append(i)
-            else:
+            elif False:
                 if thread["tn"] == "ISO":
                     ls = []
                     for x in thread["deps"]:

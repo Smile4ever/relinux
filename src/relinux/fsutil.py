@@ -427,7 +427,8 @@ def getSFSInstSize(files):
 
 
 # Generate an MD5 checksum from a file
-def genMD5(files, blocksize=65536):
+def genMD5(file_, blocksize=65536):
+    files = open(file_, "r")
     buffers = files.read(blocksize)
     m = hashlib.md5()
     while len(buffers) > 0:
@@ -438,5 +439,7 @@ def genMD5(files, blocksize=65536):
 
 # Generate an MD5 checksum that can be read by the md5sum command from a file
 def genFinalMD5(files):
+    if hasattr(files, "name"):
+        files = files.name
     string = genMD5(files) + "  " + files + "\n"
     return string
