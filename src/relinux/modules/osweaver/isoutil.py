@@ -38,7 +38,7 @@ cf = "0"
 # -boot-info-table     Add a boot information table to the boot image
 # -o file              Output image
 # -I utf-8             Use the UTF-8 input charset
-isogenopts = ("-r -cache-inodes -J -l -b ./isolinux/isolinux.bin -c ./isolinux/boot.cat -no-emul-boot " + 
+isogenopts = ("-r -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot " + 
               "-boot-load-size 4 -boot-info-table -I utf-8")
 
 
