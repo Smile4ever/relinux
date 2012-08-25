@@ -301,7 +301,7 @@ class genISO(threading.Thread):
                              configutils.getValue(configs[configutils.isolevel]))
         # Generate MD5 checksums
         logger.logV(self.tn, _("Generating MD5 sums"))
-        files = open(isotreel + "md5sum.txt")
+        files = open(isotreel + "md5sum.txt", "w")
         for x in fsutil.listdir(isotreel, {"recurse": True}):
             i = re.sub(r"^ *" + isotreel + ".*", ".", x)
             if i.find("isotree") == -1 and i.find("md5sum") == -1:
