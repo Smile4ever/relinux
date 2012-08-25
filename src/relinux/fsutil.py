@@ -444,7 +444,7 @@ def genMD5(file_, blocksize=65536):
     while len(buffers) > 0:
         m.update(buffers)
         buffers = files.read(blocksize)
-    return m.digest()
+    return m.hexdigest()
 
 
 # Generate an MD5 checksum that can be read by the md5sum command from a file
