@@ -10,6 +10,7 @@ import os
 import shutil
 import re
 import threading
+import copy
 
 tmpsys = config.TempSys
 configs = config.Configuration["OSWeaver"]
@@ -260,8 +261,9 @@ class CasperConfEditor(threading.Thread):
         if configutils.checkMatched(m):
             for i in lists.keys():
                 if m.group(1) == i:
+                    bak = copy.copy(lists[i])
                     lists[i] = None
-                    return [True, "export " + i + "=" + lists[i]]
+                    return [True, "export " + i + "=" + bak]
         return [False, ""]
 
     # Casper Variable Editor
