@@ -303,10 +303,12 @@ class genISO(threading.Thread):
         logger.logV(self.tn, _("Generating MD5 sums"))
         files = open(isotreel + "md5sum.txt", "w")
         for x in fsutil.listdir(isotreel, {"recurse": True}):
-            i = re.sub(r"^ *" + isotreel + ".*", ".", x)
-            if i.find("isotree") == -1 and i.find("md5sum") == -1:
+            i = re.sub(r"^ *" + isotreel + "/*", "./", x)
+            if i.find("isotree") < 0 and i.find("md5sum") < 0:
                 logger.logVV(self.tn, _("Writing MD5 sum of") + " " + i)
-                files.write(fsutil.genFinalMD5(i))
+                fmd5 = fsutil.genFinalMD5(i, x)
+                if fmd5 != "" and fmd5 != None:
+                    files.write(fmd5)
         files.close()
         logger.logI(self.tn, _("Generating the ISO"))
         os.system(configutils.getValue(configs[configutils.isogenerator]) + " " + isogenopts + " -V " + 
