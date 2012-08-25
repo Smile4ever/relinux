@@ -47,7 +47,6 @@ class copyEtcVar(threading.Thread):
         self.tn = logger.genTN(cpetcvar["tn"])
 
     def run(self):
-        return
         logger.logI(self.tn, _("Copying files to the temporary filesystem"))
         excludes = configutils.getValue(configs[configutils.excludes])
         fsutil.fscopy("/etc", tmpsys + "etc", excludes, self.tn)
