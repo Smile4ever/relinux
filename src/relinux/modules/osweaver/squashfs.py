@@ -47,6 +47,7 @@ class genSFS(threading.Thread):
         threading.Thread.__init__(self)
 
     def run(self):
+        return
         logger.logI(tn, _("Generating compressed filesystem"))
         # Generate the SquashFS file
         # Options:
