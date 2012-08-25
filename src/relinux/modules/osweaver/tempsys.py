@@ -33,10 +33,9 @@ class genTempSysTree(threading.Thread):
     def run(self):
         logger.logI(self.tn, _("Generating the tree for the temporary filesystem"))
         fsutil.maketree([tmpsys + "etc", tmpsys + "dev",
-                          tmpsys + "proc", tmpsys + "tmp",
+                          tmpsys + "proc", [tmpsys + "tmp", 1777],
                           tmpsys + "sys", tmpsys + "mnt",
                           tmpsys + "media/cdrom", tmpsys + "var", tmpsys + "home"], self.tn)
-        fsutil.chmod(tmpsys + "tmp", "1777", self.tn)
 tmpsystree["thread"] = genTempSysTree()
 
 

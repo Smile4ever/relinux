@@ -93,10 +93,15 @@ def sizeTrans(size, htom=True):
 
 
 # Makes a directory
-def makedir(dirs, tn=""):
+def makedir(dirs1, tn=""):
+    dirs = dirs1
+    mode = 0777
+    if isinstance(dirs1, list):
+        dirs = dirs1[0]
+        mode = dirs1[1]
     if not os.path.exists(dirs):
         logger.logVV(tn, _("Creating directory") + " " + str(dir))
-        os.makedirs(dirs)
+        os.makedirs(dirs, mode)
 
 
 # Makes a directory tree
