@@ -26,7 +26,6 @@ def utf8(string):
         print("NOT ASCII")
         # This will simply make sure that it is under the utf-8 format
         return string.decode("utf-8").encode("utf-8")
-    print("ASCII")
     return string
 
 # List flattener, based on: http://stackoverflow.com/a/4676482/999400
