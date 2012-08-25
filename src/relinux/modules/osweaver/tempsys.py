@@ -263,7 +263,15 @@ class CasperConfEditor(threading.Thread):
                 if m.group(1) == i:
                     bak = copy.copy(lists[i])
                     lists[i] = None
-                    return [True, "export " + i + "=" + bak]
+                    return [True, "export " + i + "=" + bak + "\n"]
+        patt = re.compile("^ *#.*$")
+        m = patt.match(line)
+        if configutils.checkMatched(m):
+            return [True, line]
+        patt = re.compile("^ *$")
+        m = patt.match(line)
+        if configutils.checkMatched(m):
+            return [True, line]
         return [False, ""]
 
     # Casper Variable Editor
