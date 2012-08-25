@@ -415,7 +415,7 @@ def getSFSInstSize(files):
     #     drwxr-xr-x root/root               377 2012-04-25 10:04 squashfs-root
     #                                        ^^^
     #                                        Size in bytes
-    patt = "^ *[dlspcb-][rwx-][rwx-][rwx-][rwx-][rwx-][rwx-][rwx-][rwx-][rwx-] *[A-Za-z0-9]*/[A-Za-z0-9]* *([0-9]*).*"
+    patt = re.compile("^ *[dlspcb-][rwx-][rwx-][rwx-][rwx-][rwx-][rwx-][rwx-][rwx-][rwx-] *[A-Za-z0-9]*/[A-Za-z0-9]* *([0-9]*).*")
     output = os.popen("unsquashfs -lls " + files)
     totsize = 0
     for line in output:
