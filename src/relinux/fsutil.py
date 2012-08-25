@@ -279,7 +279,7 @@ def fscopy(src, dst, excludes1, tn=""):
             logger.logVV(tn, utilities.join(utilities.runall(utilities.utf8,
                                             file_, " ",
                                             _("is a symlink. Creating an identical symlink at"), " ",
-                                            newpath)))
+                                            newpath), ""))
             symlink(dfile, newpath)
         elif os.path.isdir(fullpath):
             logger.logVV(tn, _("Creating directory") + " " + file_)
