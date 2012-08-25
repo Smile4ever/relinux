@@ -25,21 +25,23 @@ ct = "1"
 cf = "0"
 # ISO Generation Options
 # Options:
-# -r                   Use the Rock Ridge protocol
-# -V label             Label of the ISO
-# -cache-inodes        Enable caching inodes and device numbers
-# -J                   Use Joliet specification to let pathnames use 64 characters
-# -l                   Allow 31-character filenames (Joliet will replace this of course)
-# -b bootimage         Boot with the specified image
-# -c bootcatalog       Path to generate the boot catalog
-# -no-emul-boot        Shows that the boot image specified is a "no emulation" image
-#                         This means that the system will not perform any disk emulation when running it
-# -boot-load-size 4    Number of virtual sectors to load
-# -boot-info-table     Add a boot information table to the boot image
-# -o file              Output image
-# -I utf-8             Use the UTF-8 input charset
+# -r                     Use the Rock Ridge protocol
+# -V label               Label of the ISO
+# -cache-inodes          Enable caching inodes and device numbers
+# -J                     Use Joliet specification to let pathnames use 64 characters
+# -l                     Allow 31-character filenames (Joliet will replace this of course)
+# -b bootimage           Boot with the specified image
+# -c bootcatalog         Path to generate the boot catalog
+# -no-emul-boot          Shows that the boot image specified is a "no emulation" image
+#                           This means that the system will not perform any disk emulation when running it
+# -boot-load-size 4      Number of virtual sectors to load
+# -boot-info-table       Add a boot information table to the boot image
+# -o file                Output image
+# -input-charset utf-8   Use the UTF-8 input charset
+# -iso-level isolevel    ISO Level
 isogenopts = ("-r -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot " + 
-              "-boot-load-size 4 -boot-info-table -I utf-8")
+              "-boot-load-size 4 -boot-info-table -input-charset utf-8 -iso-level " +
+              configutils.getValue(configs[configutils.isolevel]))
 
 
 # Returns the disk name of the ISO
