@@ -286,12 +286,12 @@ def fscopy(src, dst, excludes1, tn=""):
             logger.logVV(tn, utilities.utf8all( _("Creating directory"), " ", file_))
             makedir(newpath)
             logger.logVV(tn, _("Setting permissions"))
-            shutil.copystat(fullpath, newpath)
+            copystat(fullpath, newpath)
         else:
             logger.logVV(tn, utilities.utf8all( _("Copying"), " ", fullpath, " ", _("to"), " ", newpath))
             shutil.copy2(fullpath, newpath)
     logger.logVV(tn, _("Setting permissions"))
-    shutil.copystat(src, dst)
+    copystat(src, dst)
 
 
 # Removes the contents of a directory with excludes and options
@@ -348,7 +348,7 @@ def getMode(stats):
 
 # Specific implementation of shutil's copystat function
 def copystat(stat, dst):
-    if hasattr(os, "utime"):
+    if hasattr(os, "utime") and False:
         os.utime(dst, (stat.st_atime, stat.st_mtime))
     if hasattr(os, "chmod"):
         os.chmod(dst, getMode(stat))
