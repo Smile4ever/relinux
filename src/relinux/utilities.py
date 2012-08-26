@@ -80,3 +80,25 @@ def setDefault(lists, **kw):
     for i in kw.keys():
         if not i in lists:
             lists[i] = kw[i]
+
+
+# Checks if regex matched
+def checkMatched(m):
+    if m is not None and m.group(0) is not None:
+        return True
+    else:
+        return False
+
+
+# Returns a buffer from a file
+def getBuffer(files, strip=True):
+    returnme = []
+    for line in files:
+        if not line or line is None:
+            break
+        if strip is True:
+            line = line.rstrip()
+        returnme.append(line)
+    print(len(returnme))
+    return returnme
+

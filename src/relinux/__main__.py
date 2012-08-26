@@ -56,7 +56,7 @@ def main():
         tkname = "tkinter"
     Tkinter = __import__(tkname)
     import time
-    from relinux import gui, configutils, logger, aptutil, modloader
+    from relinux import gui, configutils, logger, aptutil, modloader, utilities
     logger.normal()
     parser = ArgumentParser()
     parser.add_argument("-V", "--version", action="store_true",
@@ -99,7 +99,7 @@ def main():
         modules = modloader.getModules()
         spprog += 1
         splash.setProgress(calcPercent((spprog, spprogn)), "Parsing configuration...")
-        buffer1 = configutils.getBuffer(open("../../relinux.conf"))
+        buffer1 = utilities.getBuffer(open("../../relinux.conf"))
         buffer2 = configutils.compress(buffer1)
         cbuffer = configutils.parseCompressedBuffer(buffer2, "../../relinux.conf")
         config.Configuration = cbuffer

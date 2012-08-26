@@ -14,7 +14,12 @@ import gettext
 import subprocess
 import multiprocessing
 import re
-from relinux import configutils, logger, utilities
+from relinux import logger, utilities
+
+
+# Generates a relative path from an absolute one
+def relpath(files):
+    return os.path.join(os.curdir, os.path.relpath(files, os.curdir))
 
 
 # Reads the link location of a file or returns None
@@ -95,7 +100,7 @@ def sizeTrans(size, htom=True):
 # Makes a directory
 def makedir(dirs1, tn=""):
     dirs = dirs1
-    mode = 0777
+    mode = 0o777
     if isinstance(dirs1, list):
         dirs = dirs1[0]
         mode = dirs1[1]
@@ -374,7 +379,7 @@ def ife_getbuffers(files):
     returnme.append(getStat(files))
     returnme.append(files)
     fbuff = open(files, "r")
-    rbuff = configutils.getBuffer(fbuff, False)
+    rbuff = utilities.getBuffer(fbuff, False)
     fbuff2 = open(files, "w")
     returnme.append(fbuff2)
     returnme.append(rbuff)
@@ -429,7 +434,7 @@ def getSFSInstSize(files):
     totsize = 0
     for line in output:
         m = patt.match(line)
-        if configutils.checkMatched(m):
+        if utilities.checkMatched(m):
             totsize = totsize + int(m.group(1))
     return totsize
 

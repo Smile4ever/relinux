@@ -69,6 +69,7 @@ def copyFile(src, dst, tn, critical=False):
 def defineWriter(files, lists):
     d = open(files, "w")
     for i in lists.keys():
+        print(i)
         d.write("#define " + i + " " + lists[i] + "\n")
     d.close()
 
@@ -134,8 +135,11 @@ class copySysLinux(threading.Thread):
                                       "isolinux/isolinux.cfg", self.tn, True)
         # Edit the isolinux.cfg file to replace the variables
         logger.logV(self.tn, _("Editing isolinux.cfg"))
+        splash = os.path.basename(configutils.getValue(configs[configutils.splash]))
+        shutil.copy2(configutils.getValue(configs[configutils.splash]),
+                     isotreel + "isolinux/" + splash)
         for i in [["LABEL", configutils.getValue(configs[configutils.label])],
-                  ["SPLASH", configutils.getValue(configs[configutils.splash])],
+                  ["SPLASH", splash],
                   ["TIMEOUT", configutils.getValue(configs[configutils.timeout])]]:
             fsutil.ife(fsutil.ife_getbuffers(isotreel + "isolinux/isolinux.cfg"),
                        lambda line: [True, re.sub("\$" + i[0], i[1], line)])

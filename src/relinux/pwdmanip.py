@@ -9,7 +9,7 @@ import re
 
 # Checks if something matched (shorthand way of writing configutils.checkMatched(m))
 def checkMatched(m):
-    return configutils.checkMatched(m)
+    return utilities.checkMatched(m)
 
 
 # Returns a parsed list of /etc/passwd entries (i.e. PP Entry)
