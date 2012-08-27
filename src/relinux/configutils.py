@@ -263,7 +263,6 @@ def parseCompressedBuffer(buffers, filenames):
                                                 os.path.join(
                                                     os.path.dirname(os.path.abspath(filenames)),
                                                         fsutil.relpath(returnme[i][x][value])))
-                print(returnme[i][x][value])
     return returnme
 
 

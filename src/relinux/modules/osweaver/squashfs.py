@@ -62,6 +62,8 @@ class genSFS(threading.Thread):
         opts = opts + " " + configutils.getValue(configs[configutils.sfsopts])
         sfsex = "dev etc home media mnt proc sys var usr/lib/ubiquity/apt-setup/generators/40cdrom"
         sfspath = isotreel + "casper/filesystem.squashfs"
+        if os.path.exists(sfspath):
+            fsutil.rm(sfspath)
         logger.logI(tn, _("Adding the edited /etc and /var to the filesystem"))
         os.system("mksquashfs " + tmpsys + " " + sfspath + " " + opts)
         logger.logI(tn, _("Adding the rest of the system"))
