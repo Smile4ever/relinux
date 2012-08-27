@@ -83,6 +83,9 @@ def threadLoop(threads1):
         # Clear old threads
         for x in threadsrunning:
             checkThread(x, threadsdone, threadsrunning, threads)
+        # End if all threads are done
+        if len(threadsdone) >= len(threads):
+            break
         # Run runnable threads
         for x in findRunnableThreads(threadids, threadsdone, threadsrunning, threads):
             runThread(x, threadsdone, threadsrunning, threads)
