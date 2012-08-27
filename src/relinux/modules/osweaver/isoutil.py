@@ -266,7 +266,7 @@ class USBComp(threading.Thread):
         logger.logI(self.tn, _("Making the ISO compatible with a USB burner"))
         logger.logVV(self.tn, _("Writing .disk/info"))
         files = open(isotreel + ".disk/info", "w")
-        files.write(getDiskName())
+        files.write(getDiskName() + "\n")
         files.close()
         logger.logV(self.tn, _("Making symlink pointing to the ISO root dir"))
         if os.path.lexists(isotreel + "ubuntu"):

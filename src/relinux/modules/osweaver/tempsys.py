@@ -4,7 +4,7 @@ Generates a temporary filesystem to hack on
 @author: Joel Leclerc (MiJyn) <lkjoel@ubuntu.com>
 '''
 
-from relinux import logger, config, configutils, fsutil, pwdmanip, aptutil, numrange
+from relinux import logger, config, configutils, fsutil, pwdmanip, aptutil, numrange, utilities
 from relinux.modules.osweaver import aptcache
 import os
 import shutil
@@ -257,7 +257,7 @@ class CasperConfEditor(threading.Thread):
     def _varEditor(self, line, lists):
         patt = re.compile("^.*? *([A-Za-z_-]*?)=.*$")
         m = patt.match(line)
-        if configutils.checkMatched(m):
+        if utilities.checkMatched(m):
             for i in lists.keys():
                 if m.group(1) == i:
                     bak = copy.copy(lists[i])
@@ -265,11 +265,11 @@ class CasperConfEditor(threading.Thread):
                     return [True, "export " + i + "=\"" + bak + "\"\n"]
         patt = re.compile("^ *#.*$")
         m = patt.match(line)
-        if configutils.checkMatched(m):
+        if utilities.checkMatched(m):
             return [True, line]
         patt = re.compile("^ *$")
         m = patt.match(line)
-        if configutils.checkMatched(m):
+        if utilities.checkMatched(m):
             return [True, line]
         return [False, ""]
 
