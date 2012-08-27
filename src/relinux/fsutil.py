@@ -4,6 +4,7 @@ General filesystem utilities
 @author: Joel Leclerc (MiJyn) <lkjoel@ubuntu.com>
 '''
 
+from relinux import logger, utilities
 import os
 import stat
 import shutil
@@ -14,7 +15,6 @@ import gettext
 import subprocess
 import multiprocessing
 import re
-from relinux import logger, utilities
 
 
 # Generates a relative path from an absolute one
@@ -403,12 +403,12 @@ def ife(buffers, func):
 
 # Finds the system architecture
 def getArch():
-    archcmd = subprocess.Popen(["perl " + os.getcwd() + "/getarch.pl"], stdout=subprocess.PIPE,
-                            universal_newlines=True)
+    archcmd = subprocess.Popen(["perl", os.getcwd() + "/getarch.pl"],
+                               stdout=subprocess.PIPE, universal_newlines=True)
     arch = archcmd.communicate()[0].strip()
-    arch.wait()
-    exitcode = arch.returncode
-    if exitcode > 0 or arch == "" or arch == None:
+    archcmd.wait()
+    exitcode = archcmd.returncode
+    if exitcode != 0 or arch == "" or arch == None:
         bits_64 = sys.maxsize > 2 ** 32
         if bits_64 is True:
             arch = "amd64"
