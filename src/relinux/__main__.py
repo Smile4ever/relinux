@@ -56,7 +56,8 @@ def main():
         tkname = "tkinter"
     Tkinter = __import__(tkname)
     import time
-    from relinux import gui, configutils, logger, aptutil, modloader, utilities
+    from relinux import gui, configutils, logger, aptutil, modloader, utilities, fsutil
+    config.Arch = fsutil.getArch()
     logger.normal()
     parser = ArgumentParser()
     parser.add_argument("-V", "--version", action="store_true",
