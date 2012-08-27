@@ -69,7 +69,6 @@ def copyFile(src, dst, tn, critical=False):
 def defineWriter(files, lists):
     d = open(files, "w")
     for i in lists.keys():
-        print(i)
         d.write("#define " + i + " " + lists[i] + "\n")
     d.close()
 
@@ -311,7 +310,7 @@ class genISO(threading.Thread):
         files = open(isotreel + "md5sum.txt", "w")
         for x in fsutil.listdir(isotreel, {"recurse": True}):
             i = re.sub(r"^ *" + isotreel + "/*", "./", x)
-            if i.find("isotree") < 0 and i.find("md5sum") < 0:
+            if i.find("isolinux") < 0 and i.find("md5sum") < 0:
                 logger.logVV(self.tn, _("Writing MD5 sum of") + " " + i)
                 fmd5 = fsutil.genFinalMD5(i, x)
                 if fmd5 != "" and fmd5 != None:
