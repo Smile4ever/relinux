@@ -219,7 +219,7 @@ def _chmod(c, mi):
 
 # Simple implementation of the chmod utility
 def chmod(files, mod, tn=""):
-    val = 0x00
+    '''val = 0x00
     c = 0
     logger.logVV(tn, utilities.utf8all(_("Calculating permissions of"), " ", files))
     # In case the user of this function used UGO instead of SUGO, we'll cover up for that
@@ -229,10 +229,15 @@ def chmod(files, mod, tn=""):
     for i in mod:
         # OR this option to val
         val = val | _chmod(c, int(i))
-        c = c + 1
+        c = c + 1'''
+    val = mod
+    if isinstance(mod, str):
+        val = int(mod, 8)
+    else:
+        mod = str(oct(mod))[2:]
     # Chmod it
     logger.logVV(tn, utilities.utf8all(_("Setting permissions of"), " ", files, " ", _("to"), " ", mod))
-    os.chmod(files, int(val))
+    os.chmod(files, val)
 
 
 # List the files in a directory
@@ -364,7 +369,7 @@ def copystat(stats, dst):
     if hasattr(os, "utime") and False:
         os.utime(dst, (stats.st_atime, stats.st_mtime))
     if hasattr(os, "chmod") and hasattr(stats, "st_mode"):
-        chmod(dst, oct(getMode(stats)))
+        chmod(dst, getMode(stats))
     if hasattr(os, "chflags") and hasattr(stats, "st_flags"):
         os.chflags(dst, stats.st_flags)
 

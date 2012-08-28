@@ -36,6 +36,7 @@ class genTempSysTree(threading.Thread):
                           tmpsys + "proc", [tmpsys + "tmp", 0o1777],
                           tmpsys + "sys", tmpsys + "mnt",
                           tmpsys + "media/cdrom", tmpsys + "var", tmpsys + "home"], self.tn)
+        fsutil.chmod(tmpsys + "tmp", 0o1777, self.tn)
 tmpsystree["thread"] = genTempSysTree()
 
 
@@ -306,6 +307,10 @@ class CasperConfEditor(threading.Thread):
                                             "BUILD_SYSTEM": buildsys,
                                             "FLAVOUR": configutils.getValue(configs[configutils.flavour]),
                                             "UNIONFS": unionfs})
+        # Make sure the casper scripts work
+        cbs = "/usr/share/initramfs-tools/scripts/casper-bottom/"
+        for i in fsutil.listdir(cbs):
+            fsutil.chmod(i, 0o755, self.tn)
         logger.logV(self.tn, _("Editing lsb-release"))
         self.varEditor(tmpsys + "etc/lsb-release", {
                                     "DISTRIB_ID": configutils.getValue(configs[configutils.sysname]),
