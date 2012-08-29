@@ -234,7 +234,8 @@ def chmod(files, mod, tn=""):
     if isinstance(mod, str):
         val = int(mod, 8)
     else:
-        mod = str(oct(mod))[2:]
+        mod_ = str(oct(mod))[1:]
+        mod = mod_
     # Chmod it
     logger.logVV(tn, utilities.utf8all(_("Setting permissions of"), " ", files, " ", _("to"), " ", mod))
     os.chmod(files, val)
