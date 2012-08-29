@@ -203,18 +203,18 @@ class genPakManifest(threading.Thread):
 pakmanifest["thread"] = genPakManifest()
 
 
-# Generate the ramdisk
-genramdisk = {"deps": [genisotree], "tn": "RAMDisk"}
-class genRAMDisk(threading.Thread):
+# Generate the RAMFS
+genramfs = {"deps": [genisotree], "tn": "RAMFS"}
+class genRAMFS(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
-        self.tn = logger.genTN(genramdisk["tn"])
+        self.tn = logger.genTN(genramfs["tn"])
 
     def run(self):
         logger.logV(self.tn, _("Generating ramdisk"))
         os.system("mkinitramfs -o " + isotreel + "casper/initrd.gz " + 
                   configutils.getKernel(configutils.getValue(configs[configutils.kernel])))
-genramdisk["thread"] = genRAMDisk()
+genramfs["thread"] = genRAMFS()
 
 
 # Copy the kernel
