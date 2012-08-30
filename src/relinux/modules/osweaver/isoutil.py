@@ -286,7 +286,7 @@ usbcomp["thread"] = USBComp()
 
 
 from relinux.modules.osweaver import squashfs
-threads1 = [genisotree, copypreseed, copymemtest, copysyslinux, diskdefines, pakmanifest, genramdisk,
+threads1 = [genisotree, copypreseed, copymemtest, copysyslinux, diskdefines, pakmanifest, genramfs,
             copykernel, genwubi, usbcomp]
 githreads = threads1
 githreads.extend(tempsys.threads)
