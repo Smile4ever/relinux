@@ -211,7 +211,7 @@ class genRAMFS(threading.Thread):
         self.tn = logger.genTN(genramfs["tn"])
 
     def run(self):
-        logger.logV(self.tn, _("Generating ramdisk"))
+        logger.logV(self.tn, _("Generating RAMFS"))
         os.system("mkinitramfs -o " + isotreel + "casper/initrd.gz " + 
                   configutils.getKernel(configutils.getValue(configs[configutils.kernel])))
 genramfs["thread"] = genRAMFS()
