@@ -956,7 +956,7 @@ class GUI:
         self.wizard.master.minsize(400, 350)
         self.wizard.master.maxsize(800, 700)
         self.page1 = Notebook(self.wizard.page(1))
-        self.page0 = Label(self.wizard.page(0), text=_("Welcome to relinux 0.4!\nClick on next to get started"))
+        self.page0 = Label(self.wizard.page(0), text=_("Welcome to relinux 0.4!\nClick next to get started"))
         self.wizard.add_page_body(0, _("Welcome"), self.page0)
         self.wizard.add_page_body(1, _("Configure"), self.page1)
         self.wizard.pack(fill="both", expand=True)

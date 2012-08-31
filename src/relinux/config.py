@@ -55,7 +55,7 @@ unicode = True
 language = "en"
 
 # Threading
-ThreadRPS = 10
+ThreadRPS = 1
 ThreadStop = False
 
 # Modules
