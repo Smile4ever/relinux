@@ -12,7 +12,7 @@ from relinux import logger, config, fsutil, configutils
 import shutil
 import os
 import re
-import threading
+import multiprocessing
 
 
 threadname = "ISOTree"
@@ -75,9 +75,9 @@ def defineWriter(files, lists):
 
 # Generate the ISO tree
 genisotree = {"deps": [], "tn": "ISOTree"}
-class genISOTree(threading.Thread):
+class genISOTree(multiprocessing.Process):
     def __init__(self):
-        threading.Thread.__init__(self)
+        multiprocessing.Process.__init__(self)
         self.tn = logger.genTN(genisotree["tn"])
 
     def run(self):
@@ -91,9 +91,9 @@ genisotree["thread"] = genISOTree()
 
 # Copy preseed to the ISO tree
 copypreseed = {"deps": [genisotree], "tn": "Preseed"}
-class copyPreseed(threading.Thread):
+class copyPreseed(multiprocessing.Process):
     def __init__(self):
-        threading.Thread.__init__(self)
+        multiprocessing.Process.__init__(self)
         self.tn = logger.genTN(copypreseed["tn"])
 
     def run(self):
@@ -106,9 +106,9 @@ copypreseed["thread"] = copyPreseed()
 
 # Copy memtest to the ISO tree
 copymemtest = {"deps": [genisotree], "tn": "Memtest"}
-class copyMemtest(threading.Thread):
+class copyMemtest(multiprocessing.Process):
     def __init__(self):
-        threading.Thread.__init__(self)
+        multiprocessing.Process.__init__(self)
         self.tn = logger.genTN(copymemtest["tn"])
 
     def run(self):
@@ -120,9 +120,9 @@ copymemtest["thread"] = copyMemtest()
 
 # Copy Syslinux to the ISO tree
 copysyslinux = {"deps": [genisotree], "tn": "SysLinux"}
-class copySysLinux(threading.Thread):
+class copySysLinux(multiprocessing.Process):
     def __init__(self):
-        threading.Thread.__init__(self)
+        multiprocessing.Process.__init__(self)
         self.tn = logger.genTN(copysyslinux["tn"])
 
     def run(self):
@@ -147,9 +147,9 @@ copysyslinux["thread"] = copySysLinux()
 
 # Write disk definitions
 diskdefines = {"deps": [genisotree], "tn": "DiskDefines"}
-class diskDefines(threading.Thread):
+class diskDefines(multiprocessing.Process):
     def __init__(self):
-        threading.Thread.__init__(self)
+        multiprocessing.Process.__init__(self)
         self.tn = logger.genTN(diskdefines["tn"])
 
     def run(self):
@@ -171,9 +171,9 @@ diskdefines["thread"] = diskDefines()
 
 # Generate package manifests
 pakmanifest = {"deps": [genisotree], "tn": "Manifest"}
-class genPakManifest(threading.Thread):
+class genPakManifest(multiprocessing.Process):
     def __init__(self):
-        threading.Thread.__init__(self)
+        multiprocessing.Process.__init__(self)
         self.tn = logger.genTN(pakmanifest["tn"])
 
     def run(self):
@@ -205,9 +205,9 @@ pakmanifest["thread"] = genPakManifest()
 
 # Generate the RAMFS
 genramfs = {"deps": [genisotree], "tn": "RAMFS"}
-class genRAMFS(threading.Thread):
+class genRAMFS(multiprocessing.Process):
     def __init__(self):
-        threading.Thread.__init__(self)
+        multiprocessing.Process.__init__(self)
         self.tn = logger.genTN(genramfs["tn"])
 
     def run(self):
@@ -219,9 +219,9 @@ genramfs["thread"] = genRAMFS()
 
 # Copy the kernel
 copykernel = {"deps": [genisotree], "tn": "Kernel"}
-class copyKernel(threading.Thread):
+class copyKernel(multiprocessing.Process):
     def __init__(self):
-        threading.Thread.__init__(self)
+        multiprocessing.Process.__init__(self)
         self.tn = logger.genTN(copykernel["tn"])
 
     def run(self):
@@ -233,9 +233,9 @@ copykernel["thread"] = copyKernel()
 
 # Generate WUBI
 genwubi = {"deps": [genisotree], "tn": "WUBI"}
-class genWUBI(threading.Thread):
+class genWUBI(multiprocessing.Process):
     def __init__(self):
-        threading.Thread.__init__(self)
+        multiprocessing.Process.__init__(self)
         self.tn = logger.genTN(genwubi["tn"])
 
     def run(self):
@@ -257,9 +257,9 @@ genwubi["thread"] = genWUBI()
 
 # Make the LiveCD compatible with USB burners
 usbcomp = {"deps": [genisotree], "tn": "USB"}
-class USBComp(threading.Thread):
+class USBComp(multiprocessing.Process):
     def __init__(self):
-        threading.Thread.__init__(self)
+        multiprocessing.Process.__init__(self)
         self.tn = logger.genTN(usbcomp["tn"])
 
     def run(self):
@@ -294,10 +294,10 @@ githreads.extend(squashfs.threads)
 
 
 # Generates the ISO
-geniso = {"deps": githreads, "tn": "ISO"}
-class genISO(threading.Thread):
+geniso = {"deps": githreads, "tn": "ISO", "threadspan": -1}
+class genISO(multiprocessing.Process):
     def __init__(self):
-        threading.Thread.__init__(self)
+        multiprocessing.Process.__init__(self)
         self.tn = logger.genTN(geniso["tn"])
 
     def run(self):

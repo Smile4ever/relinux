@@ -8,7 +8,7 @@ from relinux import logger, fsutil, configutils, config
 from relinux.modules.osweaver import tempsys
 from relinux.modules.osweaver.isoutil import genisotree, genramfs
 import os
-import threading
+import multiprocessing
 
 threadname = "SquashFS"
 tn = logger.genTN(threadname)
@@ -44,10 +44,10 @@ tmpthreads = []
 tmpthreads.extend(tempsys.threads)
 tmpthreads.append(genisotree)
 tmpthreads.append(genramfs)
-gensfs = {"deps": tmpthreads, "tn": threadname}
-class genSFS(threading.Thread):
+gensfs = {"deps": tmpthreads, "tn": threadname, "threadspan": -1}
+class genSFS(multiprocessing.Process):
     def __init__(self):
-        threading.Thread.__init__(self)
+        multiprocessing.Process.__init__(self)
 
     def run(self):
         logger.logI(tn, _("Generating compressed filesystem"))

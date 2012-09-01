@@ -9,7 +9,7 @@ from relinux.modules.osweaver import aptcache
 import os
 import shutil
 import re
-import threading
+import multiprocessing
 import copy
 
 tmpsys = config.TempSys
@@ -25,9 +25,9 @@ configs = config.Configuration["OSWeaver"]
 
 # Generate the tree for the tempsys
 tmpsystree = {"deps": [], "tn": "TempSysTree"}
-class genTempSysTree(threading.Thread):
+class genTempSysTree(multiprocessing.Process):
     def __init__(self):
-        threading.Thread.__init__(self)
+        multiprocessing.Process.__init__(self)
         self.tn = logger.genTN(tmpsystree["tn"])
 
     def run(self):
@@ -42,9 +42,9 @@ tmpsystree["thread"] = genTempSysTree()
 
 # Copy the contents of /etc/ and /var/ to the tempsys
 cpetcvar = {"deps": [tmpsystree], "tn": "EtcVar"}
-class copyEtcVar(threading.Thread):
+class copyEtcVar(multiprocessing.Process):
     def __init__(self):
-        threading.Thread.__init__(self)
+        multiprocessing.Process.__init__(self)
         self.tn = logger.genTN(cpetcvar["tn"])
 
     def run(self):
@@ -57,9 +57,9 @@ cpetcvar["thread"] = copyEtcVar()
 
 # Remove configuration files that can break the installed/live system
 remconfig = {"deps": [cpetcvar], "tn": "RemConfig"}
-class remConfig(threading.Thread):
+class remConfig(multiprocessing.Process):
     def __init__(self):
-        threading.Thread.__init__(self)
+        multiprocessing.Process.__init__(self)
         self.tn = logger.genTN(remconfig["tn"])
 
     def run(self):
@@ -82,9 +82,9 @@ remconfig["thread"] = remConfig()
 
 # Remove cached lists
 remcachedlists = {"deps": [cpetcvar], "tn": "RemCachedLists"}
-class remCachedLists(threading.Thread):
+class remCachedLists(multiprocessing.Process):
     def __init__(self):
-        threading.Thread.__init__(self)
+        multiprocessing.Process.__init__(self)
         self.tn = logger.genTN(remcachedlists["tn"])
 
     def run(self):
@@ -97,9 +97,9 @@ remcachedlists["thread"] = remCachedLists()
 
 # Remove temporary files in /var
 remtempvar = {"deps": [cpetcvar], "tn": "RemTempVar"}
-class remTempVar(threading.Thread):
+class remTempVar(multiprocessing.Process):
     def __init__(self):
-        threading.Thread.__init__(self)
+        multiprocessing.Process.__init__(self)
         self.tn = logger.genTN(remtempvar["tn"])
 
     def run(self):
@@ -115,9 +115,9 @@ remtempvar["thread"] = remTempVar()
 
 # Generate logs in /var/log
 genvarlogs = {"deps": [cpetcvar], "tn": "GenVarLogs"}
-class genVarLogs(threading.Thread):
+class genVarLogs(multiprocessing.Process):
     def __init__(self):
-        threading.Thread.__init__(self)
+        multiprocessing.Process.__init__(self)
         self.tn = logger.genTN(genvarlogs["tn"])
 
     def run(self):
@@ -133,9 +133,9 @@ genvarlogs["thread"] = genVarLogs()
 
 # Edit passwd and shadow files to remove users
 remusers = {"deps": [cpetcvar], "tn": "RemUsers"}
-class remUsers(threading.Thread):
+class remUsers(multiprocessing.Process):
     def __init__(self):
-        threading.Thread.__init__(self)
+        multiprocessing.Process.__init__(self)
         self.tn = logger.genTN(remusers["tn"])
 
     # Helper function for changing the /etc/group file
@@ -249,9 +249,9 @@ remusers["thread"] = remUsers()
 
 # Edits casper.conf
 casperconf = {"deps": [cpetcvar], "tn": "casper.conf"}
-class CasperConfEditor(threading.Thread):
+class CasperConfEditor(multiprocessing.Process):
     def __init__(self):
-        threading.Thread.__init__(self)
+        multiprocessing.Process.__init__(self)
         self.tn = logger.genTN(casperconf["tn"])
 
     # Helper function
@@ -323,9 +323,9 @@ casperconf["thread"] = CasperConfEditor()
 
 # Sets up Ubiquity
 ubiquitysetup = {"deps": [cpetcvar], "tn": "Ubiquity"}
-class UbiquitySetup(threading.Thread):
+class UbiquitySetup(multiprocessing.Process):
     def __init__(self):
-        threading.Thread.__init__(self)
+        multiprocessing.Process.__init__(self)
         self.tn = logger.genTN(ubiquitysetup["tn"])
 
     def run(self):
@@ -351,9 +351,9 @@ class UbiquitySetup(threading.Thread):
 ubiquitysetup["thread"] = UbiquitySetup()
 
 
-class TempSys(threading.Thread):
+class TempSys(multiprocessing.Process):
     def __init__(self):
-        threading.Thread.__init__(self)
+        multiprocessing.Process.__init__(self)
         self.deps = [tmpsystree]
         self.threadname = "TempSys"
         self.tn = logger.genTN(self.threadname)

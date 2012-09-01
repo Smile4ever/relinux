@@ -17,6 +17,10 @@ def findRunnableThreads(threadids, threadsdone, threadsrunning, threads):
     for i in threadids:
         if not i in threadsdone and current < cpumax:
             thread = getThread(i, threads)
+            if thread["threadspan"] < 0 and current > 0:
+                continue
+            elif thread["threadspan"] > (cpumax - current):
+                continue
             deps = 0
             depsl = len(thread["deps"])
             for x in thread["deps"]:
@@ -31,7 +35,7 @@ def findRunnableThreads(threadids, threadsdone, threadsrunning, threads):
                         if not x in threadsdone:
                             ls.append(str(getThread(x, threads)["tn"]) + " " + str(x))
                     print("ISO " + str(i) + " " + str(ls))
-            current += 1
+            current += thread["threadspan"]
         if current >= cpumax:
             break
     return returnme
@@ -40,7 +44,7 @@ def findRunnableThreads(threadids, threadsdone, threadsrunning, threads):
 # Run a thread
 def runThread(threadid, threadsdone, threadsrunning, threads):
     thread = getThread(threadid, threads)
-    if not thread["thread"].isAlive() and not threadid in threadsdone and not threadid in threadsrunning:
+    if not thread["thread"].is_alive() and not threadid in threadsdone and not threadid in threadsrunning:
         threadsrunning.append(threadid)
         logger.logV(tn, _("Starting") + " " + getThread(threadid, threads)["tn"] + "...")
         thread["thread"].start()
@@ -49,7 +53,7 @@ def runThread(threadid, threadsdone, threadsrunning, threads):
 # Check if a thread is alive
 def checkThread(threadid, threadsdone, threadsrunning, threads):
     if threadid in threadsrunning:
-        if not getThread(threadid, threads)["thread"].isAlive():
+        if not getThread(threadid, threads)["thread"].is_alive():
             threadsrunning.remove(threadid)
             threadsdone.append(threadid)
             logger.logV(tn, getThread(threadid, threads)["tn"] + " " +
@@ -70,6 +74,9 @@ def threadLoop(threads1):
     for i in threads1:
         if not i in threads:
             threads.append(i)
+    for i in range(len(threads)):
+        if not hasattr(threads[i], "threadspan"):
+            threads[i]["threadspan"] = 1
     for i in range(len(threads)):
         threadids.append(i)
     for i in range(len(threads)):
