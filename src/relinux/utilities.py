@@ -17,12 +17,15 @@ def is_ascii(s):
 
 # Convert a string to UTF-8
 def utf8(string):
-    if config.python3:
-        return string
-    if isinstance(string, unicode):
-        return string.encode("utf-8")
+    if not config.python3:
+        if isinstance(string, unicode):
+            return string.encode("utf-8")
+    if not isinstance(string, str):
+        string_ = str(string)
+        string = string_
     if not is_ascii(string):
-        # This will simply make sure that it is under the utf-8 format
+        if config.python3:
+            return string
         return string.decode("utf-8").encode("utf-8")
     return string
 

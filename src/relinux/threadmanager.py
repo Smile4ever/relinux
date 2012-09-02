@@ -16,7 +16,7 @@ def findRunnableThreads(threadids, threadsdone, threadsrunning, threads):
     current = 0
     for i in threadids:
         thread = getThread(i, threads)
-        print(utilities.join(utilities.runall(str, thread["threadspan"], " ", current), ""))
+        print(utilities.utf8all(str, thread["threadspan"], " ", current))
         if (not i in threadsdone and current < cpumax and not
             ((thread["threadspan"] < 0 and current > 0) or
              (thread["threadspan"] > (cpumax - current)))):
@@ -34,7 +34,10 @@ def findRunnableThreads(threadids, threadsdone, threadsrunning, threads):
                         if not x in threadsdone:
                             ls.append(str(getThread(x, threads)["tn"]) + " " + str(x))
                     print("ISO " + str(i) + " " + str(ls))
-            current += thread["threadspan"]
+            if thread["threadspan"] < 0:
+                current = cpumax
+            else:
+                current += thread["threadspan"]
         if current >= cpumax:
             break
     return returnme
