@@ -3,7 +3,7 @@ Thread Managing Class
 @author: Joel Leclerc (MiJyn) <lkjoel@ubuntu.com>
 '''
 
-from relinux import config, fsutil, logger
+from relinux import config, fsutil, logger, utilities
 import time
 
 tn = logger.genTN("TheadManager")
@@ -15,12 +15,11 @@ def findRunnableThreads(threadids, threadsdone, threadsrunning, threads):
     cpumax = fsutil.getCPUCount()
     current = 0
     for i in threadids:
-        if not i in threadsdone and current < cpumax:
-            thread = getThread(i, threads)
-            if thread["threadspan"] < 0 and current > 0:
-                continue
-            elif thread["threadspan"] > (cpumax - current):
-                continue
+        thread = getThread(i, threads)
+        print(utilities.join(utilities.runall(str, thread["threadspan"], " ", current)))
+        if (not i in threadsdone and current < cpumax and not
+            ((thread["threadspan"] < 0 and current > 0) or
+             (thread["threadspan"] > (cpumax - current)))):
             deps = 0
             depsl = len(thread["deps"])
             for x in thread["deps"]:
