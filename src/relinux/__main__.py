@@ -27,6 +27,10 @@ captop = 0
 minis = 0.0
 
 def main():
+    import os
+    if os.getuid() != 0:
+        print(_("You have to run relinux as root!"))
+        exitprog(1)
     def parsePyHex(string1):
         string = "%x" % string1
         count = 0

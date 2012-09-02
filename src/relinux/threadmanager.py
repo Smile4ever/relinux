@@ -33,7 +33,7 @@ def findRunnableThreads(threadids, threadsdone, threadsrunning, threads):
                     current = cpumax
                 else:
                     current += thread["threadspan"]
-            elif False or True:
+            elif False:
                 if thread["tn"] == "ISO" or True:
                     ls = []
                     for x in thread["deps"]:
