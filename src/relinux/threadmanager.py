@@ -74,7 +74,7 @@ def threadLoop(threads1):
         if not i in threads:
             threads.append(i)
     for i in range(len(threads)):
-        if not hasattr(threads[i], "threadspan"):
+        if not "threadspan" in threads[i]:
             threads[i]["threadspan"] = 1
     for i in range(len(threads)):
         threadids.append(i)
