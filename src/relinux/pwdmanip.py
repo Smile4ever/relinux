@@ -1,6 +1,6 @@
 '''
 Password and group file manipulation
-@author: MiJyn
+@author: Joel Leclerc (MiJyn) <lkjoel@ubuntu.com>
 '''
 
 from relinux import configutils, utilities

@@ -5,6 +5,8 @@ Thread Managing Class
 
 from relinux import config, fsutil, logger, utilities
 import time
+import threading
+
 
 tn = logger.genTN("TheadManager")
 
@@ -69,6 +71,7 @@ def getThread(threadid, threads):
 
 # Thread loop
 def threadLoop(threads1):
+    # Initialization
     threadsdone = []
     threadsrunning = []
     threadids = []
@@ -88,14 +91,19 @@ def threadLoop(threads1):
                     if threads[i]["deps"][x] == threads[y]:
                         threads[i]["deps"][x] = y
                         break
-    while config.ThreadStop is False:
-        # Clear old threads
-        for x in threadsrunning:
-            checkThread(x, threadsdone, threadsrunning, threads)
-        # End if all threads are done
-        if len(threadsdone) >= len(threads):
-            break
-        # Run runnable threads
-        for x in findRunnableThreads(threadids, threadsdone, threadsrunning, threads):
-            runThread(x, threadsdone, threadsrunning, threads)
-        time.sleep(float(1.0 / config.ThreadRPS))
+    # Actual loop
+    def _ActualLoop():
+        global threads, threadsdone, threadsrunning, threadids
+        while config.ThreadStop is False:
+            # Clear old threads
+            for x in threadsrunning:
+                checkThread(x, threadsdone, threadsrunning, threads)
+            # End if all threads are done
+            if len(threadsdone) >= len(threads):
+                break
+            # Run runnable threads
+            for x in findRunnableThreads(threadids, threadsdone, threadsrunning, threads):
+                runThread(x, threadsdone, threadsrunning, threads)
+            time.sleep(float(1.0 / config.ThreadRPS))
+    t = threading.Thread(target=_ActualLoop)
+    t.start()
