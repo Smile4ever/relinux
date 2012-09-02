@@ -93,7 +93,7 @@ def threadLoop(threads1):
                         break
     # Actual loop
     def _ActualLoop(threads, threadsdone, threadsrunning, threadids):
-        global threads, threadsdone, threadsrunning, threadids
+        #global threads, threadsdone, threadsrunning, threadids
         while config.ThreadStop is False:
             # Clear old threads
             for x in threadsrunning:
