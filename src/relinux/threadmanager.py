@@ -92,7 +92,7 @@ def threadLoop(threads1):
                         threads[i]["deps"][x] = y
                         break
     # Actual loop
-    def _ActualLoop():
+    def _ActualLoop(threads, threadsdone, threadsrunning, threadids):
         global threads, threadsdone, threadsrunning, threadids
         while config.ThreadStop is False:
             # Clear old threads
@@ -105,5 +105,5 @@ def threadLoop(threads1):
             for x in findRunnableThreads(threadids, threadsdone, threadsrunning, threads):
                 runThread(x, threadsdone, threadsrunning, threads)
             time.sleep(float(1.0 / config.ThreadRPS))
-    t = threading.Thread(target=_ActualLoop)
+    t = threading.Thread(target=_ActualLoop, args=(threads, threadsdone, threadsrunning, threadids,))
     t.start()
