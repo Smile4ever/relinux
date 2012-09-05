@@ -904,7 +904,7 @@ class Progressbar(Tkinter.Canvas):
 
 class Splash(Tkinter.Toplevel):
     def __init__(self, master, func):
-        Tkinter.Toplevel.__init__(self, master, relief=Tkinter.SOLID, borderwidth=1)
+        Tkinter.Toplevel.__init__(self, master, relief=Tkinter.SOLID, highlightthickness=1, highlightcolor=fg)
         self.root = master
         self.root.withdraw()
         self.overrideredirect(Tkinter.TRUE)

@@ -13,7 +13,7 @@ tn = logger.genTN("TheadManager")
 
 
 # Finds threads that can currently run (and have not already run)
-def findRunnableThreads(threadids, threadsdone, threadsrunning, threads):
+def findRunnableThreads(threadids, threadsdone, threadsrunning, threads, **options):
     returnme = []
     cpumax = fsutil.getCPUCount()
     current = 0
@@ -25,9 +25,12 @@ def findRunnableThreads(threadids, threadsdone, threadsrunning, threads):
              (thread["threadspan"] > (cpumax - current)))):
             deps = 0
             depsl = len(thread["deps"])
-            for x in thread["deps"]:
-                if x in threadsdone or x == i:
-                    deps += 1
+            if "deps" in options and options["deps"]:
+                deps = depsl
+            else:
+                for x in thread["deps"]:
+                    if x in threadsdone or x == i:
+                        deps += 1
             if deps >= depsl:
                 returnme.append(i)
                 if thread["threadspan"] < 0:
@@ -71,7 +74,7 @@ def getThread(threadid, threads):
 
 
 # Thread loop
-def threadLoop(threads1_):
+def threadLoop(threads1_, **options):
     threads1 = copy.copy(threads1_)
     # Initialization
     threadsdone = []
@@ -111,7 +114,7 @@ def threadLoop(threads1_):
             if len(threadsdone) >= len(threads):
                 break
             # Run runnable threads
-            for x in findRunnableThreads(threadids, threadsdone, threadsrunning, threads):
+            for x in findRunnableThreads(threadids, threadsdone, threadsrunning, threads, **options):
                 runThread(x, threadsdone, threadsrunning, threads)
             time.sleep(float(1.0 / config.ThreadRPS))
     t = threading.Thread(target=_ActualLoop, args=(threads, threadsdone, threadsrunning, threadids,))
