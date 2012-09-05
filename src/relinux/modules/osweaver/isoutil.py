@@ -312,7 +312,7 @@ class genISO(multiprocessing.Process):
         files = open(isotreel + "md5sum.txt", "w")
         for x in fsutil.listdir(isotreel, {"recurse": True}):
             i = re.sub(r"^ *" + isotreel + "/*", "./", x)
-            if i.find("isolinux") < 0 and i.find("md5sum") < 0:
+            if not "isolinux" in i and not "md5sum" in i:
                 logger.logVV(self.tn, _("Writing MD5 sum of") + " " + i)
                 fmd5 = fsutil.genFinalMD5(i, x)
                 if fmd5 != "" and fmd5 != None:

@@ -124,7 +124,10 @@ def run(adict):
                 threads[i]["enabled"] = False
             else:
                 threads[i]["enabled"] = True
-        runThreads(threads, deps=not usedeps.value.get())
+            tfdeps = False
+            if usedeps.value.get() > 0:
+                tfdeps = True
+        runThreads(threads, deps=tfdeps)
         # lambda: runThreads(threads)
     page.button = gui.Button(page.frame, text="Start!", command=startThreads)
     page.button.pack()
