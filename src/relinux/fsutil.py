@@ -104,7 +104,7 @@ def makedir(dirs1, tn=""):
     if isinstance(dirs1, list):
         dirs = dirs1[0]
         mode = dirs1[1]
-    if not os.path.exists(dirs) and not os.path.isdir(dirs):
+    if not os.path.exists(dirs):
         logger.logVV(tn, _("Creating directory") + " " + str(dirs))
         os.makedirs(dirs, mode)
 
