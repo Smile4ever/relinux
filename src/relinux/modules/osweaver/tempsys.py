@@ -243,7 +243,11 @@ class remUsers(multiprocessing.Process):
         fsutil.ife(buffers, lambda line: self._parseShadow(line, usrs))
         logger.logVV(self.tn, _("Removing users in /etc/gshadow"))
         fsutil.ife(gbuffers, lambda line: self._parseGroup(line, usrs))
-        logger.logI(self.tn, _("Applying permissions to casper scripts"))
+        logger.logV(self.tn, _("Creating backups"))
+        shutil.copy2(tmpsys + "etc/passwd", tmpsys + "etc/passwd-")
+        shutil.copy2(tmpsys + "etc/group", tmpsys + "etc/group-")
+        shutil.copy2(tmpsys + "etc/shadow", tmpsys + "etc/shadow-")
+        shutil.copy2(tmpsys + "etc/gshadow", tmpsys + "etc/gshadow-")
 remusers["thread"] = remUsers
 
 
@@ -307,6 +311,7 @@ class CasperConfEditor(multiprocessing.Process):
                                             "BUILD_SYSTEM": buildsys,
                                             "FLAVOUR": configutils.getValue(configs[configutils.flavour]),
                                             "UNIONFS": unionfs})
+        logger.logI(self.tn, _("Applying permissions to casper scripts"))
         # Make sure the casper scripts work
         cbs = "/usr/share/initramfs-tools/scripts/casper-bottom/"
         for i in fsutil.listdir(cbs):
