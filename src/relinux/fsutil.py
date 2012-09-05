@@ -292,7 +292,6 @@ def fscopy(src, dst, excludes1, tn=""):
         fullpath = utilities.utf8(file__)
         #print(dst + " " + file__[len(src):])
         temp = re.sub(r"^/+", "", file__[len(src):])
-        print(os.path.join(dst, temp))
         newpath = utilities.utf8(os.path.join(dst, temp))
         dfile = delink(fullpath)
         if dfile is not None:
