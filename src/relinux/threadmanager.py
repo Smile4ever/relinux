@@ -6,6 +6,7 @@ Thread Managing Class
 from relinux import config, fsutil, logger, utilities
 import time
 import threading
+import copy
 
 
 tn = logger.genTN("TheadManager")
@@ -78,7 +79,7 @@ def threadLoop(threads1):
     threads = []
     for i in threads1:
         if not i in threads:
-            threads.append(i)
+            threads.append(copy.copy(i))
     for i in range(len(threads)):
         if not "threadspan" in threads[i]:
             threads[i]["threadspan"] = 1
