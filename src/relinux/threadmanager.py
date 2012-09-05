@@ -85,6 +85,10 @@ def threadLoop(threads1):
         if not "enabled" in threads[i]:
             threads[i]["enabled"] = True
     for i in range(len(threads)):
+        temp_ = threads[i]["thread"]
+        temp = temp_()
+        threads[i]["thread"] = temp
+    for i in range(len(threads)):
         threadids.append(i)
     for i in range(len(threads)):
         for x in range(len(threads[i]["deps"])):

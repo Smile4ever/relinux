@@ -86,7 +86,7 @@ class genISOTree(multiprocessing.Process):
         print(isotreel)
         fsutil.maketree([isotreel + "casper", isotreel + "preseed",
                           isotreel + "isolinux", isotreel + ".disk"])
-genisotree["thread"] = genISOTree()
+genisotree["thread"] = genISOTree
 
 
 # Copy preseed to the ISO tree
@@ -101,7 +101,7 @@ class copyPreseed(multiprocessing.Process):
         for i in fsutil.listdir(configutils.getValue(configs[configutils.preseed])):
             logger.logVV(self.tn, _("Copying") + " " + i + " " + _("to the ISO tree"))
             copyFile(i, isotreel + "preseed/", self.tn)
-copypreseed["thread"] = copyPreseed()
+copypreseed["thread"] = copyPreseed
 
 
 # Copy memtest to the ISO tree
@@ -115,7 +115,7 @@ class copyMemtest(multiprocessing.Process):
         if configutils.parseBoolean(configutils.getValue(configs[configutils.memtest])):
             logger.logV(self.tn, _("Copying memtest to the ISO tree"))
             copyFile("/boot/memtest86+.bin", isotreel + "isolinux/memtest", self.tn)
-copymemtest["thread"] = copyMemtest()
+copymemtest["thread"] = copyMemtest
 
 
 # Copy Syslinux to the ISO tree
@@ -142,7 +142,7 @@ class copySysLinux(multiprocessing.Process):
                   ["TIMEOUT", configutils.getValue(configs[configutils.timeout])]]:
             fsutil.ife(fsutil.ife_getbuffers(isotreel + "isolinux/isolinux.cfg"),
                        lambda line: [True, re.sub("\$" + i[0], i[1], line)])
-copysyslinux["thread"] = copySysLinux()
+copysyslinux["thread"] = copySysLinux
 
 
 # Write disk definitions
@@ -166,7 +166,7 @@ class diskDefines(multiprocessing.Process):
                                                       })
         # For some reason casper needs (or used to need) the diskdefines in its own directory
         copyFile(isotreel + "README.diskdefines", isotreel + "casper/README.diskdefines", self.tn)
-diskdefines["thread"] = diskDefines()
+diskdefines["thread"] = diskDefines
 
 
 # Generate package manifests
@@ -200,7 +200,7 @@ class genPakManifest(multiprocessing.Process):
         logger.logVV(self.tn, _("Generating filesystem.manifest-desktop"))
         copyFile(isotreel + "casper/filesystem.manifest",
                  isotreel + "casper/filesystem.manifest-desktop", self.tn)
-pakmanifest["thread"] = genPakManifest()
+pakmanifest["thread"] = genPakManifest
 
 
 # Generate the RAMFS
@@ -216,7 +216,7 @@ class genRAMFS(multiprocessing.Process):
                   configutils.getKernel(configutils.getValue(configs[configutils.kernel])))'''
         copyFile("/boot/initrd.img-" + configutils.getKernel(configutils.getValue(configs[configutils.kernel])),
                  isotreel + "casper/initrd.gz", self.tn)
-genramfs["thread"] = genRAMFS()
+genramfs["thread"] = genRAMFS
 
 
 # Copy the kernel
@@ -230,7 +230,7 @@ class copyKernel(multiprocessing.Process):
         logger.logI(self.tn, _("Copying the kernel to the ISO tree"))
         copyFile("/boot/vmlinuz-" + configutils.getKernel(configutils.getValue(configs[configutils.kernel])),
                  isotreel + "casper/vmlinuz", self.tn)
-copykernel["thread"] = copyKernel()
+copykernel["thread"] = copyKernel
 
 
 # Generate WUBI
@@ -254,7 +254,7 @@ class genWUBI(multiprocessing.Process):
             files.write("PictureFiles=false\n")
             files.write("VideoFiles=false\n")
             files.close()
-genwubi["thread"] = genWUBI()
+genwubi["thread"] = genWUBI
 
 
 # Make the LiveCD compatible with USB burners
@@ -284,7 +284,7 @@ class USBComp(multiprocessing.Process):
         files = open(isotreel + ".disk/cd_type", "w")
         files.write("full_cd/single\n")
         files.close()
-usbcomp["thread"] = USBComp()
+usbcomp["thread"] = USBComp
 
 
 from relinux.modules.osweaver import squashfs
@@ -330,7 +330,7 @@ class genISO(multiprocessing.Process):
         files.write(fsutil.genFinalMD5("./" + configutils.getValue(configs[configutils.isolocation]),
                                        location))
         files.close()
-geniso["thread"] = genISO()
+geniso["thread"] = genISO
 
 threads = threads1
 threads.append(geniso)
