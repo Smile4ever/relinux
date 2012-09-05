@@ -212,8 +212,10 @@ class genRAMFS(multiprocessing.Process):
 
     def run(self):
         logger.logV(self.tn, _("Generating RAMFS"))
-        os.system("mkinitramfs -o " + isotreel + "casper/initrd.gz " + 
-                  configutils.getKernel(configutils.getValue(configs[configutils.kernel])))
+        '''os.system("mkinitramfs -o " + isotreel + "casper/initrd.gz " + 
+                  configutils.getKernel(configutils.getValue(configs[configutils.kernel])))'''
+        copyFile("/boot/initrd.img-" + configutils.getKernel(configutils.getValue(configs[configutils.kernel])),
+                 isotreel + "casper/initrd.gz", self.tn)
 genramfs["thread"] = genRAMFS()
 
 

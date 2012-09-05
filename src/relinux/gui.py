@@ -23,6 +23,9 @@ from relinux.__main__ import exitprog
 threadname = "GUI"
 tn = logger.genTN(threadname)
 bg = "#383635"
+#bg = "#fff"
+#fg = "#000"
+fg = "#fff"
 lightbg = "#656260"
 lightbghover = "#807b79"
 lightbgclick = "#595655"
@@ -286,7 +289,7 @@ class Button(Tkinter.Canvas):
         self.commandvalid = False
         self.text = ""
         self.c_text = self.create_text(self.width / 2, self.height / 2, text=self.text,
-                                 font=self.font, fill="white")
+                                 font=self.font, fill=fg)
         normalch = _rgbtohex(normalc)
         self.c_left = self.create_line(0, 0, 0, self.height, fill=normalch)
         self.c_top = self.create_line(0, 0, self.width, 0, fill=normalch)
@@ -364,7 +367,7 @@ class Button(Tkinter.Canvas):
         self.setHeight(self.height)
         self.text = text
         self.coords(self.c_text, (self.width) / 2, (self.height) / 2)
-        self.itemconfig(self.c_text, text=self.text, font=self.font, fill="white")
+        self.itemconfig(self.c_text, text=self.text, font=self.font, fill=fg)
 
     def hoveringtrue(self, event):
         self.anim = 0.0
@@ -400,7 +403,7 @@ class Button(Tkinter.Label):
         bindclick = kw.pop("bindclick", True)
         bindunclick = kw.pop("bindunclick", True)
         self.mousedown = kw.pop("mousedown", None)
-        utilities.setDefault(kw, background=bg, foreground="white", borderwidth=0, pady=3, padx=8,
+        utilities.setDefault(kw, background=bg, foreground=fg, borderwidth=0, pady=3, padx=8,
                         highlightbackground=_rgbtohex(normalc), highlightthickness=1)
         Tkinter.Label.__init__(self, parent, *args, **kw)
         self.lastcolor = normalc
@@ -414,7 +417,7 @@ class Button(Tkinter.Label):
         if bindunclick:
             self.bind("<ButtonRelease-1>", self.onunclick)
     
-    def render(self, anims=True):
+    def render(self, anims1=True):
         if self.renderthread != None and self.renderthread.isAlive():
             self.renderthread.stop()
         color = normalc
@@ -422,13 +425,16 @@ class Button(Tkinter.Label):
             color = hoverc
         if self.clicking:
             color = clickc
-        if anims:
+        if anims1:
             self.renderthread = glowyFade(self._setHB, copy.copy(self.lastcolor), color)
             self.renderthread.start()
         else:
-            self._setHB(color)
+            self.renderthread = None
+            self._setHB(color, True)
 
-    def _setHB(self, value):
+    def _setHB(self, value, override1=False):
+        if self.renderthread == None and not override1:
+            return
         self.lastcolor = value
         self.config(highlightbackground=_rgbtohex(value))
 
@@ -448,7 +454,7 @@ class Button(Tkinter.Label):
     
     def onunclick(self, *args):
         self.clicking = False
-        self.render(True)
+        self.render()
         if self.command != None and self.hovering:
             self.command()
 
@@ -456,7 +462,7 @@ class Button(Tkinter.Label):
 # Temporary Entry Box
 class Entry(Tkinter.Entry):
     def __init__(self, parent, *args, **kw):
-        utilities.setDefault(kw, background=bg, foreground="white", selectbackground="white",
+        utilities.setDefault(kw, background=bg, foreground=fg, selectbackground=fg,
                     selectforeground=bg, borderwidth=0, highlightbackground=_rgbtohex(normalc),
                     highlightcolor=_rgbtohex(clickc))
         self.lastcolor = normalc
@@ -487,7 +493,7 @@ class Entry(Tkinter.Entry):
 # Temporary Label
 class Label(Tkinter.Label):
     def __init__(self, parent, *args, **kw):
-        utilities.setDefault(kw, background=bg, foreground="white", borderwidth=0, pady=6, padx=6,
+        utilities.setDefault(kw, background=bg, foreground=fg, borderwidth=0, pady=6, padx=6,
                     highlightbackground=_rgbtohex(normalc), highlightcolor=_rgbtohex(hoverc))
         Tkinter.Label.__init__(self, parent, *args, **kw)
 
@@ -516,11 +522,11 @@ class Combobox(Tkinter.OptionMenu):
         Tkinter.OptionMenu.__init__(self, parent, self.current, *self.choices)
         self.renderthread = None
         self.lastcolor = normalc
-        self.config(background=bg, foreground="white", borderwidth=0,
+        self.config(background=bg, foreground=fg, borderwidth=0,
                     highlightthickness=1, relief=Tkinter.FLAT, highlightbackground=_rgbtohex(normalc),
-                    padx=2, pady=2, activebackground=bg, activeforeground="white")
-        self["menu"].config(background="white", foreground=bg, borderwidth=0,
-                            activebackground=bg, activeforeground="white", relief=Tkinter.FLAT)
+                    padx=2, pady=2, activebackground=bg, activeforeground=fg)
+        self["menu"].config(background=fg, foreground=bg, borderwidth=0,
+                            activebackground=bg, activeforeground=fg, relief=Tkinter.FLAT)
         self.bind("<Enter>", self.hoveringtrue)
         self.bind("<Leave>", self.hoveringfalse)
     
@@ -567,6 +573,15 @@ class Radiobutton(Button):
             self.clicking = False
             self.render(False)
 
+
+# Glowy Checkbutton
+class Checkbutton(Tkinter.Checkbutton):
+    def __init__(self, parent, *args, **kw):
+        self.value = Tkinter.IntVar()
+        utilities.setDefault(kw, background=bg, borderwidth=0, highlightthickness=0, foreground=fg,
+                             selectcolor=bg, activebackground=bg, activeforeground=fg,
+                             variable=self.value)
+        Tkinter.Checkbutton.__init__(self, parent, *args, **kw)
 
 # Glowy Notebook
 class Notebook(Frame):
@@ -647,11 +662,11 @@ class VerticalScrolledFrame(Frame):
     def __init__(self, parent, *args, **kw):
         utilities.setDefault(kw, background=bg, borderwidth=0, highlightthickness=0, relief=Tkinter.FLAT)
         Frame.__init__(self, parent, *args, **kw)
-        vscrollbar = GScrollbar(self, orient=Tkinter.VERTICAL)
-        vscrollbar.pack(fill=Tkinter.Y, side=Tkinter.RIGHT, expand=Tkinter.FALSE)
-        canvas = Tkinter.Canvas(self, kw, yscrollcommand=vscrollbar.set)
+        self.vscrollbar = GScrollbar(self, orient=Tkinter.VERTICAL)
+        self.vscrollbar.pack(fill=Tkinter.Y, side=Tkinter.RIGHT, expand=Tkinter.FALSE)
+        canvas = Tkinter.Canvas(self, kw, yscrollcommand=self.vscrollbar.set)
         canvas.pack(side=Tkinter.LEFT, fill=Tkinter.BOTH, expand=Tkinter.TRUE)
-        vscrollbar.config(command=canvas.yview)
+        self.vscrollbar.config(command=canvas.yview)
         canvas.xview_moveto(0)
         canvas.yview_moveto(0)
         self.interior = interior = Frame(canvas, kw)
@@ -889,14 +904,14 @@ class Progressbar(Tkinter.Canvas):
 
 class Splash(Tkinter.Toplevel):
     def __init__(self, master, func):
-        Tkinter.Toplevel.__init__(self, master)
+        Tkinter.Toplevel.__init__(self, master, relief=Tkinter.SOLID, borderwidth=1)
         self.root = master
         self.root.withdraw()
         self.overrideredirect(Tkinter.TRUE)
         self.progress = Progressbar(self)
         if not config.python3:
-            self.image1 = Image.open("../../splash.png")
-            self.image2 = Image.open("../../splash_glowy.png")
+            self.image1 = Image.open(config.relinuxdir + "/splash.png")
+            self.image2 = Image.open(config.relinuxdir + "/splash_glowy.png")
             self.images = []
             for i in range(0, 11):
                 percent = float(float(i) / 10)
@@ -906,7 +921,7 @@ class Splash(Tkinter.Toplevel):
             self.imgw = self.image.width()
             self.imgh = self.image.height()
         else:
-            self.image = Tkinter.PhotoImage(file="../../splash.ppm")
+            self.image = Tkinter.PhotoImage(file=config.relinuxdir + "/splash.ppm")
             self.imgw = self.image.width()
             self.imgh = self.image.height()
         self.textvar = Tkinter.StringVar()
@@ -983,6 +998,7 @@ class GUI:
                     if y == category:
                         found = True
                         curr = subtabs[category].interior
+                        print(subtabs[category].vscrollbar.get())
                 if found is False:
                     ids = secs.add_tab()
                     frame = VerticalScrolledFrame(secs.page(ids), background=bg, borderwidth=0,

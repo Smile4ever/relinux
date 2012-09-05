@@ -19,7 +19,7 @@ def findRunnableThreads(threadids, threadsdone, threadsrunning, threads):
     for i in threadids:
         thread = getThread(i, threads)
         #print(utilities.utf8all(thread["threadspan"], " ", current))
-        if (not i in threadsdone and current < cpumax and not
+        if (thread["enabled"] and not i in threadsdone and current < cpumax and not
             ((thread["threadspan"] < 0 and current > 0) or
              (thread["threadspan"] > (cpumax - current)))):
             deps = 0
@@ -82,6 +82,8 @@ def threadLoop(threads1):
     for i in range(len(threads)):
         if not "threadspan" in threads[i]:
             threads[i]["threadspan"] = 1
+        if not "enabled" in threads[i]:
+            threads[i]["enabled"] = True
     for i in range(len(threads)):
         threadids.append(i)
     for i in range(len(threads)):

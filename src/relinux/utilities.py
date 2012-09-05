@@ -105,3 +105,11 @@ def getBuffer(files, strip=True):
     print(len(returnme))
     return returnme
 
+
+# Removes duplicates from an array and returns the result
+def remDuplicates(arr):
+    returnme = []
+    for i in arr:
+        if not i in returnme:
+            returnme.append(i)
+    return returnme

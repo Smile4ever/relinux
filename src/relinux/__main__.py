@@ -7,9 +7,11 @@ Main relinux script
 # TODO: Clean this mess up!
 
 import sys
-# Just in case, we will append both this directory and the directory higher than us
-sys.path.append("..")
-sys.path.append(".")
+import os
+mainsrcdir = sys.path[0]
+srcdir = os.path.abspath(os.path.join(mainsrcdir, os.pardir))
+relinuxdir = os.path.abspath(os.path.join(srcdir, os.pardir))
+sys.path.append(srcdir)
 from relinux import config
 import gettext
 gettext.install(config.productunix, config.localedir, config.unicode)
@@ -27,7 +29,6 @@ captop = 0
 minis = 0.0
 
 def main():
-    import os
     if os.getuid() != 0:
         print(_("You have to run relinux as root!"))
         exitprog(1)
@@ -104,9 +105,9 @@ def main():
         modules = modloader.getModules()
         spprog += 1
         splash.setProgress(calcPercent((spprog, spprogn)), "Parsing configuration...")
-        buffer1 = utilities.getBuffer(open("../../relinux.conf"))
+        buffer1 = utilities.getBuffer(open(relinuxdir + "/relinux.conf"))
         buffer2 = configutils.compress(buffer1)
-        cbuffer = configutils.parseCompressedBuffer(buffer2, "../../relinux.conf")
+        cbuffer = configutils.parseCompressedBuffer(buffer2, relinuxdir + "/relinux.conf")
         config.Configuration = cbuffer
         '''for i in configutils.beautify(buffer1):
             print(i)'''

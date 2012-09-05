@@ -4,7 +4,7 @@ General filesystem utilities
 @author: Joel Leclerc (MiJyn) <lkjoel@ubuntu.com>
 '''
 
-from relinux import logger, utilities
+from relinux import config, logger, utilities
 import os
 import stat
 import shutil
@@ -409,7 +409,7 @@ def ife(buffers, func):
 
 # Finds the system architecture
 def getArch():
-    archcmd = subprocess.Popen(["perl", os.getcwd() + "/getarch.pl"],
+    archcmd = subprocess.Popen(["perl", config.mainsrcdir + "/getarch.pl"],
                                stdout=subprocess.PIPE, universal_newlines=True)
     arch = archcmd.communicate()[0].strip()
     archcmd.wait()
