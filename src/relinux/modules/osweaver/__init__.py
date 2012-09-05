@@ -21,8 +21,8 @@ aptcache = {}
 page = {}
 
 
-def runThreads(threads):
-    threadmanager.threadLoop(threads)
+def runThreads(threads, **options):
+    threadmanager.threadLoop(threads, **options)
 
 
 def run(adict):
