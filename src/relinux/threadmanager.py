@@ -71,7 +71,8 @@ def getThread(threadid, threads):
 
 
 # Thread loop
-def threadLoop(threads1):
+def threadLoop(threads1_):
+    threads1 = copy.copy(threads1_)
     # Initialization
     threadsdone = []
     threadsrunning = []
@@ -79,7 +80,7 @@ def threadLoop(threads1):
     threads = []
     for i in threads1:
         if not i in threads:
-            threads.append(copy.copy(i))
+            threads.append(i)
     for i in range(len(threads)):
         if not "threadspan" in threads[i]:
             threads[i]["threadspan"] = 1

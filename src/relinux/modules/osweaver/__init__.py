@@ -96,7 +96,6 @@ def run(adict):
                 threads[i]["enabled"] = False
             else:
                 threads[i]["enabled"] = True
-        print(threads[i])
         runThreads(threads)
         # lambda: runThreads(threads)
     page.button = gui.Button(page.frame, text="Start!", command=startThreads)
