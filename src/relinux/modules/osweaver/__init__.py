@@ -90,14 +90,13 @@ def run(adict):
     togglesel = gui.Button(page.chframe.interior, text="Toggle", command=lambda: selBoxes(None))
     togglesel.grid(row=y, column=x)
     print("OSWEAVER" + str(page.chframe.vscrollbar.get()))
-    def test():
+    def startThreads():
         for i in range(len(page.chframe.boxes)):
             if page.chframe.boxes[i].value.get() < 1:
                 threads[i]["enabled"] = False
-                print(threads[i]["enabled"])
             else:
                 threads[i]["enabled"] = True
-                print(threads[i]["enabled"])
+        runThreads(threads)
         # lambda: runThreads(threads)
-    page.button = gui.Button(page.frame, text="Start!", command=lambda: runThreads(threads))
+    page.button = gui.Button(page.frame, text="Start!", command=startThreads)
     page.button.pack()
