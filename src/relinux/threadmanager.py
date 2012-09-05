@@ -77,10 +77,11 @@ def threadLoop(threads1_):
     threadsdone = []
     threadsrunning = []
     threadids = []
-    threads = []
+    threads_ = []
     for i in threads1:
-        if not i in threads:
-            threads.append(i)
+        if not i in threads_:
+            threads_.append(i)
+    threads = copy.copy(threads_)
     for i in range(len(threads)):
         if not "threadspan" in threads[i]:
             threads[i]["threadspan"] = 1

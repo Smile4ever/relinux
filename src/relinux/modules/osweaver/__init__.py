@@ -54,11 +54,37 @@ def run(adict):
     page.chframe.boxes = []
     x = 0
     y = 0
+    usedeps = gui.Checkbutton(page.chframe.interior, text="Ignore dependencies")
+    usedeps.grid(row=y, column=x)
+    y += 1
     label = gui.Label(page.chframe.interior, text="Select threads to run:")
     label.grid(row=y, column=x)
     y += 1
+    class customCheck(gui.Checkbutton):
+        def __init__(self, parent, *args, **kw):
+            gui.Checkbutton.__init__(self, parent, *args, **kw)
+            self.id = len(page.chframe.boxes)
+            self.ignoreauto = True
+            self.value.trace("w", self.autoSelect)
+
+        def autoSelect(self, *args):
+            id_ = self.id
+            print(id_)
+            if self.ignoreauto:
+                self.ignoreauto = False
+                return
+            if self.value.get() < 1:
+                return
+            if len(threads[id_]["deps"]) <= 0 or usedeps.value.get() > 0:
+                return
+            tns = []
+            for i in threads[id_]["deps"]:
+                tns.append(i["tn"])
+            for i in range(len(threads)):
+                if threads[i]["tn"] in tns:
+                    page.chframe.boxes[i].value.set(1)
     for i in threads:
-        temp = gui.Checkbutton(page.chframe.interior, text=i["tn"])
+        temp = customCheck(page.chframe.interior, text=i["tn"])
         temp.value.set(1)
         temp.grid(row=y, column=x, sticky=Tkinter.NW)
         page.chframe.boxes.append(temp)
@@ -72,6 +98,7 @@ def run(adict):
         val = 0
         if all_ == None:
             for i in range(len(threads)):
+                page.chframe.boxes[i].ignoreauto = True
                 if page.chframe.boxes[i].value.get() < 1:
                     page.chframe.boxes[i].value.set(1)
                 else:
@@ -80,6 +107,7 @@ def run(adict):
         if all_:
             val = 1
         for i in range(len(threads)):
+            page.chframe.boxes[i].ignoreauto = True
             page.chframe.boxes[i].value.set(val)
     selall = gui.Button(page.chframe.interior, text="Select all", command=lambda: selBoxes(True))
     selall.grid(row=y, column=x)
