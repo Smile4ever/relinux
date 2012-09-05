@@ -107,6 +107,8 @@ def makedir(dirs1, tn=""):
     if not os.path.exists(dirs):
         logger.logVV(tn, _("Creating directory") + " " + str(dirs))
         os.makedirs(dirs, mode)
+    else:
+        logger.logVV(tn, _("Yay! No work for makedir! Well, okay..."))
 
 
 # Makes a directory tree
