@@ -58,7 +58,7 @@ SysVersion = ""  # Should be filled in by: os.popen("/usr/bin/lsb_release -rs").
 Arch = ""  # Should be filled in by: fsutil.getArch()
 
 # Gettext
-localedir = "../../localize/"
+localedir = relinuxdir + "/localize/"
 unicode = True
 language = "en"
 
@@ -67,4 +67,4 @@ ThreadRPS = 1
 ThreadStop = False
 
 # Modules
-ModFolder = mainsrcdir + "/modules"
+ModFolder = mainsrcdir + "/modules/"

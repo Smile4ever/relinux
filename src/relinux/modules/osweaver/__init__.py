@@ -26,14 +26,7 @@ def runThreads(threads):
 
 
 def run(adict):
-    from relinux.modules.osweaver import isoutil, squashfs, tempsys
     global aptcache, page
-    threads = []
-    threads.extend(tempsys.threads)
-    threads.extend(squashfs.threads)
-    threads.extend(isoutil.threads)
-    threads_ = utilities.remDuplicates(threads)
-    threads = threads_
     configs = adict["config"]["OSWeaver"]
     isodir = configutils.getValue(configs[configutils.isodir])
     config.ISOTree = isodir + "/.ISO_STRUCTURE/"
@@ -41,6 +34,13 @@ def run(adict):
     config.TempSys = isodir + "/.TMPSYS/"
     aptcache = adict["aptcache"]
     ourgui = adict["gui"]
+    from relinux.modules.osweaver import isoutil, squashfs, tempsys
+    threads = []
+    threads.extend(tempsys.threads)
+    threads.extend(squashfs.threads)
+    threads.extend(isoutil.threads)
+    threads_ = utilities.remDuplicates(threads)
+    threads = threads_
     pagenum = ourgui.wizard.add_tab()
     page = gui.Frame(ourgui.wizard.page(pagenum))
     ourgui.wizard.add_page_body(pagenum, _("OSWeaver"), page)
