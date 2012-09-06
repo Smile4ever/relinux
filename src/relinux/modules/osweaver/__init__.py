@@ -154,7 +154,7 @@ def run(adict):
             if tempx >= 3:
                 tempx = 0
                 tempy += 1
-        runThreads(threads, deps=tfdeps, poststart=postStart)
+        runThreads(threads, deps=tfdeps, poststart=postStart, postend=postStart)
         # lambda: runThreads(threads)
     page.button = gui.Button(page.frame, text="Start!", command=startThreads)
     page.button.pack()
