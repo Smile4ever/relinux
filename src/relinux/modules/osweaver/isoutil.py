@@ -194,6 +194,7 @@ class genPakManifest(multiprocessing.Process):
                 configutils.parseMultipleValues(configutils.getValue(configs[configutils.remafterinst]))):
                 writer_desktop.write(strs)
         writer.close()
+        writer_desktop.close()
         logger.logVV(self.tn, logger.I, _("Generating filesytem.manifest-remove"))
         writer = open(isotreel + "casper/filesystem.manifest-remove", "w")
         for i in configutils.parseMultipleValues(configutils.getValue(configs[configutils.remafterinst])):

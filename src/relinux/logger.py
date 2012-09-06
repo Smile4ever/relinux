@@ -60,7 +60,7 @@ VVBuffer = ""'''
 # Logging presets
 MError = "Error! "
 MWarning = "Warning! "
-MDebug = "Debug! "
+MDebug = "Debug: "
 MTab = "    "
 MNewline = "\n"
 E = "E"
