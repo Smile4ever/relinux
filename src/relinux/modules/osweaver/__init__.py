@@ -10,6 +10,7 @@ if config.python3:
 else:
     import Tkinter
 import os
+import copy
 
 relinuxmodule = True
 relinuxmoduleapi = "0.4a1"
@@ -53,6 +54,7 @@ def run(adict):
     page.chframe = gui.VerticalScrolledFrame(page.frame)
     page.chframe.pack(fill=Tkinter.BOTH, expand=True, anchor=Tkinter.N)
     page.chframe.boxes = []
+    page.chframe.dispthreads = []
     x = 0
     y = 0
     usedeps = gui.Checkbutton(page.chframe.interior, text="Ignore dependencies")
@@ -117,6 +119,10 @@ def run(adict):
     x += 1
     togglesel = gui.Button(page.chframe.interior, text="Toggle", command=lambda: selBoxes(None))
     togglesel.grid(row=y, column=x)
+    y += 1
+    threadsrunninglabel = gui.Label(page.chframe.interior, text="Threads running:")
+    threadsrunninglabel.grid(row=y, column=x)
+    y += 1
     def startThreads():
         if os.getuid() != 0:
             page.isnotroot.pack_forget()
@@ -130,7 +136,24 @@ def run(adict):
             tfdeps = False
             if usedeps.value.get() > 0:
                 tfdeps = True
-        runThreads(threads, deps=tfdeps)
+        def postStart(threadid, threadsrunning, threads):
+            tempy = copy.copy(y)
+            tempx = 0
+            threadsshow = []
+            for i in range(len(page.chframe.dispthreads)):
+                page.chframe.dispthreads[i].pack_remove()
+                del(page.chframe.dispthreads[i])
+            for i in threadsrunning:
+                threadsshow.append(threadmanager.getThread(i, threads)["tn"])
+            for i in threadsshow:
+                temp = gui.Label(page.chframe.interior, text=i)
+                temp.grid(row=tempy, column=tempx)
+                page.chframe.dispthreads.append(temp)
+            tempx += 1
+            if tempx >= 3:
+                tempx = 0
+                tempy += 1
+        runThreads(threads, deps=tfdeps, poststart=postStart)
         # lambda: runThreads(threads)
     page.button = gui.Button(page.frame, text="Start!", command=startThreads)
     page.button.pack()

@@ -50,22 +50,26 @@ def findRunnableThreads(threadids, threadsdone, threadsrunning, threads, **optio
 
 
 # Run a thread
-def runThread(threadid, threadsdone, threadsrunning, threads):
+def runThread(threadid, threadsdone, threadsrunning, threads, **options):
     thread = getThread(threadid, threads)
     if not thread["thread"].is_alive() and not threadid in threadsdone and not threadid in threadsrunning:
         threadsrunning.append(threadid)
         logger.logV(tn, logger.I, _("Starting") + " " + getThread(threadid, threads)["tn"] + "...")
         thread["thread"].start()
+        if options.get("poststart") != None:
+            options["poststart"](threadid, threadsrunning, threads)
 
 
 # Check if a thread is alive
-def checkThread(threadid, threadsdone, threadsrunning, threads):
+def checkThread(threadid, threadsdone, threadsrunning, threads, **options):
     if threadid in threadsrunning:
         if not getThread(threadid, threads)["thread"].is_alive():
             threadsrunning.remove(threadid)
             threadsdone.append(threadid)
             logger.logV(tn, logger.I, getThread(threadid, threads)["tn"] + " " +
                         _("has finished. Number of threads running: ") + str(len(threadsrunning)))
+            if options.get("postend") != None:
+                options["postend"](threadid, threadsrunning, threads)
 
 
 # Returns a thread from an ID
@@ -108,13 +112,13 @@ def threadLoop(threads1_, **options):
         while config.ThreadStop is False:
             # Clear old threads
             for x in threadsrunning:
-                checkThread(x, threadsdone, threadsrunning, threads)
+                checkThread(x, threadsdone, threadsrunning, threads, **options)
             # End if all threads are done
             if len(threadsdone) >= len(threads):
                 break
             # Run runnable threads
             for x in findRunnableThreads(threadids, threadsdone, threadsrunning, threads, **options):
-                runThread(x, threadsdone, threadsrunning, threads)
+                runThread(x, threadsdone, threadsrunning, threads, **options)
             time.sleep(float(1.0 / config.ThreadRPS))
     t = threading.Thread(target=_ActualLoop, args=(threads, threadsdone, threadsrunning, threadids,))
     t.start()
