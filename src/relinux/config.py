@@ -61,6 +61,7 @@ VFiles = [sys.stdout]
 VVFiles = [sys.stdout]
 
 # GUI Section
+GUIStream = None
 GUIStatus = True
 background = "lightgrey"
 

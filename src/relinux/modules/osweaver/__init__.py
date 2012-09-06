@@ -46,7 +46,26 @@ def run(adict):
     pagenum = ourgui.wizard.add_tab()
     page = gui.Frame(ourgui.wizard.page(pagenum))
     ourgui.wizard.add_page_body(pagenum, _("OSWeaver"), page)
-    page.frame = gui.Frame(page, borderwidth=2, relief=Tkinter.GROOVE)
+    page.frame = gui.Frame(page)
+    page.details = gui.VerticalScrolledFrame(page, borderwidth=1, relief=Tkinter.SOLID)
+    page.details.output = gui.Label(page.details.interior, text=config.GUIStream.getvalue(), anchor=Tkinter.NW, justify=Tkinter.LEFT)
+    def onWrite():
+        page.details.output.config(text=config.GUIStream.getvalue())
+    config.GUIStream.writefunc.append(onWrite)
+    page.details.output.pack(fill=Tkinter.BOTH, expand=True, anchor=Tkinter.NW, side=Tkinter.LEFT)
+    page.details.pack(fill=Tkinter.BOTH, expand=True, side=Tkinter.BOTTOM, anchor=Tkinter.SW)
+    '''page.details.buttonstate = True
+    def showDetails():
+        if page.details.buttonstate:
+            page.details.output.pack(fill=Tkinter.BOTH, expand=True, anchor=Tkinter.NW, side=Tkinter.LEFT)
+            page.showdetails.config(text="<< Hide details")
+            page.details.buttonstate = False
+        else:
+            page.details.output.pack_forget()
+            page.showdetails.config(text="Show details >>")
+            page.details.buttonstate = True
+    page.showdetails = gui.Button(page, text="Show details >>", command=showDetails)
+    page.showdetails.pack(side=Tkinter.BOTTOM, anchor=Tkinter.SW)'''
     page.progress = gui.Progressbar(page)
     page.progress.pack(fill=Tkinter.X, expand=True, side=Tkinter.BOTTOM,
                           anchor=Tkinter.S)

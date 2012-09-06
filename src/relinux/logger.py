@@ -5,6 +5,7 @@ Contains streams for logging information
 """
 
 from relinux import config
+import copy
 #from threading import RLock
 
 
@@ -85,19 +86,22 @@ def writeAll(status, lists, tn, importance, text):
     text__ = text_ + text
     text = text__
     for i in lists:
+        text_ = copy.copy(text)
         if i in config.TermStreams:
-            text_ = "\033["
+            if hasattr(i, "writefunc"):
+                print(True)
+            text__ = "\033["
             if importance == E:
-                text_ += str(config.TermRed)
+                text__ += str(config.TermRed)
             elif importance == W:
-                text_ += str(config.TermYellow)
+                text__ += str(config.TermYellow)
             elif importance == D:
-                text_ += str(config.TermGreen)
+                text__ += str(config.TermGreen)
             '''elif importance == I:
-                text_ += config.TermBlue'''
-            text_ += "m" + text + "\033[" + str(config.TermReset) + "m"
-            text = text_
-        i.write(text + MNewline)
+                text__ += config.TermBlue'''
+            text__ += "m" + text_ + "\033[" + str(config.TermReset) + "m"
+            text_ = text__
+        i.write(text_ + MNewline)
 
 
 # Generates a thread name string

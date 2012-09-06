@@ -61,7 +61,12 @@ def main():
     from relinux import gui, configutils, logger, aptutil, modloader, utilities, fsutil
     config.Arch = fsutil.getArch()
     logger.normal()
-    #logger.logI(logger.genTN("Main"), logger.I, "Test")
+    config.GUIStream = utilities.eventStringIO()
+    config.EFiles.append(config.GUIStream)
+    config.IFiles.append(config.GUIStream)
+    config.VFiles.append(config.GUIStream)
+    config.VVFiles.append(config.GUIStream)
+    logger.logI(logger.genTN("Main"), logger.I, "Test")
     parser = ArgumentParser(prog="relinux", usage="%(prog)s [options]")
     parser.add_argument("-V", "--version", action="store_true",
                       dest="showversion",

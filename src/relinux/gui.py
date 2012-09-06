@@ -502,9 +502,23 @@ class GScrollbar(Tkinter.Scrollbar):
     def __init__(self, parent, *args, **kw):
         utilities.setDefault(kw, background=lightbg, borderwidth=0, relief=Tkinter.FLAT,
                     activebackground=lightbghover, troughcolor=bg)
+        if kw.get("showfunc"):
+            self.showfunc = kw.pop("showfunc")
+        if kw.get("hidefunc"):
+            self.hidefunc = kw.pop("hidefunc")
         Tkinter.Scrollbar.__init__(self, parent, *args, **kw)
         self.bind("<ButtonPress-1>", self.onclick)
         self.bind("<ButtonRelease-1>", self.onunclick)
+
+    '''def set(self, lo, hi):
+        if float(lo) <= 0.0 and float(hi) >= 1.0:
+            if hasattr(self, "hidefunc"):
+                self.hidefunc()
+        elif hasattr(self, "showfunc"):
+            if hasattr(self, "hidefunc"):
+                self.hidefunc()
+            self.showfunc()
+        Tkinter.Scrollbar.set(self, lo, hi)'''
     
     def onclick(self, *args):
         self.config(activebackground=lightbgclick)
@@ -661,6 +675,10 @@ class VerticalScrolledFrame(Frame):
     def __init__(self, parent, *args, **kw):
         utilities.setDefault(kw, background=bg, borderwidth=0, highlightthickness=0, relief=Tkinter.FLAT)
         Frame.__init__(self, parent, *args, **kw)
+        def showFunc():
+            self.vscrollbar.pack(fill=Tkinter.Y, side=Tkinter.RIGHT, expand=Tkinter.FALSE)
+        def hideFunc():
+            self.vscrollbar.pack_forget()
         self.vscrollbar = GScrollbar(self, orient=Tkinter.VERTICAL)
         self.vscrollbar.pack(fill=Tkinter.Y, side=Tkinter.RIGHT, expand=Tkinter.FALSE)
         canvas = Tkinter.Canvas(self, kw, yscrollcommand=self.vscrollbar.set)

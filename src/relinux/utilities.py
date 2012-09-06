@@ -5,6 +5,7 @@ Random utilities
 '''
 
 from relinux import config
+import io
 
 
 # Check if a string is ASCII or not
@@ -112,3 +113,21 @@ def remDuplicates(arr):
         if not i in returnme:
             returnme.append(i)
     return returnme
+
+# Event-based StringIO
+class eventStringIO(io.StringIO):
+    def __init__(self):
+        io.StringIO.__init__(self)
+        self.writefunc = []
+
+    def write(self, msg):
+        if config.python3 or isinstance(msg, unicode):
+            io.StringIO.write(self, msg)
+        else:
+            io.StringIO.write(self, unicode(msg))
+        if self.writefunc:
+            if isinstance(self.writefunc, list):
+                for i in self.writefunc:
+                    i()
+            else:
+                self.writefunc()
