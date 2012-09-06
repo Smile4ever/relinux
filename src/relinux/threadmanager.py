@@ -15,7 +15,7 @@ tn = logger.genTN("TheadManager")
 # Finds threads that can currently run (and have not already run)
 def findRunnableThreads(threadids, threadsdone, threadsrunning, threads, **options):
     returnme = []
-    cpumax = fsutil.getCPUCount()
+    cpumax = fsutil.getCPUCount() * 2
     current = 0
     for i in threadids:
         thread = getThread(i, threads)
