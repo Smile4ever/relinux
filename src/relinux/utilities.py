@@ -102,7 +102,6 @@ def getBuffer(files, strip=True):
         if strip is True:
             line = line.rstrip()
         returnme.append(line)
-    print(len(returnme))
     return returnme
 
 

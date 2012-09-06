@@ -78,7 +78,6 @@ class FuncThread(threading.Thread):
         self.ondie = ondie
  
     def run(self):
-        print(self._target)
         self._target(*self._args)
         if self.ondie != None:
             self.ondie()
@@ -654,7 +653,7 @@ class Notebook(Frame):
         if page_num < len(self.pages):
             return self.pages[page_num]
         else:
-            logger.logE(tn, _("Page") + " " + str(page_num) + " " + _("does not exist"))
+            logger.logI(tn, logger.E, _("Page") + " " + str(page_num) + " " + _("does not exist"))
 
 
 # Scrolling frame, based on http://Tkinter.unpy.net/wiki/VerticalScrolledFrame
@@ -707,7 +706,7 @@ class Wizard(Notebook):
         Notebook.__init__(self, master, *args, **kw)
         self.finishedtb = self._wizard_buttons
         '''for page in range(npages):
-            logger.logVV(tn, _("Creating page") + " " + str(page))
+            logger.logVV(tn, logger.I, _("Creating page") + " " + str(page))
             self.add_empty_page()
         #self.pages[0].pack(fill='both', expand=1)
         #self._wizard_buttons()'''
@@ -765,7 +764,7 @@ class Wizard(Notebook):
         if page_num < len(self.pages):
             return self.pages[page_num]
         else:
-            logger.logE(tn, _("Page") + " " + str(page_num) + " " + _("does not exist"))'''
+            logger.logI(tn, logger.E, _("Page") + " " + str(page_num) + " " + _("does not exist"))'''
 
 
 class FileSelector(Frame):
@@ -937,7 +936,6 @@ class Splash(Tkinter.Toplevel):
         self.progress.pack(side=Tkinter.BOTTOM, fill=Tkinter.X, expand=True)
         self.progresstext.pack(side=Tkinter.BOTTOM, fill=Tkinter.X, expand=True)
         self.update()
-        print(func != None)
         self.thread = FuncThread(func, self.endSplash, self)
         self.thread.start()
 
@@ -998,7 +996,6 @@ class GUI:
                     if y == category:
                         found = True
                         curr = subtabs[category].interior
-                        print(subtabs[category].vscrollbar.get())
                 if found is False:
                     ids = secs.add_tab()
                     frame = VerticalScrolledFrame(secs.page(ids), background=bg, borderwidth=0,

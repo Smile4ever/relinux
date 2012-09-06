@@ -24,7 +24,7 @@ def isModule(module):
 # Checks if a module is compatible with this version of relinux
 def isCompatible(module):
     if module.relinuxmoduleapi != config.version:
-        logger.logW(tn, _("Module") + " " + module.modulename + " " +
+        logger.logI(tn, logger.W, _("Module") + " " + module.modulename + " " +
                     _("is incompatible with this relinux version") + " (" + _("relinux version:") + " " +
                     config.version + ", " + _("required version:") + " " + module.relinuxmoduleapi + ")")
         return False
@@ -49,7 +49,7 @@ def getModules():
         if loadme:
             returnme.append({"name": i, "file": file, "path": pathname, "desc": desc})
         else:
-            logger.logW(tn, _("Module") + " " + module.modulename + " " + _("will not be loaded"))
+            logger.logI(tn, logger.W, _("Module") + " " + module.modulename + " " + _("will not be loaded"))
     return returnme
 
 

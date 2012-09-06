@@ -69,7 +69,6 @@ def run(adict):
 
         def autoSelect(self, *args):
             id_ = self.id
-            print(id_)
             if self.ignoreauto:
                 self.ignoreauto = False
                 return
@@ -117,7 +116,6 @@ def run(adict):
     x += 1
     togglesel = gui.Button(page.chframe.interior, text="Toggle", command=lambda: selBoxes(None))
     togglesel.grid(row=y, column=x)
-    print("OSWEAVER" + str(page.chframe.vscrollbar.get()))
     def startThreads():
         for i in range(len(page.chframe.boxes)):
             if page.chframe.boxes[i].value.get() < 1:

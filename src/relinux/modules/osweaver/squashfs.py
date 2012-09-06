@@ -19,16 +19,16 @@ configs = config.Configuration["OSWeaver"]
 
 # Display a iso9660 error
 def dispiso9660(level, maxs, size):
-    logger.logE(tn, _("Compressed filesystem is higher than the iso9660 level ") + level +
+    logger.logE(tn, logger.E, _("Compressed filesystem is higher than the iso9660 level ") + level +
                     " spec allows (" + fsutil.sizeTrans({"B": maxs}, "M") + _("MB, size is ") +
                     fsutil.sizeTrans({"B": size}, "M") + "MB).")
-    logger.logE(tn, logger.MTab + _("Please try to either reduce the amount of data you are generating, or ") +
+    logger.logE(tn, logger.E, logger.MTab + _("Please try to either reduce the amount of data you are generating, or ") +
                 _("increase the ISO level"))
 
 
 # Make the SquashFS checks
 def doSFSChecks(files, isolvl):
-    logger.logI(tn, _("Checking the compressed filesystem"))
+    logger.logI(tn, logger.I, _("Checking the compressed filesystem"))
     size = fsutil.getSize(files)
     lvl2 = fsutil.sizeTrans({"G": 4})
     lvl3 = fsutil.sizeTrans({"T": 8})
@@ -50,14 +50,14 @@ class genSFS(multiprocessing.Process):
         multiprocessing.Process.__init__(self)
 
     def run(self):
-        logger.logI(tn, _("Generating compressed filesystem"))
+        logger.logI(tn, logger.I, _("Generating compressed filesystem"))
         # Generate the SquashFS file
         # Options:
         # -b 1M                    Use a 1M blocksize (maximum)
         # -no-recovery             No recovery files
         # -always-use-fragments    Fragment blocks for files larger than the blocksize (1M)
         # -comp                    Compression type
-        logger.logVV(tn, _("Generating options"))
+        logger.logVV(tn, logger.I, _("Generating options"))
         opts = "-b 1M -no-recovery -no-duplicates -always-use-fragments"
         opts = opts + " -comp " + configutils.getValue(configs[configutils.sfscomp])
         opts = opts + " " + configutils.getValue(configs[configutils.sfsopts])
@@ -65,14 +65,14 @@ class genSFS(multiprocessing.Process):
         sfspath = isotreel + "casper/filesystem.squashfs"
         if os.path.exists(sfspath):
             fsutil.rm(sfspath)
-        logger.logI(tn, _("Adding the edited /etc and /var to the filesystem"))
+        logger.logI(tn, logger.I, _("Adding the edited /etc and /var to the filesystem"))
         os.system("mksquashfs " + tmpsys + " " + sfspath + " " + opts)
-        logger.logI(tn, _("Adding the rest of the system"))
+        logger.logI(tn, logger.I, _("Adding the rest of the system"))
         os.system("mksquashfs / " + sfspath + " " + opts + " -e " + sfsex)
         # Make sure the SquashFS file is OK
         doSFSChecks(sfspath, int(configutils.getValue(configs[configutils.isolevel])))
         # Find the size after it is uncompressed
-        logger.logV(tn, _("Writing the size"))
+        logger.logV(tn, logger.I, _("Writing the size"))
         files = open(isotreel + "casper/filesystem.size", "w")
         files.write(str(fsutil.getSFSInstSize(sfspath)) + "\n")
         files.close()

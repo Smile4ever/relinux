@@ -54,7 +54,7 @@ def runThread(threadid, threadsdone, threadsrunning, threads):
     thread = getThread(threadid, threads)
     if not thread["thread"].is_alive() and not threadid in threadsdone and not threadid in threadsrunning:
         threadsrunning.append(threadid)
-        logger.logV(tn, _("Starting") + " " + getThread(threadid, threads)["tn"] + "...")
+        logger.logV(tn, logger.I, _("Starting") + " " + getThread(threadid, threads)["tn"] + "...")
         thread["thread"].start()
 
 
@@ -64,7 +64,7 @@ def checkThread(threadid, threadsdone, threadsrunning, threads):
         if not getThread(threadid, threads)["thread"].is_alive():
             threadsrunning.remove(threadid)
             threadsdone.append(threadid)
-            logger.logV(tn, getThread(threadid, threads)["tn"] + " " +
+            logger.logV(tn, logger.I, getThread(threadid, threads)["tn"] + " " +
                         _("has finished. Number of threads running: ") + str(len(threadsrunning)))
 
 

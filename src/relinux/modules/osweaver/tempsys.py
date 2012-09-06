@@ -31,7 +31,7 @@ class genTempSysTree(multiprocessing.Process):
         self.tn = logger.genTN(tmpsystree["tn"])
 
     def run(self):
-        logger.logI(self.tn, _("Generating the tree for the temporary filesystem"))
+        logger.logI(self.tn, logger.I, _("Generating the tree for the temporary filesystem"))
         fsutil.maketree([tmpsys + "etc", tmpsys + "dev",
                           tmpsys + "proc", [tmpsys + "tmp", 0o1777],
                           tmpsys + "sys", tmpsys + "mnt",
@@ -48,7 +48,7 @@ class copyEtcVar(multiprocessing.Process):
         self.tn = logger.genTN(cpetcvar["tn"])
 
     def run(self):
-        logger.logI(self.tn, _("Copying files to the temporary filesystem"))
+        logger.logI(self.tn, logger.I, _("Copying files to the temporary filesystem"))
         excludes = configutils.getValue(configs[configutils.excludes])
         fsutil.fscopy("/etc", tmpsys + "etc", excludes, self.tn)
         fsutil.fscopy("/var", tmpsys + "var", excludes, self.tn)
@@ -64,7 +64,7 @@ class remConfig(multiprocessing.Process):
 
     def run(self):
         # Remove these files as they can conflict inside the installed system
-        logger.logV(self.tn, _("Removing personal configurations that can break the installed system"))
+        logger.logV(self.tn, logger.I, _("Removing personal configurations that can break the installed system"))
         fsutil.rmfiles([tmpsys + "etc/X11/xorg.conf*", tmpsys + "etc/resolv.conf",
                         tmpsys + "etc/hosts", tmpsys + "etc/hostname", tmpsys + "etc/timezone",
                         tmpsys + "etc/mtab", tmpsys + "etc/fstab",
@@ -88,7 +88,7 @@ class remCachedLists(multiprocessing.Process):
         self.tn = logger.genTN(remcachedlists["tn"])
 
     def run(self):
-        logger.logV(self.tn, _("Removing cached lists"))
+        logger.logV(self.tn, logger.I, _("Removing cached lists"))
         fsutil.adrm(tmpsys + "var/lib/apt/lists/",
                     {"excludes": True, "remdirs": False, "remsymlink": True, "remfullpath": False},
                     ["*.gpg", "*lock*", "*partial*"], self.tn)
@@ -103,7 +103,7 @@ class remTempVar(multiprocessing.Process):
         self.tn = logger.genTN(remtempvar["tn"])
 
     def run(self):
-        logger.logV(self.tn, _("Removing temporary files in /var"))
+        logger.logV(self.tn, logger.I, _("Removing temporary files in /var"))
         # Remove all files in these directories (but not directories inside them)
         for i in ["etc/NetworkManager/system-connections/", "var/run", "var/log", "var/mail",
                   "var/spool", "var/lock", "var/backups", "var/tmp", "var/crash", "var/lib/ubiquity"]:
@@ -122,11 +122,11 @@ class genVarLogs(multiprocessing.Process):
 
     def run(self):
         # Create the logs
-        logger.logV(self.tn, _("Creating empty logs"))
+        logger.logV(self.tn, logger.I, _("Creating empty logs"))
         for i in ["dpkg.log", "lastlog", "mail.log", "syslog", "auth.log", "daemon.log", "faillog",
                           "lpr.log", "mail.warn", "user.log", "boot", "debug", "mail.err", "messages", "wtmp",
                           "bootstrap.log", "dmesg", "kern.log", "mail.info"]:
-            logger.logVV(self.tn, logger.MTab + _("Creating") + " " + i)
+            logger.logVV(self.tn, logger.I, logger.MTab + _("Creating") + " " + i)
             fsutil.touch(tmpsys + "var/log/" + i)
 genvarlogs["thread"] = genVarLogs
 
@@ -169,7 +169,7 @@ class remUsers(multiprocessing.Process):
 
     def run(self):
         # Setup the password and group stuff
-        logger.logI(self.tn, _("Removing conflicting users"))
+        logger.logI(self.tn, logger.I, _("Removing conflicting users"))
         passwdf = tmpsys + "etc/passwd"
         #passwdfile = open(passwdf, "r")
         #passwdstat = fsutil.getStat(passwdf)
@@ -180,40 +180,41 @@ class remUsers(multiprocessing.Process):
         pe = pwdmanip.parsePasswdEntries(buffers[3])
         buffers[3] = pe
         # Users to "delete" on the live system
-        logger.logV(self.tn, _("Gathering users to remove"))
+        logger.logV(self.tn, logger.I, _("Gathering users to remove"))
         nobody = ""
         for x in pe:
             if x["user"] == "nobody":
                 nobody = x
-        if nobody == "":
-            logger.logE(self.tn, _("User 'nobody' could not be found!"))
         max_uid = 1999
         sysrange = 500
-        nuid = int(nobody["uid"])
-        if nuid <= 100:
-            # nobody has been assigned to the conventional system UID range
-            max_uid = 1999
-            sysrange = 100
-        elif nuid < 500:
-            # nobody has been assigned to the RHEL system UID range
-            max_uid = 1999
-            sysrange = 500
-        elif nuid >= 65530 and nuid <= 65535:
-            # nobody has been assigned to the highest possible unsigned short integer (16 bit) range
-            max_uid = nuid - 1
-            sysrange = 555
-        elif nuid >= 32766:
-            # nobody has been assigned to the highest possible signed short integer (16 bit) range
-            max_uid = nuid - 1
-            sysrange = 500
+        if not isinstance(nobody, dict):
+            logger.logV(self.tn, logger.E, _("User 'nobody' could not be found!"))
         else:
-            max_uid = 1999
-            sysrange = 555
+            nuid = int(nobody["uid"])
+            if nuid <= 100:
+                # nobody has been assigned to the conventional system UID range
+                max_uid = 1999
+                sysrange = 100
+            elif nuid < 500:
+                # nobody has been assigned to the RHEL system UID range
+                max_uid = 1999
+                sysrange = 500
+            elif nuid >= 65530 and nuid <= 65535:
+                # nobody has been assigned to the highest possible unsigned short integer (16 bit) range
+                max_uid = nuid - 1
+                sysrange = 555
+            elif nuid >= 32766:
+                # nobody has been assigned to the highest possible signed short integer (16 bit) range
+                max_uid = nuid - 1
+                sysrange = 500
+            else:
+                max_uid = 1999
+                sysrange = 555
         usrs = pwdmanip.getPPByUID(numrange.gen_num_range(sysrange, max_uid), pe)
         print(usrs)
         if config.VVStatus is False:
-            logger.logV(self.tn, _("Removing them"))
-        logger.logVV(self.tn, _("Removing users in /etc/passwd"))
+            logger.logV(self.tn, logger.I, _("Removing them"))
+        logger.logVV(self.tn, logger.I, _("Removing users in /etc/passwd"))
         fsutil.ife(buffers, lambda line: [True, pwdmanip.PPtoEntry(line)] if not line in usrs else [False, ""])
         # Rewrite the password file
         #for i in ppe:
@@ -222,7 +223,7 @@ class remUsers(multiprocessing.Process):
         #fsutil.copystat(passwdstat, passwdf)
         #passwdfile.close()
         # Now for the group file
-        logger.logVV(self.tn, _("Removing users in /etc/group"))
+        logger.logVV(self.tn, logger.I, _("Removing users in /etc/group"))
         groupf = tmpsys + "etc/group"
         buffers = fsutil.ife_getbuffers(groupf)
         pe = pwdmanip.parseGroupEntries(buffers[3])
@@ -239,11 +240,11 @@ class remUsers(multiprocessing.Process):
         # are very similar to group files, so we can just parse them as if they were group files
         pe = pwdmanip.parseGroupEntries(gbuffers[3])
         gbuffers[3] = pe
-        logger.logVV(self.tn, _("Removing users in /etc/shadow"))
+        logger.logVV(self.tn, logger.I, _("Removing users in /etc/shadow"))
         fsutil.ife(buffers, lambda line: self._parseShadow(line, usrs))
-        logger.logVV(self.tn, _("Removing users in /etc/gshadow"))
+        logger.logVV(self.tn, logger.I, _("Removing users in /etc/gshadow"))
         fsutil.ife(gbuffers, lambda line: self._parseGroup(line, usrs))
-        logger.logV(self.tn, _("Creating backups"))
+        logger.logV(self.tn, logger.I, _("Creating backups"))
         shutil.copy2(tmpsys + "etc/passwd", tmpsys + "etc/passwd-")
         shutil.copy2(tmpsys + "etc/group", tmpsys + "etc/group-")
         shutil.copy2(tmpsys + "etc/shadow", tmpsys + "etc/shadow-")
@@ -294,14 +295,14 @@ class CasperConfEditor(multiprocessing.Process):
         # Edit the casper.conf
         # Strangely enough, casper uses the "quiet" flag if the build system is either Debian or Ubuntu
         if config.VStatus is False:
-            logger.logI(self.tn, _("Editing casper and LSB configuration files"))
-        logger.logV(self.tn, _("Editing casper.conf"))
+            logger.logI(self.tn, logger.I, _("Editing casper and LSB configuration files"))
+        logger.logV(self.tn, logger.I, _("Editing casper.conf"))
         buildsys = "Ubuntu"
         if configutils.parseBoolean(configutils.getValue(configs[configutils.casperquiet])) is False:
             buildsys = ""
         unionfs = configutils.getValue(configs[configutils.unionfs])
         if unionfs == "overlayfs" and aptutil.compVersions(aptutil.getPkgVersion(aptutil.getPkg("casper", aptcache)), "1.272", aptutil.lt):
-            logger.logW(self.tn, _("Using DEFAULT instead of overlayfs"))
+            logger.logI(self.tn, logger.W, _("Using DEFAULT instead of overlayfs"))
             unionfs = "DEFAULT"
         self.varEditor(tmpsys + "etc/casper.conf", {
                                             "USERNAME": configutils.getValue(configs[configutils.username]),
@@ -311,12 +312,12 @@ class CasperConfEditor(multiprocessing.Process):
                                             "BUILD_SYSTEM": buildsys,
                                             "FLAVOUR": configutils.getValue(configs[configutils.flavour]),
                                             "UNIONFS": unionfs})
-        logger.logI(self.tn, _("Applying permissions to casper scripts"))
+        logger.logI(self.tn, logger.I, _("Applying permissions to casper scripts"))
         # Make sure the casper scripts work
         cbs = "/usr/share/initramfs-tools/scripts/casper-bottom/"
         for i in fsutil.listdir(cbs):
             fsutil.chmod(i, 0o755, self.tn)
-        logger.logV(self.tn, _("Editing lsb-release"))
+        logger.logV(self.tn, logger.I, _("Editing lsb-release"))
         self.varEditor(tmpsys + "etc/lsb-release", {
                                     "DISTRIB_ID": configutils.getValue(configs[configutils.sysname]),
                                     "DISTRIB_RELEASE": configutils.getValue(configs[configutils.sysversion]),
@@ -335,7 +336,7 @@ class UbiquitySetup(multiprocessing.Process):
 
     def run(self):
         # If the user-setup-apply file does not exist, and there is an alternative, we'll copy it over
-        logger.logI(self.tn, _("Setting up the installer"))
+        logger.logI(self.tn, logger.I, _("Setting up the installer"))
         if (os.path.isfile("/usr/lib/ubiquity/user-setup/user-setup-apply.orig") and not
             os.path.isfile("/usr/lib/ubiquity/user-setup/user-setup-apply")):
             shutil.copy2("/usr/lib/ubiquity/user-setup/user-setup-apply.orig",
@@ -364,7 +365,7 @@ class TempSys(multiprocessing.Process):
         self.tn = logger.genTN(self.threadname)
 
     def run(self):
-        logger.logI(self.tn, _("Removing unneeded files"))
+        logger.logI(self.tn, logger.I, _("Removing unneeded files"))
         '''cbs = "/usr/share/initramfs-tools/scripts/casper-bottom/"
         # This pattern should do the trick
         execme = glob.glob(os.path.join(cbs, "[0-9][0-9]*"))

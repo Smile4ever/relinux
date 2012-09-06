@@ -5,15 +5,13 @@ Contains streams for logging information
 """
 
 from relinux import config
-import sys
 #from threading import RLock
 
 
 # Remove console output from a certain stream
 def remConsoleOutput(stream):
-    consolestreams = [sys.stderr, sys.stdout]
     for i in stream:
-        if i in consolestreams:
+        if i in config.TermStreams:
             stream.remove(i)
 
 
@@ -62,14 +60,38 @@ VVBuffer = ""'''
 # Logging presets
 MError = "Error! "
 MWarning = "Warning! "
+MDebug = "Debug! "
 MTab = "    "
 MNewline = "\n"
+E = "E"
+W = "W"
+I = "I"
+D = "D"
 
 
-# Writes in all files in list
-def writeAll(lists, text):
+# Writes in all files in list (plus formats the text)
+def writeAll(status, lists, tn, importance, text):
+    if tn == "" or tn == None or not status:
+        return
+    fmt = tn + "%s" + text
+    if importance == E:
+        text = fmt % MError
+    elif importance == W:
+        text = fmt % MWarning
+    elif importance == D:
+        text = fmt % MDebug
     for i in lists:
-        i.write(text)
+        if i in config.TermStreams:
+            fmt = "\033[%dm%s\033[" + str(config.TermReset) + "m"
+            if importance == E:
+                text = fmt % (config.TermRed, text)
+            elif importance == W:
+                text = fmt % (config.TermYellow, text)
+            elif importance == I:
+                text = fmt % (config.TermBlue, text)
+            elif importance == D:
+                text = fmt % (config.TermGreen, text)
+        i.write(text + MNewline)
 
 
 # Generates a thread name string
@@ -77,46 +99,21 @@ def genTN(tn):
     return "[" + tn + "] "
 
 
-# Log to error stream
-def logE(tn, text):
-    if config.EStatus is True and not tn == "":
-        #RLock.acquire()
-        text = tn + MError + text
-        writeAll(config.EFiles, text + MNewline)
-        #RLock.release()
+# Log to essential stream
+def logE(tn, importance, text):
+    writeAll(config.EStatus, config.EFiles, tn, importance, text)
 
 
 # Log to info stream
-def logI(tn, text):
-    if config.IStatus is True and not tn == "":
-        #RLock.acquire()
-        text = tn + text
-        writeAll(config.IFiles, text + MNewline)
-        #RLock.release()
-
-
-# Log to warning stream
-def logW(tn, text):
-    if config.IStatus is True and not tn == "":
-        #RLock.acquire()
-        text = tn + MWarning + text
-        writeAll(config.WFiles, text + MNewline)
-        #RLock.release()
+def logI(tn, importance, text):
+    writeAll(config.IStatus, config.IFiles, tn, importance, text)
 
 
 # Log to verbose stream
-def logV(tn, text):
-    if config.VStatus is True and not tn == "":
-        #RLock.acquire()
-        text = tn + text
-        writeAll(config.VFiles, text + MNewline)
-        #RLock.release()
+def logV(tn, importance, text):
+    writeAll(config.VStatus, config.VFiles, tn, importance, text)
 
 
 # Log to very-verbose stream
-def logVV(tn, text):
-    if config.VVStatus is True and not tn == "":
-        #RLock.acquire()
-        text = tn + text
-        writeAll(config.VVFiles, text + MNewline)
-        #RLock.release()
+def logVV(tn, importance, text):
+    writeAll(config.VVStatus, config.VVFiles, tn, importance, text)

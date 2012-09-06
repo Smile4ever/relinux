@@ -51,7 +51,7 @@ def getDiskName():
 
 # Shows a file not found error
 def showFileNotFound(files, dirs, tn):
-    logger.logE(tn, files + " " + _("not found") + ". " + _("Copy") + " " + files + 
+    logger.logE(tn, logger.E, files + " " + _("not found") + ". " + _("Copy") + " " + files + 
                 " " + _("to") + " " + dirs)
 
 
@@ -81,7 +81,7 @@ class genISOTree(multiprocessing.Process):
         self.tn = logger.genTN(genisotree["tn"])
 
     def run(self):
-        logger.logI(self.tn, _("Generating ISO Tree"))
+        logger.logI(self.tn, logger.I, _("Generating ISO Tree"))
         # Make the tree
         print(isotreel)
         fsutil.maketree([isotreel + "casper", isotreel + "preseed",
@@ -97,9 +97,9 @@ class copyPreseed(multiprocessing.Process):
         self.tn = logger.genTN(copypreseed["tn"])
 
     def run(self):
-        logger.logV(self.tn, _("Copying preseed files to the ISO tree"))
+        logger.logV(self.tn, logger.I, _("Copying preseed files to the ISO tree"))
         for i in fsutil.listdir(configutils.getValue(configs[configutils.preseed])):
-            logger.logVV(self.tn, _("Copying") + " " + i + " " + _("to the ISO tree"))
+            logger.logVV(self.tn, logger.I, _("Copying") + " " + i + " " + _("to the ISO tree"))
             copyFile(i, isotreel + "preseed/", self.tn)
 copypreseed["thread"] = copyPreseed
 
@@ -113,7 +113,7 @@ class copyMemtest(multiprocessing.Process):
 
     def run(self):
         if configutils.parseBoolean(configutils.getValue(configs[configutils.memtest])):
-            logger.logV(self.tn, _("Copying memtest to the ISO tree"))
+            logger.logV(self.tn, logger.I, _("Copying memtest to the ISO tree"))
             copyFile("/boot/memtest86+.bin", isotreel + "isolinux/memtest", self.tn)
 copymemtest["thread"] = copyMemtest
 
@@ -126,14 +126,14 @@ class copySysLinux(multiprocessing.Process):
         self.tn = logger.genTN(copysyslinux["tn"])
 
     def run(self):
-        logger.logV(self.tn, _("Copying ISOLINUX to the ISO tree"))
+        logger.logV(self.tn, logger.I, _("Copying ISOLINUX to the ISO tree"))
         copyFile("/usr/lib/syslinux/isolinux.bin", isotreel + "isolinux/", self.tn, True)
         copyFile("/usr/lib/syslinux/vesamenu.c32", isotreel + "isolinux/", self.tn, True)
-        logger.logVV(self.tn, _("Copying isolinux.cfg to the ISO tree"))
+        logger.logVV(self.tn, logger.I, _("Copying isolinux.cfg to the ISO tree"))
         copyFile(configutils.getValue(configs[configutils.isolinuxfile]), isotreel + 
                                       "isolinux/isolinux.cfg", self.tn, True)
         # Edit the isolinux.cfg file to replace the variables
-        logger.logV(self.tn, _("Editing isolinux.cfg"))
+        logger.logV(self.tn, logger.I, _("Editing isolinux.cfg"))
         splash = os.path.basename(configutils.getValue(configs[configutils.splash]))
         shutil.copy2(configutils.getValue(configs[configutils.splash]),
                      isotreel + "isolinux/" + splash)
@@ -153,7 +153,7 @@ class diskDefines(multiprocessing.Process):
         self.tn = logger.genTN(diskdefines["tn"])
 
     def run(self):
-        logger.logV(self.tn, _("Writing disk definitions"))
+        logger.logV(self.tn, logger.I, _("Writing disk definitions"))
         defineWriter(isotreel + "README.diskdefines", {"DISKNAME": getDiskName(),
                                                       "TYPE": "binary",
                                                       "TYPEbinary": ct,
@@ -178,28 +178,27 @@ class genPakManifest(multiprocessing.Process):
 
     def run(self):
         # Generate the package manifest
-        logger.logV(self.tn, _("Generating package manifests"))
-        logger.logVV(self.tn, _("Generating filesystem.manifest"))
+        logger.logV(self.tn, logger.I, _("Generating package manifests"))
+        logger.logVV(self.tn, logger.I, _("Generating filesystem.manifest and filesystem.manifest-desktop"))
         pkglistu = config.AptCache.packages
         writer = open(isotreel + "casper/filesystem.manifest", "w")
+        writer_desktop = open(isotreel + "casper/filesystem.manifest-desktop", "w")
         for i in pkglistu:
             if i.current_ver == None:
                 continue
             name = i.get_fullname(True).strip()
             ver = i.current_ver.ver_str.strip()
+            strs = name + " " + ver + "\n"
+            writer.write(strs)
             if (not name in 
                 configutils.parseMultipleValues(configutils.getValue(configs[configutils.remafterinst]))):
-                writer.write(name + " " + ver + "\n")
+                writer_desktop.write(strs)
         writer.close()
-        logger.logVV(self.tn, _("Generating filesytem.manifest-remove"))
+        logger.logVV(self.tn, logger.I, _("Generating filesytem.manifest-remove"))
         writer = open(isotreel + "casper/filesystem.manifest-remove", "w")
         for i in configutils.parseMultipleValues(configutils.getValue(configs[configutils.remafterinst])):
             writer.write(i.strip() + "\n")
         writer.close()
-        # We don't want any differences, so we'll just copy filesystem.manifest to filesystem.manifest-desktop
-        logger.logVV(self.tn, _("Generating filesystem.manifest-desktop"))
-        copyFile(isotreel + "casper/filesystem.manifest",
-                 isotreel + "casper/filesystem.manifest-desktop", self.tn)
 pakmanifest["thread"] = genPakManifest
 
 
@@ -211,7 +210,7 @@ class genRAMFS(multiprocessing.Process):
         self.tn = logger.genTN(genramfs["tn"])
 
     def run(self):
-        logger.logV(self.tn, _("Generating RAMFS"))
+        logger.logV(self.tn, logger.I, _("Generating RAMFS"))
         '''os.system("mkinitramfs -o " + isotreel + "casper/initrd.gz " + 
                   configutils.getKernel(configutils.getValue(configs[configutils.kernel])))'''
         copyFile("/boot/initrd.img-" + configutils.getKernel(configutils.getValue(configs[configutils.kernel])),
@@ -227,7 +226,7 @@ class copyKernel(multiprocessing.Process):
         self.tn = logger.genTN(copykernel["tn"])
 
     def run(self):
-        logger.logI(self.tn, _("Copying the kernel to the ISO tree"))
+        logger.logI(self.tn, logger.I, _("Copying the kernel to the ISO tree"))
         copyFile("/boot/vmlinuz-" + configutils.getKernel(configutils.getValue(configs[configutils.kernel])),
                  isotreel + "casper/vmlinuz", self.tn)
 copykernel["thread"] = copyKernel
@@ -242,7 +241,7 @@ class genWUBI(multiprocessing.Process):
 
     def run(self):
         if configutils.parseBoolean(configutils.getValue(configs[configutils.enablewubi])) is True:
-            logger.logV(self.tn, _("Generating the windows autorun.inf"))
+            logger.logV(self.tn, logger.I, _("Generating the windows autorun.inf"))
             files = open(isotreel + "autorun.inf", "w")
             files.write("[autorun]\n")
             files.write("open=wubi.exe\n")
@@ -265,22 +264,22 @@ class USBComp(multiprocessing.Process):
         self.tn = logger.genTN(usbcomp["tn"])
 
     def run(self):
-        logger.logI(self.tn, _("Making the ISO compatible with a USB burner"))
-        logger.logVV(self.tn, _("Writing .disk/info"))
+        logger.logI(self.tn, logger.I, _("Making the ISO compatible with a USB burner"))
+        logger.logVV(self.tn, logger.I, _("Writing .disk/info"))
         files = open(isotreel + ".disk/info", "w")
         files.write(getDiskName() + "\n")
         files.close()
-        logger.logV(self.tn, _("Making symlink pointing to the ISO root dir"))
+        logger.logV(self.tn, logger.I, _("Making symlink pointing to the ISO root dir"))
         if os.path.lexists(isotreel + "ubuntu"):
             fsutil.rm(isotreel + "ubuntu", False, self.tn)
         os.symlink(isotreel, isotreel + "ubuntu")
-        logger.logVV(self.tn, _("Writing release notes URL"))
+        logger.logVV(self.tn, logger.I, _("Writing release notes URL"))
         files = open(isotreel + ".disk/release_notes_url", "w")
         files.write(configutils.getValue(configs[configutils.url]) + "\n")
         files.close()
-        logger.logVV(self.tn, _("Writing .disk/base_installable"))
+        logger.logVV(self.tn, logger.I, _("Writing .disk/base_installable"))
         fsutil.touch(isotreel + ".disk/base_installable")
-        logger.logVV(self.tn, _("Writing CD Type"))
+        logger.logVV(self.tn, logger.I, _("Writing CD Type"))
         files = open(isotreel + ".disk/cd_type", "w")
         files.write("full_cd/single\n")
         files.close()
@@ -303,12 +302,12 @@ class genISO(multiprocessing.Process):
         self.tn = logger.genTN(geniso["tn"])
 
     def run(self):
-        logger.logI(self.tn, _("Starting generation of the ISO image"))
+        logger.logI(self.tn, logger.I, _("Starting generation of the ISO image"))
         # Make a last verification on the SquashFS
         squashfs.doSFSChecks(isotreel + "casper/filesystem.squashfs",
                              configutils.getValue(configs[configutils.isolevel]))
         # Generate MD5 checksums
-        logger.logV(self.tn, _("Generating MD5 sums"))
+        logger.logV(self.tn, logger.I, _("Generating MD5 sums"))
         files = open(isotreel + "md5sum.txt", "w")
         for x in fsutil.listdir(isotreel, {"recurse": True}):
             i = re.sub(r"^ *" + isotreel + "/*", "./", x)
@@ -318,14 +317,14 @@ class genISO(multiprocessing.Process):
                 if fmd5 != "" and fmd5 != None:
                     files.write(fmd5)
         files.close()
-        logger.logI(self.tn, _("Generating the ISO"))
+        logger.logI(self.tn, logger.I, _("Generating the ISO"))
         location = (configutils.getValue(configs[configutils.isodir]) + "/" +
                     configutils.getValue(configs[configutils.isolocation]))
         os.system(configutils.getValue(configs[configutils.isogenerator]) + " -o " + location +
                   " " + isogenopts + " -V \"" + configutils.getValue(configs[configutils.label])
                   + "\" " + isotreel)
         # Generate the MD5 sum
-        logger.logV(self.tn, _("Generating MD5 sum for the ISO"))
+        logger.logV(self.tn, logger.I, _("Generating MD5 sum for the ISO"))
         files = open(location + ".md5", "w")
         files.write(fsutil.genFinalMD5("./" + configutils.getValue(configs[configutils.isolocation]),
                                        location))

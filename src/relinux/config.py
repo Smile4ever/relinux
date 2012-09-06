@@ -33,14 +33,32 @@ version = "0.4a1"
 version_string = product + " version " + str(version)
 about_string = product + " is a free software designed to help you make a professional-looking OS easily"
 
+TermStreams = [sys.stderr, sys.stdout]
+
+TermBlack = 30
+TermRed = 31
+TermGreen = 32
+TermYellow = 33
+TermBlue = 34
+TermMagenta = 35
+TermCyan = 36
+TermWhite = 37
+
+TermReset = 0
+TermBold = 1
+TermDark = 2
+TermUnderline = 4
+TermBlink = 5  # I hope this will be unused...
+TermReverse = 7
+TermConcealed = 8
+TermAddForBackground = 10  # Add this to the color you want
+
 EStatus = True
-WStatus = True
 IStatus = True
 VStatus = True
 VVStatus = True
 
 EFiles = [sys.stderr]
-WFiles = [sys.stdout]
 IFiles = [sys.stdout]
 VFiles = [sys.stdout]
 VVFiles = [sys.stdout]
