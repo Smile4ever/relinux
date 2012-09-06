@@ -80,6 +80,8 @@ def writeAll(status, lists, tn, importance, text):
         text = fmt % MWarning
     elif importance == D:
         text = fmt % MDebug
+    else:
+        text = fmt % ""
     for i in lists:
         if i in config.TermStreams:
             fmt = "\033[%dm%s\033[" + str(config.TermReset) + "m"
@@ -87,10 +89,10 @@ def writeAll(status, lists, tn, importance, text):
                 text = fmt % (config.TermRed, text)
             elif importance == W:
                 text = fmt % (config.TermYellow, text)
-            elif importance == I:
-                text = fmt % (config.TermBlue, text)
             elif importance == D:
                 text = fmt % (config.TermGreen, text)
+            '''elif importance == I:
+                text = fmt % (config.TermBlue, text)'''
         i.write(text + MNewline)
 
 

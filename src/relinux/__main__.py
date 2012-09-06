@@ -64,6 +64,7 @@ def main():
     from relinux import gui, configutils, logger, aptutil, modloader, utilities, fsutil
     config.Arch = fsutil.getArch()
     logger.normal()
+    logger.logI(logger.genTN("Main"), logger.I, "Test")
     parser = ArgumentParser()
     parser.add_argument("-V", "--version", action="store_true",
                       dest="showversion",
