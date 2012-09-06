@@ -86,15 +86,17 @@ def writeAll(status, lists, tn, importance, text):
     text = text__
     for i in lists:
         if i in config.TermStreams:
-            fmt1 = "\033[%dm%s\033[" + str(config.TermReset) + "m"
+            text_ = "\033["
             if importance == E:
-                text = fmt1 % (config.TermRed, text)
+                text_ += str(config.TermRed)
             elif importance == W:
-                text = fmt1 % (config.TermYellow, text)
+                text_ += str(config.TermYellow)
             elif importance == D:
-                text = fmt1 % (config.TermGreen, text)
+                text_ += str(config.TermGreen)
             '''elif importance == I:
-                text = fmt1 % (config.TermBlue, text)'''
+                text_ += config.TermBlue'''
+            text_ += "m" + text + "\033[" + str(config.TermReset) + "m"
+            text = text_
         i.write(text + MNewline)
 
 
