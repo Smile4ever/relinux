@@ -9,6 +9,7 @@ if config.python3:
     import tkinter as Tkinter
 else:
     import Tkinter
+import os
 
 relinuxmodule = True
 relinuxmoduleapi = "0.4a1"
@@ -117,6 +118,10 @@ def run(adict):
     togglesel = gui.Button(page.chframe.interior, text="Toggle", command=lambda: selBoxes(None))
     togglesel.grid(row=y, column=x)
     def startThreads():
+        if os.getuid() != 0:
+            page.isnotroot.pack_forget()
+            page.isnotroot.pack(fill=Tkinter.X)
+            return
         for i in range(len(page.chframe.boxes)):
             if page.chframe.boxes[i].value.get() < 1:
                 threads[i]["enabled"] = False
@@ -129,3 +134,4 @@ def run(adict):
         # lambda: runThreads(threads)
     page.button = gui.Button(page.frame, text="Start!", command=startThreads)
     page.button.pack()
+    page.isnotroot = gui.Label(page.frame, text="You are not root!")
