@@ -73,26 +73,28 @@ D = "D"
 def writeAll(status, lists, tn, importance, text):
     if tn == "" or tn == None or not status:
         return
-    fmt = tn + "%s" + text
+    text_ = tn
     if importance == E:
-        text = fmt % MError
+        text_ += MError
     elif importance == W:
-        text = fmt % MWarning
+        text_ += MWarning
     elif importance == D:
-        text = fmt % MDebug
+        text_ += MDebug
     else:
-        text = fmt % ""
+        text_ += ""
+    text__ = text_ + text
+    text = text__
     for i in lists:
         if i in config.TermStreams:
-            fmt = "\033[%dm%s\033[" + str(config.TermReset) + "m"
+            fmt1 = "\033[%dm%s\033[" + str(config.TermReset) + "m"
             if importance == E:
-                text = fmt % (config.TermRed, text)
+                text = fmt1 % (config.TermRed, text)
             elif importance == W:
-                text = fmt % (config.TermYellow, text)
+                text = fmt1 % (config.TermYellow, text)
             elif importance == D:
-                text = fmt % (config.TermGreen, text)
+                text = fmt1 % (config.TermGreen, text)
             '''elif importance == I:
-                text = fmt % (config.TermBlue, text)'''
+                text = fmt1 % (config.TermBlue, text)'''
         i.write(text + MNewline)
 
 
