@@ -120,6 +120,7 @@ def run(adict):
     togglesel = gui.Button(page.chframe.interior, text="Toggle", command=lambda: selBoxes(None))
     togglesel.grid(row=y, column=x)
     y += 1
+    x = 0
     threadsrunninglabel = gui.Label(page.chframe.interior, text="Threads running:")
     threadsrunninglabel.grid(row=y, column=x)
     y += 1
@@ -141,7 +142,7 @@ def run(adict):
             tempx = 0
             threadsshow = []
             for i in range(len(page.chframe.dispthreads)):
-                page.chframe.dispthreads[i].pack_remove()
+                page.chframe.dispthreads[i].grid_remove()
                 del(page.chframe.dispthreads[i])
             for i in threadsrunning:
                 threadsshow.append(threadmanager.getThread(i, threads)["tn"])
