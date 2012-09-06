@@ -313,7 +313,7 @@ class genISO(multiprocessing.Process):
         for x in fsutil.listdir(isotreel, {"recurse": True}):
             i = re.sub(r"^ *" + isotreel + "/*", "./", x)
             if not "isolinux" in i and not "md5sum" in i:
-                logger.logVV(self.tn, _("Writing MD5 sum of") + " " + i)
+                logger.logVV(self.tn, logger.I, _("Writing MD5 sum of") + " " + i)
                 fmd5 = fsutil.genFinalMD5(i, x)
                 if fmd5 != "" and fmd5 != None:
                     files.write(fmd5)
