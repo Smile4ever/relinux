@@ -8,11 +8,10 @@ ISO Utilities
 '''
 
 from relinux.modules.osweaver import tempsys
-from relinux import logger, config, fsutil, configutils
+from relinux import logger, config, fsutil, configutils, threadmanager
 import shutil
 import os
 import re
-import multiprocessing
 
 
 threadname = "ISOTree"
@@ -75,12 +74,8 @@ def defineWriter(files, lists):
 
 # Generate the ISO tree
 genisotree = {"deps": [], "tn": "ISOTree"}
-class genISOTree(multiprocessing.Process):
-    def __init__(self):
-        multiprocessing.Process.__init__(self)
-        self.tn = logger.genTN(genisotree["tn"])
-
-    def run(self):
+class genISOTree(threadmanager.Thread):
+    def runthread(self):
         logger.logI(self.tn, logger.I, _("Generating ISO Tree"))
         # Make the tree
         print(isotreel)
@@ -91,12 +86,8 @@ genisotree["thread"] = genISOTree
 
 # Copy preseed to the ISO tree
 copypreseed = {"deps": [genisotree], "tn": "Preseed"}
-class copyPreseed(multiprocessing.Process):
-    def __init__(self):
-        multiprocessing.Process.__init__(self)
-        self.tn = logger.genTN(copypreseed["tn"])
-
-    def run(self):
+class copyPreseed(threadmanager.Thread):
+    def runthread(self):
         logger.logV(self.tn, logger.I, _("Copying preseed files to the ISO tree"))
         for i in fsutil.listdir(configutils.getValue(configs[configutils.preseed])):
             logger.logVV(self.tn, logger.I, _("Copying") + " " + i + " " + _("to the ISO tree"))
@@ -106,12 +97,8 @@ copypreseed["thread"] = copyPreseed
 
 # Copy memtest to the ISO tree
 copymemtest = {"deps": [genisotree], "tn": "Memtest"}
-class copyMemtest(multiprocessing.Process):
-    def __init__(self):
-        multiprocessing.Process.__init__(self)
-        self.tn = logger.genTN(copymemtest["tn"])
-
-    def run(self):
+class copyMemtest(threadmanager.Thread):
+    def runthread(self):
         if configutils.parseBoolean(configutils.getValue(configs[configutils.memtest])):
             logger.logV(self.tn, logger.I, _("Copying memtest to the ISO tree"))
             copyFile("/boot/memtest86+.bin", isotreel + "isolinux/memtest", self.tn)
@@ -120,12 +107,8 @@ copymemtest["thread"] = copyMemtest
 
 # Copy Syslinux to the ISO tree
 copysyslinux = {"deps": [genisotree], "tn": "SysLinux"}
-class copySysLinux(multiprocessing.Process):
-    def __init__(self):
-        multiprocessing.Process.__init__(self)
-        self.tn = logger.genTN(copysyslinux["tn"])
-
-    def run(self):
+class copySysLinux(threadmanager.Thread):
+    def runthread(self):
         logger.logV(self.tn, logger.I, _("Copying ISOLINUX to the ISO tree"))
         copyFile("/usr/lib/syslinux/isolinux.bin", isotreel + "isolinux/", self.tn, True)
         copyFile("/usr/lib/syslinux/vesamenu.c32", isotreel + "isolinux/", self.tn, True)
@@ -147,12 +130,8 @@ copysyslinux["thread"] = copySysLinux
 
 # Write disk definitions
 diskdefines = {"deps": [genisotree], "tn": "DiskDefines"}
-class diskDefines(multiprocessing.Process):
-    def __init__(self):
-        multiprocessing.Process.__init__(self)
-        self.tn = logger.genTN(diskdefines["tn"])
-
-    def run(self):
+class diskDefines(threadmanager.Thread):
+    def runthread(self):
         logger.logV(self.tn, logger.I, _("Writing disk definitions"))
         defineWriter(isotreel + "README.diskdefines", {"DISKNAME": getDiskName(),
                                                       "TYPE": "binary",
@@ -171,12 +150,8 @@ diskdefines["thread"] = diskDefines
 
 # Generate package manifests
 pakmanifest = {"deps": [genisotree], "tn": "Manifest"}
-class genPakManifest(multiprocessing.Process):
-    def __init__(self):
-        multiprocessing.Process.__init__(self)
-        self.tn = logger.genTN(pakmanifest["tn"])
-
-    def run(self):
+class genPakManifest(threadmanager.Thread):
+    def runthread(self):
         # Generate the package manifest
         logger.logV(self.tn, logger.I, _("Generating package manifests"))
         logger.logVV(self.tn, logger.I, _("Generating filesystem.manifest and filesystem.manifest-desktop"))
@@ -205,12 +180,8 @@ pakmanifest["thread"] = genPakManifest
 
 # Generate the RAMFS
 genramfs = {"deps": [genisotree], "tn": "RAMFS"}
-class genRAMFS(multiprocessing.Process):
-    def __init__(self):
-        multiprocessing.Process.__init__(self)
-        self.tn = logger.genTN(genramfs["tn"])
-
-    def run(self):
+class genRAMFS(threadmanager.Thread):
+    def runthread(self):
         logger.logV(self.tn, logger.I, _("Generating RAMFS"))
         '''os.system("mkinitramfs -o " + isotreel + "casper/initrd.gz " + 
                   configutils.getKernel(configutils.getValue(configs[configutils.kernel])))'''
@@ -221,12 +192,8 @@ genramfs["thread"] = genRAMFS
 
 # Copy the kernel
 copykernel = {"deps": [genisotree], "tn": "Kernel"}
-class copyKernel(multiprocessing.Process):
-    def __init__(self):
-        multiprocessing.Process.__init__(self)
-        self.tn = logger.genTN(copykernel["tn"])
-
-    def run(self):
+class copyKernel(threadmanager.Thread):
+    def runthread(self):
         logger.logI(self.tn, logger.I, _("Copying the kernel to the ISO tree"))
         copyFile("/boot/vmlinuz-" + configutils.getKernel(configutils.getValue(configs[configutils.kernel])),
                  isotreel + "casper/vmlinuz", self.tn)
@@ -235,12 +202,8 @@ copykernel["thread"] = copyKernel
 
 # Generate WUBI
 genwubi = {"deps": [genisotree], "tn": "WUBI"}
-class genWUBI(multiprocessing.Process):
-    def __init__(self):
-        multiprocessing.Process.__init__(self)
-        self.tn = logger.genTN(genwubi["tn"])
-
-    def run(self):
+class genWUBI(threadmanager.Thread):
+    def runthread(self):
         if configutils.parseBoolean(configutils.getValue(configs[configutils.enablewubi])) is True:
             logger.logV(self.tn, logger.I, _("Generating the windows autorun.inf"))
             files = open(isotreel + "autorun.inf", "w")
@@ -259,12 +222,8 @@ genwubi["thread"] = genWUBI
 
 # Make the LiveCD compatible with USB burners
 usbcomp = {"deps": [genisotree], "tn": "USB"}
-class USBComp(multiprocessing.Process):
-    def __init__(self):
-        multiprocessing.Process.__init__(self)
-        self.tn = logger.genTN(usbcomp["tn"])
-
-    def run(self):
+class USBComp(threadmanager.Thread):
+    def runthread(self):
         logger.logI(self.tn, logger.I, _("Making the ISO compatible with a USB burner"))
         logger.logVV(self.tn, logger.I, _("Writing .disk/info"))
         files = open(isotreel + ".disk/info", "w")
@@ -297,12 +256,8 @@ githreads.extend(squashfs.threads)
 
 # Generates the ISO
 geniso = {"deps": githreads, "tn": "ISO", "threadspan": -1}
-class genISO(multiprocessing.Process):
-    def __init__(self):
-        multiprocessing.Process.__init__(self)
-        self.tn = logger.genTN(geniso["tn"])
-
-    def run(self):
+class genISO(threadmanager.Thread):
+    def runthread(self):
         logger.logI(self.tn, logger.I, _("Starting generation of the ISO image"))
         # Make a last verification on the SquashFS
         squashfs.doSFSChecks(isotreel + "casper/filesystem.squashfs",

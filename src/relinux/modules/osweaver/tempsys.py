@@ -4,12 +4,11 @@ Generates a temporary filesystem to hack on
 @author: Joel Leclerc (MiJyn) <lkjoel@ubuntu.com>
 '''
 
-from relinux import logger, config, configutils, fsutil, pwdmanip, aptutil, numrange, utilities
+from relinux import logger, config, configutils, fsutil, pwdmanip, aptutil, numrange, utilities, threadmanager
 from relinux.modules.osweaver import aptcache
 import os
 import shutil
 import re
-import multiprocessing
 import copy
 
 tmpsys = config.TempSys
@@ -25,12 +24,8 @@ configs = config.Configuration["OSWeaver"]
 
 # Generate the tree for the tempsys
 tmpsystree = {"deps": [], "tn": "TempSysTree"}
-class genTempSysTree(multiprocessing.Process):
-    def __init__(self):
-        multiprocessing.Process.__init__(self)
-        self.tn = logger.genTN(tmpsystree["tn"])
-
-    def run(self):
+class genTempSysTree(threadmanager.Thread):
+    def runthread(self):
         logger.logI(self.tn, logger.I, _("Generating the tree for the temporary filesystem"))
         fsutil.maketree([tmpsys + "etc", tmpsys + "dev",
                           tmpsys + "proc", [tmpsys + "tmp", 0o1777],
@@ -42,12 +37,8 @@ tmpsystree["thread"] = genTempSysTree
 
 # Copy the contents of /etc/ and /var/ to the tempsys
 cpetcvar = {"deps": [tmpsystree], "tn": "EtcVar"}
-class copyEtcVar(multiprocessing.Process):
-    def __init__(self):
-        multiprocessing.Process.__init__(self)
-        self.tn = logger.genTN(cpetcvar["tn"])
-
-    def run(self):
+class copyEtcVar(threadmanager.Thread):
+    def runthread(self):
         logger.logI(self.tn, logger.I, _("Copying files to the temporary filesystem"))
         excludes = configutils.getValue(configs[configutils.excludes])
         fsutil.fscopy("/etc", tmpsys + "etc", excludes, self.tn)
@@ -57,12 +48,8 @@ cpetcvar["thread"] = copyEtcVar
 
 # Remove configuration files that can break the installed/live system
 remconfig = {"deps": [cpetcvar], "tn": "RemConfig"}
-class remConfig(multiprocessing.Process):
-    def __init__(self):
-        multiprocessing.Process.__init__(self)
-        self.tn = logger.genTN(remconfig["tn"])
-
-    def run(self):
+class remConfig(threadmanager.Thread):
+    def runthread(self):
         # Remove these files as they can conflict inside the installed system
         logger.logV(self.tn, logger.I, _("Removing personal configurations that can break the installed system"))
         fsutil.rmfiles([tmpsys + "etc/X11/xorg.conf*", tmpsys + "etc/resolv.conf",
@@ -82,12 +69,8 @@ remconfig["thread"] = remConfig
 
 # Remove cached lists
 remcachedlists = {"deps": [cpetcvar], "tn": "RemCachedLists"}
-class remCachedLists(multiprocessing.Process):
-    def __init__(self):
-        multiprocessing.Process.__init__(self)
-        self.tn = logger.genTN(remcachedlists["tn"])
-
-    def run(self):
+class remCachedLists(threadmanager.Thread):
+    def runthread(self):
         logger.logV(self.tn, logger.I, _("Removing cached lists"))
         fsutil.adrm(tmpsys + "var/lib/apt/lists/",
                     {"excludes": True, "remdirs": False, "remsymlink": True, "remfullpath": False},
@@ -97,12 +80,8 @@ remcachedlists["thread"] = remCachedLists
 
 # Remove temporary files in /var
 remtempvar = {"deps": [cpetcvar], "tn": "RemTempVar"}
-class remTempVar(multiprocessing.Process):
-    def __init__(self):
-        multiprocessing.Process.__init__(self)
-        self.tn = logger.genTN(remtempvar["tn"])
-
-    def run(self):
+class remTempVar(threadmanager.Thread):
+    def runthread(self):
         logger.logV(self.tn, logger.I, _("Removing temporary files in /var"))
         # Remove all files in these directories (but not directories inside them)
         for i in ["etc/NetworkManager/system-connections/", "var/run", "var/log", "var/mail",
@@ -115,12 +94,8 @@ remtempvar["thread"] = remTempVar
 
 # Generate logs in /var/log
 genvarlogs = {"deps": [cpetcvar], "tn": "GenVarLogs"}
-class genVarLogs(multiprocessing.Process):
-    def __init__(self):
-        multiprocessing.Process.__init__(self)
-        self.tn = logger.genTN(genvarlogs["tn"])
-
-    def run(self):
+class genVarLogs(threadmanager.Thread):
+    def runthread(self):
         # Create the logs
         logger.logV(self.tn, logger.I, _("Creating empty logs"))
         for i in ["dpkg.log", "lastlog", "mail.log", "syslog", "auth.log", "daemon.log", "faillog",
@@ -133,11 +108,7 @@ genvarlogs["thread"] = genVarLogs
 
 # Edit passwd and shadow files to remove users
 remusers = {"deps": [cpetcvar], "tn": "RemUsers"}
-class remUsers(multiprocessing.Process):
-    def __init__(self):
-        multiprocessing.Process.__init__(self)
-        self.tn = logger.genTN(remusers["tn"])
-
+class remUsers(threadmanager.Thread):
     # Helper function for changing the /etc/group file
     def _parseGroup(self, i, usrs):
         addme = True
@@ -167,7 +138,7 @@ class remUsers(multiprocessing.Process):
         else:
             return [False, ""]
 
-    def run(self):
+    def runthread(self):
         # Setup the password and group stuff
         logger.logI(self.tn, logger.I, _("Removing conflicting users"))
         passwdf = tmpsys + "etc/passwd"
@@ -254,11 +225,7 @@ remusers["thread"] = remUsers
 
 # Edits casper.conf
 casperconf = {"deps": [cpetcvar], "tn": "casper.conf"}
-class CasperConfEditor(multiprocessing.Process):
-    def __init__(self):
-        multiprocessing.Process.__init__(self)
-        self.tn = logger.genTN(casperconf["tn"])
-
+class CasperConfEditor(threadmanager.Thread):
     # Helper function
     def _varEditor(self, line, lists):
         patt = re.compile("^.*? *([A-Za-z_-]*?)=.*$")
@@ -291,7 +258,7 @@ class CasperConfEditor(multiprocessing.Process):
                 buffers.write("export " + i + "=\"" + lists[i] + "\"\n")
         buffers.close()
 
-    def run(self):
+    def runthread(self):
         # Edit the casper.conf
         # Strangely enough, casper uses the "quiet" flag if the build system is either Debian or Ubuntu
         if config.VStatus is False:
@@ -329,12 +296,8 @@ casperconf["thread"] = CasperConfEditor
 
 # Sets up Ubiquity
 ubiquitysetup = {"deps": [cpetcvar], "tn": "Ubiquity"}
-class UbiquitySetup(multiprocessing.Process):
-    def __init__(self):
-        multiprocessing.Process.__init__(self)
-        self.tn = logger.genTN(ubiquitysetup["tn"])
-
-    def run(self):
+class UbiquitySetup(threadmanager.Thread):
+    def runthread(self):
         # If the user-setup-apply file does not exist, and there is an alternative, we'll copy it over
         logger.logI(self.tn, logger.I, _("Setting up the installer"))
         if (os.path.isfile("/usr/lib/ubiquity/user-setup/user-setup-apply.orig") and not
@@ -357,14 +320,8 @@ class UbiquitySetup(multiprocessing.Process):
 ubiquitysetup["thread"] = UbiquitySetup
 
 
-class TempSys(multiprocessing.Process):
-    def __init__(self):
-        multiprocessing.Process.__init__(self)
-        self.deps = [tmpsystree]
-        self.threadname = "TempSys"
-        self.tn = logger.genTN(self.threadname)
-
-    def run(self):
+class TempSys(threadmanager.Thread):
+    def runthread(self):
         logger.logI(self.tn, logger.I, _("Removing unneeded files"))
         '''cbs = "/usr/share/initramfs-tools/scripts/casper-bottom/"
         # This pattern should do the trick

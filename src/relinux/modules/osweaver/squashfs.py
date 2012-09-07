@@ -4,11 +4,10 @@ SquashFS Generation
 @author: Joel Leclerc (MiJyn) <lkjoel@ubuntu.com>
 '''
 
-from relinux import logger, fsutil, configutils, config
+from relinux import logger, fsutil, configutils, config, threadmanager
 from relinux.modules.osweaver import tempsys
 from relinux.modules.osweaver.isoutil import genisotree, genramfs
 import os
-import multiprocessing
 
 threadname = "SquashFS"
 tn = logger.genTN(threadname)
@@ -45,11 +44,8 @@ tmpthreads.extend(tempsys.threads)
 tmpthreads.append(genisotree)
 tmpthreads.append(genramfs)
 gensfs = {"deps": tmpthreads, "tn": threadname, "threadspan": -1}
-class genSFS(multiprocessing.Process):
-    def __init__(self):
-        multiprocessing.Process.__init__(self)
-
-    def run(self):
+class genSFS(threadmanager.Thread):
+    def runthread(self):
         logger.logI(tn, logger.I, _("Generating compressed filesystem"))
         # Generate the SquashFS file
         # Options:

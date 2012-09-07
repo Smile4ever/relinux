@@ -7,16 +7,15 @@ from relinux import config, fsutil, logger, utilities
 import time
 import threading
 import copy
-import multiprocessing
 
 
 tn = logger.genTN("TheadManager")
 
 
 # Custom thread class
-class Thread(multiprocessing.Process):
+class Thread(threading.Thread):
     def __init__(self, **kw):
-        multiprocessing.Process.__init__(self)
+        threading.Thread.__init__(self)
         for i in kw.keys():
             self.__dict__[i] = kw[i]
 
@@ -111,7 +110,7 @@ def threadLoop(threads1_, **options):
     # Generate the threads
     for i in range(len(threads)):
         temp_ = threads[i]["thread"]
-        kw = {"tn": threads[i]["tn"]}
+        kw = {"tn": logger.genTN(threads[i]["tn"])}
         if "threadargs" in options:
             for i in options["threadargs"].keys():
                 kw[i] = options["threadargs"][i]
