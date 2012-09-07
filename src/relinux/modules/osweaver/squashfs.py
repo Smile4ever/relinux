@@ -71,13 +71,16 @@ class genSFS(threadmanager.Thread):
         sfscmd = subprocess.Popen(shlex.split("mksquashfs " + tmpsys + " " + sfspath + " " + opts),
                                    stdout=subprocess.PIPE, universal_newlines=True)
         while sfscmd.poll() is None:
-            output = sfscmd.stdout.readline()
-            match = patt.match(output)
             print("OK")
+            output = sfscmd.stdout.readline()
+            print("OK1")
+            match = patt.match(output)
+            print("OK1.5")
             if match != None:
                 print("OK2")
                 sys.stdout.write("\r" + match.group(0))
                 sys.stdout.flush()
+            print("OK3")
         sys.stdout.write("\n")
         logger.logI(tn, logger.I, _("Adding the rest of the system"))
         sfscmd = subprocess.Popen(shlex.split("mksquashfs / " + sfspath + " " + opts + " -e " + sfsex),
