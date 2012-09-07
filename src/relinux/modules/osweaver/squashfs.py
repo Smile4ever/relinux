@@ -67,6 +67,10 @@ class genSFS(threadmanager.Thread):
             fsutil.rm(sfspath)
         # This line would match the pattern below: [==========/              ]  70/300  20%
         patt = re.compile("^ *\[=*[|/-\\]* *\] *[0-9]*/[0-9]* *([0-9]*)% *$")
+        appnd = "32"
+        if sys.maxsize > 2 ** 32:
+            appnd = "64"
+        os.environ["LD_PRELOAD"] = sys.path[0] + "/isatty" + appnd + ".so"
         logger.logI(tn, logger.I, _("Adding the edited /etc and /var to the filesystem"))
         sfscmd = subprocess.Popen(shlex.split("mksquashfs " + tmpsys + " " + sfspath + " " + opts),
                                    stdout=subprocess.PIPE, universal_newlines=True)
@@ -92,6 +96,7 @@ class genSFS(threadmanager.Thread):
                 sys.stdout.write("\r" + match.group(0))
                 sys.stdout.flush()
         sys.stdout.write("\n")
+        os.environ["LD_PRELOAD"] = ""
         # Make sure the SquashFS file is OK
         doSFSChecks(sfspath, int(configutils.getValue(configs[configutils.isolevel])))
         # Find the size after it is uncompressed
