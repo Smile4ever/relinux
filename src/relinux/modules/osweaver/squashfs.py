@@ -75,6 +75,7 @@ class genSFS(threadmanager.Thread):
             match = patt.match(output)
             if match != None:
                 sys.stdout.write("\r" + match.group(0))
+                sys.stdout.flush()
         sys.stdout.write("\n")
         logger.logI(tn, logger.I, _("Adding the rest of the system"))
         sfscmd = subprocess.Popen(shlex.split("mksquashfs / " + sfspath + " " + opts + " -e " + sfsex),
@@ -84,6 +85,7 @@ class genSFS(threadmanager.Thread):
             match = patt.match(output)
             if match != None:
                 sys.stdout.write("\r" + match.group(0))
+                sys.stdout.flush()
         sys.stdout.write("\n")
         # Make sure the SquashFS file is OK
         doSFSChecks(sfspath, int(configutils.getValue(configs[configutils.isolevel])))
