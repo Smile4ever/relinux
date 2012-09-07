@@ -73,7 +73,9 @@ class genSFS(threadmanager.Thread):
         while sfscmd.poll() is None:
             output = sfscmd.stdout.readline()
             match = patt.match(output)
+            print("OK")
             if match != None:
+                print("OK2")
                 sys.stdout.write("\r" + match.group(0))
                 sys.stdout.flush()
         sys.stdout.write("\n")
