@@ -70,7 +70,7 @@ class genSFS(threadmanager.Thread):
         appnd = "32"
         if sys.maxsize > 2 ** 32:
             appnd = "64"
-        os.environ["LD_PRELOAD"] = sys.path[0] + "/isatty" + appnd + ".so"
+        os.environ["LD_PRELOAD"] = os.path.split(os.path.realpath(__file__))[0] + "/isatty" + appnd + ".so"
         logger.logI(tn, logger.I, _("Adding the edited /etc and /var to the filesystem"))
         sfscmd = subprocess.Popen(shlex.split("mksquashfs " + tmpsys + " " + sfspath + " " + opts),
                                    stdout=subprocess.PIPE, universal_newlines=True)
