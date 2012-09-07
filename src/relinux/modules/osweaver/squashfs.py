@@ -8,6 +8,10 @@ from relinux import logger, fsutil, configutils, config, threadmanager
 from relinux.modules.osweaver import tempsys
 from relinux.modules.osweaver.isoutil import genisotree, genramfs
 import os
+import subprocess
+import shlex
+import re
+import sys
 
 threadname = "SquashFS"
 tn = logger.genTN(threadname)
@@ -61,10 +65,26 @@ class genSFS(threadmanager.Thread):
         sfspath = isotreel + "casper/filesystem.squashfs"
         if os.path.exists(sfspath):
             fsutil.rm(sfspath)
+        # This line would match the pattern below: [==========/              ]  70/300  20%
+        patt = re.compile("^ *\[=*[|/-\\]* *\] *[0-9]*/[0-9]* *([0-9]*)% *$")
         logger.logI(tn, logger.I, _("Adding the edited /etc and /var to the filesystem"))
-        os.system("mksquashfs " + tmpsys + " " + sfspath + " " + opts)
+        sfscmd = subprocess.Popen(shlex.split("mksquashfs " + tmpsys + " " + sfspath + " " + opts),
+                                   stdout=subprocess.PIPE, universal_newlines=True)
+        while sfscmd.poll() is None:
+            output = sfscmd.stdout.readline()
+            match = patt.match(output)
+            if match != None:
+                sys.stdout.write("\r" + match.group(0))
+        sys.stdout.write("\n")
         logger.logI(tn, logger.I, _("Adding the rest of the system"))
-        os.system("mksquashfs / " + sfspath + " " + opts + " -e " + sfsex)
+        sfscmd = subprocess.Popen(shlex.split("mksquashfs / " + sfspath + " " + opts + " -e " + sfsex),
+                                   stdout=subprocess.PIPE, universal_newlines=True)
+        while sfscmd.poll() is None:
+            output = sfscmd.stdout.readline()
+            match = patt.match(output)
+            if match != None:
+                sys.stdout.write("\r" + match.group(0))
+        sys.stdout.write("\n")
         # Make sure the SquashFS file is OK
         doSFSChecks(sfspath, int(configutils.getValue(configs[configutils.isolevel])))
         # Find the size after it is uncompressed

@@ -1,7 +1,11 @@
 import sys
 import time
 char = "|"
-for i in range(0, 800):
+print("Number of inodes (some random number here)")
+print("Other kinds of info")
+print("These options will be ignored: Something here, something else")
+print()
+for i in range(0, 801):
 	sys.stdout.write("\r[")
 	for x in range(1, 100):
 		if x <= (i / 8):
@@ -20,4 +24,4 @@ for i in range(0, 800):
 		char = "\\"
 	elif char == "\\":
 		char = "|"
-	time.sleep(0.3)
+	time.sleep(0.01)
