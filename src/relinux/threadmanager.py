@@ -61,18 +61,19 @@ def findRunnableThreads(threadids, threadsdone, threadsrunning, threads, **optio
 
 
 # Run a thread
-def runThread(threadid, threadsdone, threadsrunning, threads, **options):
+def runThread(threadid, threadsdone, threadsrunning, threads, lock, **options):
     thread = getThread(threadid, threads)
     if not thread["thread"].is_alive() and not threadid in threadsdone and not threadid in threadsrunning:
         threadsrunning.append(threadid)
         logger.logV(tn, logger.I, _("Starting") + " " + getThread(threadid, threads)["tn"] + "...")
         thread["thread"].start()
         if options.get("poststart") != None:
-            options["poststart"](threadid, threadsrunning, threads)
+            with lock:
+                options["poststart"](threadid, threadsrunning, threads)
 
 
 # Check if a thread is alive
-def checkThread(threadid, threadsdone, threadsrunning, threads, **options):
+def checkThread(threadid, threadsdone, threadsrunning, threads, lock, **options):
     if threadid in threadsrunning:
         if not getThread(threadid, threads)["thread"].is_alive():
             threadsrunning.remove(threadid)
@@ -80,7 +81,8 @@ def checkThread(threadid, threadsdone, threadsrunning, threads, **options):
             logger.logV(tn, logger.I, getThread(threadid, threads)["tn"] + " " +
                         _("has finished. Number of threads running: ") + str(len(threadsrunning)))
             if options.get("postend") != None:
-                options["postend"](threadid, threadsrunning, threads)
+                with lock:
+                    options["postend"](threadid, threadsrunning, threads)
 
 
 # Returns a thread from an ID
@@ -97,6 +99,8 @@ def threadLoop(threads1_, **options):
     threadsrunning = []
     threadids = []
     threads = []
+    pslock = threading.RLock()
+    pelock = threading.RLock()
     # Remove duplicates
     for i in threads1:
         if not i in threads:
@@ -133,13 +137,13 @@ def threadLoop(threads1_, **options):
         while config.ThreadStop is False:
             # Clear old threads
             for x in threadsrunning:
-                checkThread(x, threadsdone, threadsrunning, threads, **options)
+                checkThread(x, threadsdone, threadsrunning, threads, pelock, **options)
             # End if all threads are done
             if len(threadsdone) >= len(threads):
                 break
             # Run runnable threads
             for x in findRunnableThreads(threadids, threadsdone, threadsrunning, threads, **options):
-                runThread(x, threadsdone, threadsrunning, threads, **options)
+                runThread(x, threadsdone, threadsrunning, threads, pslock, **options)
             time.sleep(float(1.0 / config.ThreadRPS))
     # Make a new thread (so that the user can continue on using relinux)
     t = threading.Thread(target=_ActualLoop, args=(threads, threadsdone, threadsrunning, threadids))
