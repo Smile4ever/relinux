@@ -105,7 +105,7 @@ def threadLoop(threads1_, **options):
         pslock = threading.RLock()
         if "postend" in options and options["postend"] == options["poststart"]:
             pelock = pslock
-    elif "postend" in options:
+    if "postend" in options and pelock == None:
         pelock = threading.RLock()
     # Remove duplicates
     for i in threads1:

@@ -162,7 +162,7 @@ def run(adict):
             threadsshow = []
             for i in range(len(page.chframe.dispthreads)):
                 page.chframe.dispthreads[i].grid_remove()
-                del(page.chframe.dispthreads[i])
+            page.chframe.dispthreads = []
             for i in threadsrunning:
                 threadsshow.append(threadmanager.getThread(i, threads)["tn"])
             for i in threadsshow:
