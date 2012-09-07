@@ -51,6 +51,7 @@ def run(adict):
     page.details.output = gui.Label(page.details.interior, text=config.GUIStream.getvalue(), anchor=Tkinter.NW, justify=Tkinter.LEFT)
     def onWrite():
         page.details.output.config(text=config.GUIStream.getvalue())
+        page.details.canvas.yview(Tkinter.END)
     config.GUIStream.writefunc.append(onWrite)
     page.details.output.pack(fill=Tkinter.BOTH, expand=True, anchor=Tkinter.NW, side=Tkinter.LEFT)
     page.details.pack(fill=Tkinter.BOTH, expand=True, side=Tkinter.BOTTOM, anchor=Tkinter.SW)

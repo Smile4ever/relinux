@@ -681,27 +681,27 @@ class VerticalScrolledFrame(Frame):
             self.vscrollbar.pack_forget()
         self.vscrollbar = GScrollbar(self, orient=Tkinter.VERTICAL)
         self.vscrollbar.pack(fill=Tkinter.Y, side=Tkinter.RIGHT, expand=Tkinter.FALSE)
-        canvas = Tkinter.Canvas(self, kw, yscrollcommand=self.vscrollbar.set)
-        canvas.pack(side=Tkinter.LEFT, fill=Tkinter.BOTH, expand=Tkinter.TRUE)
-        self.vscrollbar.config(command=canvas.yview)
-        canvas.xview_moveto(0)
-        canvas.yview_moveto(0)
-        self.interior = interior = Frame(canvas, kw)
+        self.canvas = Tkinter.Canvas(self, kw, yscrollcommand=self.vscrollbar.set)
+        self.canvas.pack(side=Tkinter.LEFT, fill=Tkinter.BOTH, expand=Tkinter.TRUE)
+        self.vscrollbar.config(command=self.canvas.yview)
+        self.canvas.xview_moveto(0)
+        self.canvas.yview_moveto(0)
+        self.interior = interior = Frame(self.canvas, kw)
         interior.pack(fill=Tkinter.BOTH, expand=Tkinter.TRUE)
-        interior_id = canvas.create_window(0, 0, window=interior,
+        interior_id = self.canvas.create_window(0, 0, window=interior,
                                            anchor=Tkinter.NW)
 
         def _configure_interior(event):
             size = (interior.winfo_reqwidth(), interior.winfo_reqheight())
-            canvas.config(scrollregion="0 0 %s %s" % size)
-            if interior.winfo_reqwidth() != canvas.winfo_width():
-                canvas.config(width=interior.winfo_reqwidth())
+            self.canvas.config(scrollregion="0 0 %s %s" % size)
+            if interior.winfo_reqwidth() != self.canvas.winfo_width():
+                self.canvas.config(width=interior.winfo_reqwidth())
         interior.bind('<Configure>', _configure_interior)
 
         def _configure_canvas(event):
-            if interior.winfo_reqwidth() != canvas.winfo_width():
-                canvas.itemconfigure(interior_id, width=canvas.winfo_width())
-        canvas.bind('<Configure>', _configure_canvas)
+            if interior.winfo_reqwidth() != self.canvas.winfo_width():
+                self.canvas.itemconfigure(interior_id, width=self.canvas.winfo_width())
+        self.canvas.bind('<Configure>', _configure_canvas)
 
 
 '''class About:
