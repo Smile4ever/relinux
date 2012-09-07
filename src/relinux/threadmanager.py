@@ -67,7 +67,7 @@ def runThread(threadid, threadsdone, threadsrunning, threads, lock, **options):
         threadsrunning.append(threadid)
         logger.logV(tn, logger.I, _("Starting") + " " + getThread(threadid, threads)["tn"] + "...")
         thread["thread"].start()
-        if options.get("poststart") != None:
+        if options.get("poststart") != None and lock != None:
             with lock:
                 options["poststart"](threadid, threadsrunning, threads)
 
@@ -80,7 +80,7 @@ def checkThread(threadid, threadsdone, threadsrunning, threads, lock, **options)
             threadsdone.append(threadid)
             logger.logV(tn, logger.I, getThread(threadid, threads)["tn"] + " " +
                         _("has finished. Number of threads running: ") + str(len(threadsrunning)))
-            if options.get("postend") != None:
+            if options.get("postend") != None and lock != None:
                 with lock:
                     options["postend"](threadid, threadsrunning, threads)
 
@@ -99,8 +99,14 @@ def threadLoop(threads1_, **options):
     threadsrunning = []
     threadids = []
     threads = []
-    pslock = threading.RLock()
-    pelock = threading.RLock()
+    pslock = None
+    pelock = None
+    if "poststart" in options:
+        pslock = threading.RLock()
+        if "postend" in options and options["postend"] == options["poststart"]:
+            pelock = pslock
+    elif "postend" in options:
+        pelock = threading.RLock()
     # Remove duplicates
     for i in threads1:
         if not i in threads:
