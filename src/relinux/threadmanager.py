@@ -7,9 +7,21 @@ from relinux import config, fsutil, logger, utilities
 import time
 import threading
 import copy
+import multiprocessing
 
 
 tn = logger.genTN("TheadManager")
+
+
+# Custom thread class
+class Thread(multiprocessing.Process):
+    def __init__(self, **kw):
+        multiprocessing.Process.__init__(self)
+        for i in kw.keys():
+            self.__dict__[i] = kw[i]
+
+    def run(self):
+        self.runthread()
 
 
 # Finds threads that can currently run (and have not already run)
@@ -79,26 +91,36 @@ def getThread(threadid, threads):
 
 # Thread loop
 def threadLoop(threads1_, **options):
+    # Remove pointers
     threads1 = copy.deepcopy(threads1_)
     # Initialization
     threadsdone = []
     threadsrunning = []
     threadids = []
     threads = []
+    # Remove duplicates
     for i in threads1:
         if not i in threads:
             threads.append(i)
+    # Make sure all threads have these attributes (which are "optional")
     for i in range(len(threads)):
         if not "threadspan" in threads[i]:
             threads[i]["threadspan"] = 1
         if not "enabled" in threads[i]:
             threads[i]["enabled"] = True
+    # Generate the threads
     for i in range(len(threads)):
         temp_ = threads[i]["thread"]
-        temp = temp_()
+        kw = {"tn": threads[i]["tn"]}
+        if "threadargs" in options:
+            for i in options["threadargs"].keys():
+                kw[i] = options["threadargs"][i]
+        temp = temp_(kw)
         threads[i]["thread"] = temp
+    # Generate the thread IDS
     for i in range(len(threads)):
         threadids.append(i)
+    # Make sure thread dependencies are made as IDs, and not actual thread dictionaries
     for i in range(len(threads)):
         for x in range(len(threads[i]["deps"])):
             if threads[i]["deps"][x] in threads:
@@ -120,5 +142,6 @@ def threadLoop(threads1_, **options):
             for x in findRunnableThreads(threadids, threadsdone, threadsrunning, threads, **options):
                 runThread(x, threadsdone, threadsrunning, threads, **options)
             time.sleep(float(1.0 / config.ThreadRPS))
-    t = threading.Thread(target=_ActualLoop, args=(threads, threadsdone, threadsrunning, threadids,))
+    # Make a new thread (so that the user can continue on using relinux)
+    t = threading.Thread(target=_ActualLoop, args=(threads, threadsdone, threadsrunning, threadids))
     t.start()
