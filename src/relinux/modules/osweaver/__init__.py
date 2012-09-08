@@ -142,7 +142,7 @@ def run(adict):
     y += 1
     x = 0
     threadsrunninglabel = gui.Label(page.chframe.interior, text="Threads running:")
-    threadsrunninglabel.grid(row=y, column=x)
+    threadsrunninglabel.grid(row=y, column=x, columnspan=3)
     y += 1
     page.progress.threads = {}
     def startThreads():
