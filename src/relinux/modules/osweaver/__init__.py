@@ -150,11 +150,13 @@ def run(adict):
             page.isnotroot.pack_forget()
             page.isnotroot.pack(fill=Tkinter.X)
             return
+        numthreads = 0
         for i in range(len(page.chframe.boxes)):
             if page.chframe.boxes[i].value.get() < 1:
                 threads[i]["enabled"] = False
             else:
                 threads[i]["enabled"] = True
+                numthreads += 1
             tfdeps = False
             if usedeps.value.get() > 0:
                 tfdeps = True
@@ -180,7 +182,7 @@ def run(adict):
             totprogress = 0
             for i in page.progress.threads.keys():
                 totprogress += utilities.floatDivision(float(page.progress.threads[i]), 100)
-            page.progress.setProgress(utilities.calcPercent(totprogress, len(threads)))
+            page.progress.setProgress(utilities.calcPercent(totprogress, numthreads))
         def postEnd(threadid, threadsrunning, threads):
             tn = threadmanager.getThread(threadid, threads)["tn"]
             setProgress(tn, 100)
