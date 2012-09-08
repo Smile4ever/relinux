@@ -177,7 +177,6 @@ def run(adict):
                     txt += ", " + tn
             threadsrunninglabel.config(text="Threads running: " + txt)
         def setProgress(tn, progress):
-            print(progress)
             page.progress.threads[tn] = progress
             totprogress = 0
             for i in page.progress.threads.keys():

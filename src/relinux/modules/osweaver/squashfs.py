@@ -100,7 +100,7 @@ class genSFS(threadmanager.Thread):
                 sys.stdout.flush()
                 progress = int(match.group(1))
                 if progress > oldprogress:
-                    self.setProgress(tn, int(utilities.floatDivision(progress, 2)))
+                    self.setProgress(tn, 50 + int(utilities.floatDivision(progress, 2)))
                     oldprogress = progress
             else:
                 logger.logI(tn, logger.I, output.rstrip(), noterm=True, nogui=True)
