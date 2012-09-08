@@ -4,7 +4,7 @@ SquashFS Generation
 @author: Joel Leclerc (MiJyn) <lkjoel@ubuntu.com>
 '''
 
-from relinux import logger, fsutil, configutils, config, threadmanager
+from relinux import logger, fsutil, configutils, config, threadmanager, utilities
 from relinux.modules.osweaver import tempsys
 from relinux.modules.osweaver.isoutil import genisotree, genramfs
 import os
@@ -80,6 +80,9 @@ class genSFS(threadmanager.Thread):
             if match != None:
                 sys.stdout.write("\r" + match.group(0))
                 sys.stdout.flush()
+                self.setProgress(tn, int(utilities.floatDivision(match.group(1), 2)))
+            else:
+                logger.logI(tn, logger.I, output.rstrip(), noterm=True, nogui=True)
         sys.stdout.write("\n")
         logger.logI(tn, logger.I, _("Adding the rest of the system"))
         sfscmd = subprocess.Popen(shlex.split("mksquashfs / " + sfspath + " " + opts + " -e " + sfsex),
@@ -90,6 +93,9 @@ class genSFS(threadmanager.Thread):
             if match != None:
                 sys.stdout.write("\r" + match.group(0))
                 sys.stdout.flush()
+                self.setProgress(tn, 50 + int(utilities.floatDivision(match.group(1), 2)))
+            else:
+                logger.logI(tn, logger.I, output.rstrip(), noterm=True, nogui=True)
         sys.stdout.write("\n")
         os.environ["LD_PRELOAD"] = ""
         # Make sure the SquashFS file is OK

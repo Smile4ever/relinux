@@ -71,7 +71,7 @@ D = "D"
 
 
 # Writes in all files in list (plus formats the text)
-def writeAll(status, lists, tn, importance, text):
+def writeAll(status, lists, tn, importance, text, **options):
     if tn == "" or tn == None or not status:
         return
     text_ = tn
@@ -86,6 +86,10 @@ def writeAll(status, lists, tn, importance, text):
     text__ = text_ + text
     text = text__
     for i in lists:
+        if i in config.TermStreams and "noterm" in options and options["noterm"]:
+            continue
+        if i == config.GUIStream and "nogui" in options and options["nogui"]:
+            continue
         text_ = copy.copy(text)
         if i in config.TermStreams:
             if hasattr(i, "writefunc"):
@@ -110,20 +114,20 @@ def genTN(tn):
 
 
 # Log to essential stream
-def logE(tn, importance, text):
+def logE(tn, importance, text, **options):
     writeAll(config.EStatus, config.EFiles, tn, importance, text)
 
 
 # Log to info stream
-def logI(tn, importance, text):
+def logI(tn, importance, text, **options):
     writeAll(config.IStatus, config.IFiles, tn, importance, text)
 
 
 # Log to verbose stream
-def logV(tn, importance, text):
+def logV(tn, importance, text, **options):
     writeAll(config.VStatus, config.VFiles, tn, importance, text)
 
 
 # Log to very-verbose stream
-def logVV(tn, importance, text):
+def logVV(tn, importance, text, **options):
     writeAll(config.VVStatus, config.VVFiles, tn, importance, text)
