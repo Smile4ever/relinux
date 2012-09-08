@@ -122,10 +122,9 @@ def threadLoop(threads1_, **options):
         temp_ = threads[i]["thread"]
         kw = {"tn": logger.genTN(threads[i]["tn"])}
         if "threadargs" in options:
-            for i in options["threadargs"].keys():
-                kw[i] = options["threadargs"][i]
+            for x in options["threadargs"].keys():
+                kw[x] = options["threadargs"][x]
         temp = temp_(**kw)
-        print(threads[i])
         threads[i]["thread"] = temp
     # Generate the thread IDS
     for i in range(len(threads)):
