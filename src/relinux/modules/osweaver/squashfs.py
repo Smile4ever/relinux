@@ -66,7 +66,7 @@ class genSFS(threadmanager.Thread):
         if os.path.exists(sfspath):
             fsutil.rm(sfspath)
         # This line would match the pattern below: [==========/              ]  70/300  20%
-        patt = re.compile("^ *\[=*[|/\-\\]* *\] *[0-9]*/[0-9]* *([0-9]*)% *$")
+        patt = re.compile("^ *\[=*. *\] *[0-9]*/[0-9]* *([0-9]*)% *$")
         appnd = "32"
         if sys.maxsize > 2 ** 32:
             appnd = "64"
