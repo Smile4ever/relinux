@@ -159,22 +159,21 @@ def run(adict):
             if usedeps.value.get() > 0:
                 tfdeps = True
         def postStart(threadid, threadsrunning, threads):
-            tempy = copy.copy(y)
-            tempx = 0
-            threadsshow = []
-            for i in range(len(page.chframe.dispthreads)):
-                page.chframe.dispthreads[i].grid_remove()
-            page.chframe.dispthreads = []
-            for i in threadsrunning:
-                threadsshow.append(threadmanager.getThread(i, threads)["tn"])
-            for i in threadsshow:
-                temp = gui.Label(page.chframe.interior, text=i)
-                temp.grid(row=tempy, column=tempx)
-                page.chframe.dispthreads.append(temp)
-                tempx += 1
-                if tempx >= 3:
-                    tempx = 0
-                    tempy += 1
+            txt = ""
+            for i in range(len(threadsrunning)):
+                tn = threadmanager.getThread(threadsrunning[i], threads)["tn"]
+                if i == len(threadsrunning) - 1:
+                    if len(threadsrunning) == 1:
+                        txt = tn
+                    elif len(threadsrunning) == 2:
+                        txt += " and " + tn
+                    else:
+                        txt += ", and " + tn
+                elif i == 0:
+                    txt = tn
+                else:
+                    txt += ", " + tn
+            threadsrunninglabel.config(text="Threads running: " + txt)
         def setProgress(tn, progress):
             page.progress.threads[tn] = progress
             totprogress = 0
