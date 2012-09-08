@@ -182,7 +182,7 @@ def run(adict):
                 totprogress += utilities.floatDivision(float(page.progress.threads[i]), 100)
             page.progress.setProgress(utilities.calcPercent(totprogress, len(threads)))
         def postEnd(threadid, threadsrunning, threads):
-            tn = threadmanager.getThread(i, threads)["tn"]
+            tn = threadmanager.getThread(threadid, threads)["tn"]
             setProgress(tn, 100)
             postStart(threadid, threadsrunning, threads)
         runThreads(threads, deps=tfdeps, poststart=postStart, postend=postEnd, threadargs={"setProgress": setProgress})
