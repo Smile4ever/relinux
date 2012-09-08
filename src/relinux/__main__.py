@@ -98,12 +98,8 @@ def main():
         global modules, aptcache, cbuffer, App
         spprogn = 6
         spprog = 0
-        def calcSubPercent(p, p1):
-            ans = float(float(p) / p1)
-            return ans
         def calcPercent(def2=(spprog, spprogn)):
-            ans = float(float(calcSubPercent(*def2)) * float(100))
-            return ans
+            utilities.calcPercent(def2[0], def2[1])
         splash.setProgress(calcPercent((spprog, spprogn)), "Loading modules...")
         modules = modloader.getModules()
         spprog += 1
@@ -119,8 +115,8 @@ def main():
         def aptupdate(op, percent):
             global minis
             if percent != None:
-                minis += calcSubPercent(percent, 100)
-            splash.setProgress(calcPercent((calcSubPercent(minis + captop, aptops) + spprog, spprogn)),
+                minis += utilities.floatDivision(percent, 100)
+            splash.setProgress(calcPercent((utilities.floatDivision(minis + captop, aptops) + spprog, spprogn)),
                                "Reading APT Cache... (" + op + ")")
         def aptdone(op):
             global minis, captop

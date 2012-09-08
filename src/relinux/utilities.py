@@ -131,3 +131,13 @@ class eventStringIO(io.StringIO):
                     i()
             else:
                 self.writefunc()
+
+# Float division for Python 2
+def floatDivision(p, p1):
+    if config.python3:
+        return p / p1
+    return float(float(p) / p1)
+
+# Percent calculation
+def calcPercent(first, second):
+    return float(float(floatDivision(first, second)) * float(100))

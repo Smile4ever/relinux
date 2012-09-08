@@ -144,6 +144,7 @@ def run(adict):
     threadsrunninglabel = gui.Label(page.chframe.interior, text="Threads running:")
     threadsrunninglabel.grid(row=y, column=x)
     y += 1
+    page.progress.threads = {}
     def startThreads():
         if os.getuid() != 0:
             page.isnotroot.pack_forget()
@@ -174,7 +175,17 @@ def run(adict):
             if tempx >= 3:
                 tempx = 0
                 tempy += 1
-        runThreads(threads, deps=tfdeps, poststart=postStart, postend=postStart)
+        def setProgress(tn, progress):
+            page.progress.threads[tn] = progress
+            totprogress = 0
+            for i in page.progress.threads.keys():
+                totprogress += utilities.floatDivision(float(page.progress.threads[i]), 100)
+            page.progress.setProgress(utilities.calcPercent(totprogress, len(threads)))
+        def postEnd(threadid, threadsrunning, threads):
+            tn = threadmanager.getThread(i, threads)["tn"]
+            setProgress(tn, 100)
+            postStart(threadid, threadsrunning, threads)
+        runThreads(threads, deps=tfdeps, poststart=postStart, postend=postEnd, threadargs={"setProgress": setProgress})
         # lambda: runThreads(threads)
     page.button = gui.Button(page.frame, text="Start!", command=startThreads)
     page.button.pack()
