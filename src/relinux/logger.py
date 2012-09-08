@@ -115,19 +115,19 @@ def genTN(tn):
 
 # Log to essential stream
 def logE(tn, importance, text, **options):
-    writeAll(config.EStatus, config.EFiles, tn, importance, text)
+    writeAll(config.EStatus, config.EFiles, tn, importance, text, **options)
 
 
 # Log to info stream
 def logI(tn, importance, text, **options):
-    writeAll(config.IStatus, config.IFiles, tn, importance, text)
+    writeAll(config.IStatus, config.IFiles, tn, importance, text, **options)
 
 
 # Log to verbose stream
 def logV(tn, importance, text, **options):
-    writeAll(config.VStatus, config.VFiles, tn, importance, text)
+    writeAll(config.VStatus, config.VFiles, tn, importance, text, **options)
 
 
 # Log to very-verbose stream
 def logVV(tn, importance, text, **options):
-    writeAll(config.VVStatus, config.VVFiles, tn, importance, text)
+    writeAll(config.VVStatus, config.VVFiles, tn, importance, text, **options)
