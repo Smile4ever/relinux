@@ -171,10 +171,10 @@ def run(adict):
                 temp = gui.Label(page.chframe.interior, text=i)
                 temp.grid(row=tempy, column=tempx)
                 page.chframe.dispthreads.append(temp)
-            tempx += 1
-            if tempx >= 3:
-                tempx = 0
-                tempy += 1
+                tempx += 1
+                if tempx >= 3:
+                    tempx = 0
+                    tempy += 1
         def setProgress(tn, progress):
             page.progress.threads[tn] = progress
             totprogress = 0
