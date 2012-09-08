@@ -136,8 +136,10 @@ class eventStringIO(io.StringIO):
 def floatDivision(p, p1):
     if config.python3:
         return p / p1
-    return float(float(p) / p1)
+    return float(float(p) / float(p1))
 
 # Percent calculation
 def calcPercent(first, second):
+    if config.python3:
+        return first / second * 100
     return float(float(floatDivision(first, second)) * float(100))

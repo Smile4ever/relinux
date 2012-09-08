@@ -99,7 +99,7 @@ def main():
         spprogn = 6
         spprog = 0
         def calcPercent(def2=(spprog, spprogn)):
-            utilities.calcPercent(def2[0], def2[1])
+            return utilities.calcPercent(*def2)
         splash.setProgress(calcPercent((spprog, spprogn)), "Loading modules...")
         modules = modloader.getModules()
         spprog += 1
