@@ -277,7 +277,7 @@ class genISO(threadmanager.Thread):
                 if fmd5 != "" and fmd5 != None:
                     files.write(fmd5)
         files.close()
-        self.setProgress(15)
+        self.setProgress(self.tn, 15)
         logger.logI(self.tn, logger.I, _("Generating the ISO"))
         location = (configutils.getValue(configs[configutils.isodir]) + "/" +
                     configutils.getValue(configs[configutils.isolocation]))
@@ -304,7 +304,7 @@ class genISO(threadmanager.Thread):
                     oldprogress = progress
             sys.stdout.write(match.group(0))
             sys.stdout.flush()
-        self.setProgress(85)
+        self.setProgress(self.tn, 85)
         # Generate the MD5 sum
         logger.logV(self.tn, logger.I, _("Generating MD5 sum for the ISO"))
         files = open(location + ".md5", "w")
