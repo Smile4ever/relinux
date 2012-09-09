@@ -294,7 +294,7 @@ class genISO(threadmanager.Thread):
         while isocmd.poll() is None:
             output = isocmd.stderr.readline()
             match = patt.match(output)
-            match.groups()
+            print(match.groups())
             if match != None:
                 print(match.group(1))
                 progress = int(match.group(1))
