@@ -307,7 +307,6 @@ class UbiquitySetup(threadmanager.Thread):
         if (True or
             configutils.parseBoolean(configutils.getValue(configs[configutils.aptlistchange]))):
             os.rename("/usr/share/ubiquity/apt-setup", "/usr/share/ubiquity/apt-setup.relinux-backup")
-            fsutil.makedir("/usr/share/ubiquity/")
             aptsetup = open("/usr/share/ubiquity/apt-setup", "w")
             aptsetup.write("#!/bin/sh\n")
             aptsetup.write("exit\n")
