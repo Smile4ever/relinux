@@ -265,7 +265,7 @@ class genISO(threadmanager.Thread):
         # Make a last verification on the SquashFS
         squashfs.doSFSChecks(isotreel + "casper/filesystem.squashfs",
                              configutils.getValue(configs[configutils.isolevel]))
-        self.setProgress(5)
+        self.setProgress(self.tn, 5)
         # Generate MD5 checksums
         logger.logV(self.tn, logger.I, _("Generating MD5 sums"))
         files = open(isotreel + "md5sum.txt", "w")
