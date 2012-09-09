@@ -289,11 +289,12 @@ class genISO(threadmanager.Thread):
         isocmd = subprocess.Popen(shlex.split(configutils.getValue(configs[configutils.isogenerator]) + " -o " +
                                               location + " " + isogenopts + " -V \"" +
                                               configutils.getValue(configs[configutils.label]) + "\" " + isotreel),
-                                  stdout=subprocess.PIPE, universal_newlines=True)
+                                  stderr=subprocess.PIPE, universal_newlines=True)
         oldprogress = 0
         while isocmd.poll() is None:
-            output = isocmd.stdout.readline()
+            output = isocmd.stderr.readline()
             match = patt.match(output)
+            match.groups()
             if match != None:
                 print(match.group(1))
                 progress = int(match.group(1))
@@ -303,6 +304,7 @@ class genISO(threadmanager.Thread):
                     oldprogress = progress
             sys.stdout.write(match.group(0))
             sys.stdout.flush()
+        os.environ["LD_PRELOAD"] = ""
         self.setProgress(self.tn, 85)
         # Generate the MD5 sum
         logger.logV(self.tn, logger.I, _("Generating MD5 sum for the ISO"))
