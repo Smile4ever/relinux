@@ -306,17 +306,12 @@ class UbiquitySetup(threadmanager.Thread):
                          "/usr/lib/ubiquity/user-setup/user-setup-apply")
         if (True or
             configutils.parseBoolean(configutils.getValue(configs[configutils.aptlistchange]))):
-            fsutil.makedir(tmpsys + "usr/share/ubiquity/")
-            aptsetup = open(tmpsys + "usr/share/ubiquity/apt-setup", "w")
+            os.rename("/usr/share/ubiquity/apt-setup", "/usr/share/ubiquity/apt-setup.relinux-backup")
+            fsutil.makedir("/usr/share/ubiquity/")
+            aptsetup = open("/usr/share/ubiquity/apt-setup", "w")
             aptsetup.write("#!/bin/sh\n")
             aptsetup.write("exit\n")
             aptsetup.close()
-        else:
-            fsutil.makedir(tmpsys + "usr/lib/ubiquity/apt-setup/generators/")
-            cdrom = open(tmpsys + "usr/lib/ubiquity/apt-setup/generators/40cdrom", "w")
-            cdrom.write("#!/bin/sh\n")
-            cdrom.write("exit\n")
-            cdrom.close()
 ubiquitysetup["thread"] = UbiquitySetup
 
 

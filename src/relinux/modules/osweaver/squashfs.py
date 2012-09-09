@@ -61,7 +61,7 @@ class genSFS(threadmanager.Thread):
         opts = "-b 1M -no-recovery -no-duplicates -always-use-fragments"
         opts = opts + " -comp " + configutils.getValue(configs[configutils.sfscomp])
         opts = opts + " " + configutils.getValue(configs[configutils.sfsopts])
-        sfsex = "dev etc home media mnt proc sys var usr/lib/ubiquity/apt-setup/generators/40cdrom"
+        sfsex = "dev etc home media mnt proc sys var usr/lib/ubiquity/apt-setup/generators/40cdrom tmp"
         sfspath = isotreel + "casper/filesystem.squashfs"
         if os.path.exists(sfspath):
             fsutil.rm(sfspath)
