@@ -8,10 +8,13 @@ ISO Utilities
 '''
 
 from relinux.modules.osweaver import tempsys
-from relinux import logger, config, fsutil, configutils, threadmanager
+from relinux import logger, config, fsutil, configutils, threadmanager, utilities
 import shutil
 import os
 import re
+import subprocess
+import shlex
+import sys
 
 
 threadname = "ISOTree"
@@ -262,6 +265,7 @@ class genISO(threadmanager.Thread):
         # Make a last verification on the SquashFS
         squashfs.doSFSChecks(isotreel + "casper/filesystem.squashfs",
                              configutils.getValue(configs[configutils.isolevel]))
+        self.setProgress(5)
         # Generate MD5 checksums
         logger.logV(self.tn, logger.I, _("Generating MD5 sums"))
         files = open(isotreel + "md5sum.txt", "w")
@@ -273,12 +277,34 @@ class genISO(threadmanager.Thread):
                 if fmd5 != "" and fmd5 != None:
                     files.write(fmd5)
         files.close()
+        self.setProgress(15)
         logger.logI(self.tn, logger.I, _("Generating the ISO"))
         location = (configutils.getValue(configs[configutils.isodir]) + "/" +
                     configutils.getValue(configs[configutils.isolocation]))
-        os.system(configutils.getValue(configs[configutils.isogenerator]) + " -o " + location +
-                  " " + isogenopts + " -V \"" + configutils.getValue(configs[configutils.label])
-                  + "\" " + isotreel)
+        patt = re.compile("^ *([0-9]*).*$")
+        appnd = "32"
+        if sys.maxsize > 2 ** 32:
+            appnd = "64"
+        os.environ["LD_PRELOAD"] = os.path.split(os.path.realpath(__file__))[0] + "/isatty" + appnd + ".so"
+        isocmd = subprocess.Popen(shlex.split(configutils.getValue(configs[configutils.isogenerator]) + " -o " +
+                                              location + " " + isogenopts + " -V \"" +
+                                              configutils.getValue(configs[configutils.label]) + "\" " + isotreel),
+                                  stdout=subprocess.PIPE, universal_newlines=True)
+        oldprogress = 0
+        while isocmd.poll() is None:
+            output = isocmd.stdout.readline()
+            match = patt.match(output)
+            if match != None:
+                sys.stdout.write("\r" + match.group(0))
+                sys.stdout.flush()
+                progress = int(match.group(1))
+                if progress > oldprogress:
+                    # 1.4285714285714286 is just 100 / 70
+                    self.setProgress(self.tn, 15 + int(utilities.floatDivision(progress, 1.4285714285714286)))
+                    oldprogress = progress
+            sys.stdout.write(match.group(0))
+            sys.stdout.flush()
+        self.setProgress(85)
         # Generate the MD5 sum
         logger.logV(self.tn, logger.I, _("Generating MD5 sum for the ISO"))
         files = open(location + ".md5", "w")
