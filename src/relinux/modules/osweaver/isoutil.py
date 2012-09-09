@@ -302,7 +302,7 @@ class genISO(threadmanager.Thread):
                     # 1.4285714285714286 is just 100 / 70
                     self.setProgress(self.tn, 15 + int(utilities.floatDivision(progress, 1.4285714285714286)))
                     oldprogress = progress
-            sys.stdout.write(match.group(0))
+            sys.stdout.write(output)
             sys.stdout.flush()
         os.environ["LD_PRELOAD"] = ""
         self.setProgress(self.tn, 85)
