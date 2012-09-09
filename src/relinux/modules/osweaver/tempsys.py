@@ -89,6 +89,7 @@ class remTempVar(threadmanager.Thread):
             fsutil.adrm(tmpsys + i,
                         {"excludes": False, "remdirs": False, "remsymlink": True, "remfullpath": False},
                         None, self.tn)
+        fsutil.rm(tmpsys + "var/run/dbus/pid", False, self.tn)
 remtempvar["thread"] = remTempVar
 
 

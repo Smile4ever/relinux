@@ -295,8 +295,6 @@ class genISO(threadmanager.Thread):
             output = isocmd.stderr.readline()
             match = patt.match(output)
             if match != None:
-                print(match.groups())
-                print(match.group(1))
                 progress = int(match.group(1))
                 if progress > oldprogress:
                     # 1.4285714285714286 is just 100 / 70
