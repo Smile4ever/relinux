@@ -281,7 +281,7 @@ class genISO(threadmanager.Thread):
         logger.logI(self.tn, logger.I, _("Generating the ISO"))
         location = (configutils.getValue(configs[configutils.isodir]) + "/" +
                     configutils.getValue(configs[configutils.isolocation]))
-        patt = re.compile("^ *([0-9]*).*$")
+        patt = re.compile("^ *([0-9]+)\.?[0-9]*%.*$")
         appnd = "32"
         if sys.maxsize > 2 ** 32:
             appnd = "64"
@@ -295,8 +295,7 @@ class genISO(threadmanager.Thread):
             output = isocmd.stdout.readline()
             match = patt.match(output)
             if match != None:
-                sys.stdout.write("\r" + match.group(0))
-                sys.stdout.flush()
+                print(match.group(1))
                 progress = int(match.group(1))
                 if progress > oldprogress:
                     # 1.4285714285714286 is just 100 / 70
